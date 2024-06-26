@@ -1,0 +1,37 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    ports:
+      - 8080:3000
+    tty: true
+    volumes:
+      - type: bind
+        source: ./app
+        target: /go/src/app
+      - type: volume
+        source: go-modules
+        target: /go/pkg/mod
+  
+  db:
+    image: postgres:16
+    shm_size: 128mb
+    expose: 
+      - 5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: phraze
+    volumes:
+      - db-store:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-U postgres -d phraze"]
+      interval: 10s
+      timeout: 30s
+      retries: 3
+      start_period: 30s
+
+volumes:
+  db-store:
+  go-modules:
