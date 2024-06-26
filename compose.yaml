@@ -3,9 +3,11 @@ services:
     build:
       context: .
       dockerfile: docker/Dockerfile
+    depends_on:
+      db:
+        condition: service_healthy
     ports:
       - 8080:3000
-    tty: true
     volumes:
       - type: bind
         source: ./app
@@ -26,11 +28,11 @@ services:
     volumes:
       - db-store:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready", "-U postgres -d phraze"]
+      test: pg_isready -U postgres -d phraze
       interval: 10s
       timeout: 30s
       retries: 3
-      start_period: 30s
+      start_period: 10s
 
 volumes:
   db-store:
