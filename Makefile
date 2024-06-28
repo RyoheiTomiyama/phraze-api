@@ -6,11 +6,11 @@ up:
 migrate:
 	atlas schema apply\
 		--url "postgres://postgres:password@0.0.0.0:5432/phraze?sslmode=disable"\
-		--to "file://atlas/schema.hcl"\
+		--to "file://atlas/schema.sql"\
 		--dev-url "docker://postgres"
 
 migrate-diff:
 	atlas schema diff\
 		--from "postgres://postgres:password@0.0.0.0:5432/phraze?sslmode=disable"\
-		--to "file://atlas/schema.hcl"\
+		--to "file://atlas/schema.sql"\
 		--dev-url "docker://postgres"
