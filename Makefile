@@ -3,6 +3,12 @@
 up:
 	@docker compose up -d
 
+# GraphQL
+gqlgen:
+	docker compose run --rm api go run github.com/99designs/gqlgen generate
+
+# DATABASE 
+
 migrate:
 	atlas schema apply\
 		--url "postgres://postgres:password@0.0.0.0:5432/phraze?sslmode=disable"\
