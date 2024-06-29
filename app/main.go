@@ -2,16 +2,25 @@ package main
 
 import (
 	"net/http"
+	"time"
 
-	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
+	"github.com/RyoheiTomiyama/phraze-api/infra/router"
 )
 
 func main() {
-	r := chi.NewRouter()
-	r.Use(middleware.Logger)
-	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("welcome"))
-	})
-	http.ListenAndServe(":3000", r)
+
+	r := router.New()
+
+	server := &http.Server{
+		Addr:              ":3000",
+		ReadHeaderTimeout: 1 * time.Second,
+		ReadTimeout:       3 * time.Second,
+		WriteTimeout:      30 * time.Second,
+		IdleTimeout:       1 * time.Second,
+		Handler:           r.Handler(),
+	}
+
+	if err := server.ListenAndServe(); err != nil {
+		panic(err)
+	}
 }
