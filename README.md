@@ -49,4 +49,5 @@ seeds/
 make up
 ```
 
-マイグレーション・シード管理に関しては、`atlas/` の README を参照してください。
+- [マイグレーション・シード管理について](./atlas/)
+- [GraphQL の管理について](./app/infra/graph/)
