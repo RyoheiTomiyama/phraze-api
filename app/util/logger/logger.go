@@ -4,6 +4,10 @@ import (
 	"context"
 	"log/slog"
 	"os"
+
+	"github.com/RyoheiTomiyama/phraze-api/util/errutil"
+	"github.com/golang-cz/devslog"
+	"github.com/samber/lo"
 )
 
 type Level = slog.Level
@@ -16,19 +20,31 @@ const (
 )
 
 type logger struct {
-	logger *slog.Logger
+	logger    *slog.Logger
+	debugMode bool
 	// Notify NotifyFunc
 }
 
 type Options struct {
 	Level Level
+	Debug bool
 }
 
 func New(opt Options) *logger {
-	return &logger{
-		logger: slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
+	handler := lo.Ternary[slog.Handler](opt.Debug,
+		devslog.NewHandler(os.Stdout, &devslog.Options{
+			HandlerOptions: &slog.HandlerOptions{
+				Level: opt.Level,
+			},
+		}),
+		slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
 			Level: opt.Level,
-		})),
+		}),
+	)
+
+	return &logger{
+		logger:    slog.New(handler),
+		debugMode: opt.Debug,
 	}
 }
 
@@ -61,6 +77,12 @@ func (l *logger) Warning(msg string, arg ...any) {
 	l.logger.Warn(msg, arg...)
 }
 
-func (l *logger) Error(msg string, arg ...any) {
-	l.logger.Error(msg, arg...)
+func (l *logger) Error(err error, arg ...any) {
+	if l.debugMode {
+		st := errutil.ErrorWithStackTrace(err)
+		if len(st) > 0 {
+			arg = append(arg, "stack_trace", st)
+		}
+	}
+	l.logger.Error(err.Error(), arg...)
 }

@@ -1,13 +1,19 @@
 package main
 
 import (
+	"context"
 	"net/http"
 	"time"
 
 	"github.com/RyoheiTomiyama/phraze-api/infra/router"
+	"github.com/RyoheiTomiyama/phraze-api/util/logger"
 )
 
 func main() {
+	ctx := context.Background()
+
+	l := logger.New(logger.Options{Level: logger.LevelDebug, Debug: true})
+	l.WithCtx(ctx)
 
 	r := router.New()
 
