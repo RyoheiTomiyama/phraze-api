@@ -6,12 +6,18 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    environment:
+      GOOGLE_APPLICATION_CREDENTIALS: /go/src/secrets/service-account-credentials.json
     ports:
       - 8080:3000
     volumes:
       - type: bind
         source: ./app
         target: /go/src/app
+      - type: bind
+        source: ./secrets
+        target: /go/src/secrets
+        read_only: true
       - type: volume
         source: go-modules
         target: /go/pkg/mod
