@@ -8,6 +8,7 @@ services:
         condition: service_healthy
     environment:
       GOOGLE_APPLICATION_CREDENTIALS: /go/src/secrets/service-account-credentials.json
+      POSTGRES_DSN: $POSTGRES_DSN
     ports:
       - 8080:3000
     volumes:
@@ -28,9 +29,9 @@ services:
     ports: 
       - ${POSTGRES_PORT:-5432}:5432
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: phraze
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      POSTGRES_DB: ${POSTGRES_DB:-phraze}
     volumes:
       - db-store:/var/lib/postgresql/data
     healthcheck:

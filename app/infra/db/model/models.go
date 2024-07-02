@@ -2,6 +2,7 @@ package model
 
 import (
 	"database/sql"
+	"time"
 )
 
 type Card struct {
@@ -9,16 +10,16 @@ type Card struct {
 	DeckID    int64
 	Question  string
 	Answer    string
-	CreatedAt sql.NullTime
-	UpdatedAt sql.NullTime
+	CreatedAt time.Time
+	UpdatedAt time.Time
 }
 
 type Deck struct {
-	ID        int64        `db:"id"`
-	UserID    string       `db:"user_id"`
-	Name      string       `db:"name"`
-	CreatedAt sql.NullTime `db:"created_at"`
-	UpdatedAt sql.NullTime `db:"updatedAt"`
+	ID        int64     `db:"id"`
+	UserID    string    `db:"user_id"`
+	Name      string    `db:"name"`
+	CreatedAt time.Time `db:"created_at"`
+	UpdatedAt time.Time `db:"updated_at"`
 }
 
 type User struct {

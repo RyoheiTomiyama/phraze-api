@@ -14,9 +14,9 @@ import (
 func (c *client) GetDeck(ctx context.Context, id int64) (*domain.Deck, error) {
 	e := c.execerFrom(ctx)
 
-	var deck *model.Deck
+	var deck model.Deck
 
-	if err := sqlx.GetContext(ctx, e, &deck, "SELECT * FROM decks WHERE id=$1", id); err != nil {
+	if err := sqlx.GetContext(ctx, e, &deck, "SELECT id, user_id, name, created_at, updated_at FROM decks WHERE id=$1", id); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, nil
 		}
@@ -28,7 +28,7 @@ func (c *client) GetDeck(ctx context.Context, id int64) (*domain.Deck, error) {
 		ID:        deck.ID,
 		UserID:    deck.UserID,
 		Name:      deck.Name,
-		CreateAt:  deck.CreatedAt.Time,
-		UpdatedAt: deck.UpdatedAt.Time,
+		CreateAt:  deck.CreatedAt,
+		UpdatedAt: deck.UpdatedAt,
 	}, nil
 }

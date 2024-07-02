@@ -2,8 +2,10 @@ package db
 
 import (
 	"context"
+	"database/sql"
 
 	"github.com/RyoheiTomiyama/phraze-api/domain"
+	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -25,9 +27,10 @@ func NewClient(dataSource string) (IClient, error) {
 }
 
 func open(dataSource string) (*sqlx.DB, error) {
-	db, err := sqlx.Open("pgx", dataSource)
+	sqlDB, err := sql.Open("pgx", dataSource)
+	db := sqlx.NewDb(sqlDB, "pgx")
 	if err != nil {
-		return db, err
+		return nil, err
 	}
 
 	if err := db.Ping(); err != nil {
