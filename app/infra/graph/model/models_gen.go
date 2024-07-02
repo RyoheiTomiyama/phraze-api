@@ -2,25 +2,32 @@
 
 package model
 
+import (
+	"time"
+)
+
+type Card struct {
+	ID        string    `json:"id"`
+	DeckID    string    `json:"deckID"`
+	Question  string    `json:"question"`
+	Answer    string    `json:"answer"`
+	CreatedAt time.Time `json:"createdAt"`
+	UpdatedAt time.Time `json:"updatedAt"`
+}
+
+type Deck struct {
+	ID        string    `json:"id"`
+	Name      string    `json:"name"`
+	CreatedAt time.Time `json:"createdAt"`
+	UpdatedAt time.Time `json:"updatedAt"`
+}
+
+type Health struct {
+	Healthy *bool `json:"healthy,omitempty"`
+}
+
 type Mutation struct {
 }
 
-type NewTodo struct {
-	Text   string `json:"text"`
-	UserID string `json:"userId"`
-}
-
 type Query struct {
-}
-
-type Todo struct {
-	ID   string `json:"id"`
-	Text string `json:"text"`
-	Done bool   `json:"done"`
-	User *User  `json:"user"`
-}
-
-type User struct {
-	ID   string `json:"id"`
-	Name string `json:"name"`
 }

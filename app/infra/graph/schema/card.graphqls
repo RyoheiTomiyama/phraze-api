@@ -1,0 +1,13 @@
+type Card {
+  id: ID!
+  deckID: ID!
+  question: String!
+  answer: String!
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
+}
+
+extend type Query {
+  cards: [Card!]!
+  card: Card!
+}

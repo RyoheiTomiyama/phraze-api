@@ -12,14 +12,14 @@ import (
 	"github.com/RyoheiTomiyama/phraze-api/infra/graph/model"
 )
 
-// CreateTodo is the resolver for the createTodo field.
-func (r *mutationResolver) CreateTodo(ctx context.Context, input model.NewTodo) (*model.Todo, error) {
-	panic(fmt.Errorf("not implemented: CreateTodo - createTodo"))
+// Health is the resolver for the health field.
+func (r *mutationResolver) Health(ctx context.Context) (*model.Health, error) {
+	panic(fmt.Errorf("not implemented: Health - health"))
 }
 
-// Todos is the resolver for the todos field.
-func (r *queryResolver) Todos(ctx context.Context) ([]*model.Todo, error) {
-	panic(fmt.Errorf("not implemented: Todos - todos"))
+// Health is the resolver for the health field.
+func (r *queryResolver) Health(ctx context.Context) (*model.Health, error) {
+	panic(fmt.Errorf("not implemented: Health - health"))
 }
 
 // Mutation returns graph.MutationResolver implementation.

@@ -2,27 +2,16 @@
 #
 # https://gqlgen.com/getting-started/
 
-type Todo {
-  id: ID!
-  text: String!
-  done: Boolean!
-  user: User!
-}
+scalar Timestamp
 
-type User {
-  id: ID!
-  name: String!
+type Health {
+  healthy: Boolean
 }
 
 type Query {
-  todos: [Todo!]!
-}
-
-input NewTodo {
-  text: String!
-  userId: String!
+  health: Health!
 }
 
 type Mutation {
-  createTodo(input: NewTodo!): Todo!
+  health: Health!
 }

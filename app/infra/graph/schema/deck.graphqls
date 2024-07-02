@@ -1,0 +1,11 @@
+type Deck {
+  id: ID!
+  name: String!
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
+}
+
+extend type Query {
+  decks: [Deck!]!
+  deck: Deck!
+}
