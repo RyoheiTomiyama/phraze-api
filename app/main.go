@@ -17,13 +17,19 @@ func main() {
 	l := logger.New(logger.Options{Level: logger.LevelDebug, Debug: true})
 	ctx = l.WithCtx(ctx)
 
-	config, err := env.New(ctx)
+	config, err := env.New()
 	if err != nil {
 		panic(err)
 	}
 	ctx = config.WithCtx(ctx)
 
-	db, err := db.NewClient(config.DB.DSN)
+	db, err := db.NewClient(db.DataSourceOption{
+		Host:     config.DB.HOST,
+		Port:     config.DB.PORT,
+		DBName:   config.DB.DB_NAME,
+		User:     config.DB.USER,
+		Password: config.DB.PASSWORD,
+	})
 	if err != nil {
 		panic(err)
 	}

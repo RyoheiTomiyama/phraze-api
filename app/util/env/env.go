@@ -14,10 +14,14 @@ type config struct {
 }
 
 type db struct {
-	DSN string `env:"POSTGRES_DSN" envDefault:"postgres://postgres:password@db:5432/postgres"`
+	HOST     string `env:"POSTGRES_HOST" envDefault:"0.0.0.0"`
+	USER     string `env:"POSTGRES_USER" envDefault:"postgres"`
+	PASSWORD string `env:"POSTGRES_PASSWORD" envDefault:"password"`
+	DB_NAME  string `env:"POSTGRES_DB" envDefault:"phraze"`
+	PORT     string `env:"POSTGRES_PORT" envDefault:"5432"`
 }
 
-func New(ctx context.Context) (*config, error) {
+func New() (*config, error) {
 	cfg := config{}
 	if err := env.Parse(&cfg); err != nil {
 		return nil, errutil.Wrap((err))
