@@ -61,6 +61,7 @@ type ComplexityRoot struct {
 		ID        func(childComplexity int) int
 		Name      func(childComplexity int) int
 		UpdatedAt func(childComplexity int) int
+		UserID    func(childComplexity int) int
 	}
 
 	Health struct {
@@ -179,6 +180,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Deck.UpdatedAt(childComplexity), true
+
+	case "Deck.userId":
+		if e.complexity.Deck.UserID == nil {
+			break
+		}
+
+		return e.complexity.Deck.UserID(childComplexity), true
 
 	case "Health.healthy":
 		if e.complexity.Health.Healthy == nil {
@@ -349,6 +357,7 @@ extend type Query {
 `, BuiltIn: false},
 	{Name: "../schema/deck.graphqls", Input: `type Deck {
   id: ID!
+  userId: String!
   name: String!
   createdAt: Timestamp!
   updatedAt: Timestamp!
@@ -740,6 +749,50 @@ func (ec *executionContext) fieldContext_Deck_id(_ context.Context, field graphq
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Deck_userId(ctx context.Context, field graphql.CollectedField, obj *model.Deck) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Deck_userId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UserID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Deck_userId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Deck",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -1171,6 +1224,8 @@ func (ec *executionContext) fieldContext_Query_decks(_ context.Context, field gr
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Deck_id(ctx, field)
+			case "userId":
+				return ec.fieldContext_Deck_userId(ctx, field)
 			case "name":
 				return ec.fieldContext_Deck_name(ctx, field)
 			case "createdAt":
@@ -1225,6 +1280,8 @@ func (ec *executionContext) fieldContext_Query_deck(_ context.Context, field gra
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Deck_id(ctx, field)
+			case "userId":
+				return ec.fieldContext_Deck_userId(ctx, field)
 			case "name":
 				return ec.fieldContext_Deck_name(ctx, field)
 			case "createdAt":
@@ -3225,6 +3282,11 @@ func (ec *executionContext) _Deck(ctx context.Context, sel ast.SelectionSet, obj
 			out.Values[i] = graphql.MarshalString("Deck")
 		case "id":
 			out.Values[i] = ec._Deck_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "userId":
+			out.Values[i] = ec._Deck_userId(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}

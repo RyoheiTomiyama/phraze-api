@@ -1,5 +1,6 @@
 type Deck {
   id: ID!
+  userId: String!
   name: String!
   createdAt: Timestamp!
   updatedAt: Timestamp!
