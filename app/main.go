@@ -5,7 +5,9 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/RyoheiTomiyama/phraze-api/application/usecase/auth"
 	"github.com/RyoheiTomiyama/phraze-api/infra/db"
+	firebaseAuth "github.com/RyoheiTomiyama/phraze-api/infra/firebase/auth"
 	"github.com/RyoheiTomiyama/phraze-api/router"
 	"github.com/RyoheiTomiyama/phraze-api/util/env"
 	"github.com/RyoheiTomiyama/phraze-api/util/logger"
@@ -34,7 +36,16 @@ func main() {
 		panic(err)
 	}
 
-	r := router.New()
+	// infra
+	firebaseAuthClient, err := firebaseAuth.New()
+	if err != nil {
+		panic(err)
+	}
+
+	// usecase
+	authUsecase := auth.New(firebaseAuthClient)
+
+	r := router.New(config, l, authUsecase)
 
 	server := &http.Server{
 		Addr:              ":3000",

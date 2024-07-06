@@ -9,7 +9,7 @@ import (
 	"github.com/caarlos0/env/v11"
 )
 
-type config struct {
+type Config struct {
 	DB db
 }
 
@@ -21,8 +21,8 @@ type db struct {
 	PORT     string `env:"POSTGRES_PORT" envDefault:"5432"`
 }
 
-func New() (*config, error) {
-	cfg := config{}
+func New() (*Config, error) {
+	cfg := Config{}
 	if err := env.Parse(&cfg); err != nil {
 		return nil, errutil.Wrap((err))
 	}
@@ -32,14 +32,14 @@ func New() (*config, error) {
 
 type envCtxKey struct{}
 
-func (c *config) WithCtx(ctx context.Context) context.Context {
+func (c *Config) WithCtx(ctx context.Context) context.Context {
 	return context.WithValue(ctx, envCtxKey{}, c)
 }
 
-func FromCtx(ctx context.Context) *config {
-	c, ok := ctx.Value(envCtxKey{}).(*config)
+func FromCtx(ctx context.Context) *Config {
+	c, ok := ctx.Value(envCtxKey{}).(*Config)
 	if !ok {
-		return &config{}
+		return &Config{}
 	}
 
 	return c
