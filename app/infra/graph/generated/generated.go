@@ -75,7 +75,7 @@ type ComplexityRoot struct {
 	Query struct {
 		Card   func(childComplexity int) int
 		Cards  func(childComplexity int) int
-		Deck   func(childComplexity int) int
+		Deck   func(childComplexity int, id string) int
 		Decks  func(childComplexity int) int
 		Health func(childComplexity int) int
 	}
@@ -89,7 +89,7 @@ type QueryResolver interface {
 	Cards(ctx context.Context) ([]*model.Card, error)
 	Card(ctx context.Context) (*model.Card, error)
 	Decks(ctx context.Context) ([]*model.Deck, error)
-	Deck(ctx context.Context) (*model.Deck, error)
+	Deck(ctx context.Context, id string) (*model.Deck, error)
 }
 
 type executableSchema struct {
@@ -221,7 +221,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		return e.complexity.Query.Deck(childComplexity), true
+		args, err := ec.field_Query_deck_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Deck(childComplexity, args["id"].(string)), true
 
 	case "Query.decks":
 		if e.complexity.Query.Decks == nil {
@@ -365,7 +370,7 @@ extend type Query {
 
 extend type Query {
   decks: [Deck!]!
-  deck: Deck!
+  deck(id: ID!): Deck!
 }
 `, BuiltIn: false},
 	{Name: "../schema/schema.graphqls", Input: `# GraphQL schema example
@@ -405,6 +410,21 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 		}
 	}
 	args["name"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_deck_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
 	return args, nil
 }
 
@@ -1253,7 +1273,7 @@ func (ec *executionContext) _Query_deck(ctx context.Context, field graphql.Colle
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Deck(rctx)
+		return ec.resolvers.Query().Deck(rctx, fc.Args["id"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1270,7 +1290,7 @@ func (ec *executionContext) _Query_deck(ctx context.Context, field graphql.Colle
 	return ec.marshalNDeck2ᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋinfraᚋgraphᚋmodelᚐDeck(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Query_deck(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Query_deck(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Query",
 		Field:      field,
@@ -1291,6 +1311,17 @@ func (ec *executionContext) fieldContext_Query_deck(_ context.Context, field gra
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Deck", field.Name)
 		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_deck_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
 	}
 	return fc, nil
 }

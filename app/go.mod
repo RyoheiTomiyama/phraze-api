@@ -3,7 +3,9 @@ module github.com/RyoheiTomiyama/phraze-api
 go 1.22.4
 
 require (
+	ariga.io/atlas-go-sdk v0.5.6
 	github.com/99designs/gqlgen v0.17.49
+	github.com/DATA-DOG/go-txdb v0.1.9
 	github.com/caarlos0/env/v11 v11.1.0
 	github.com/go-chi/chi/v5 v5.0.14
 	github.com/stretchr/testify v1.9.0
@@ -12,7 +14,6 @@ require (
 
 require (
 	ariga.io/atlas v0.21.2-0.20240418081819-02b3f6239b04 // indirect
-	ariga.io/atlas-go-sdk v0.5.6 // indirect
 	cloud.google.com/go v0.115.0 // indirect
 	cloud.google.com/go/auth v0.6.0 // indirect
 	cloud.google.com/go/auth/oauth2adapt v0.2.2 // indirect
@@ -21,7 +22,6 @@ require (
 	cloud.google.com/go/iam v1.1.8 // indirect
 	cloud.google.com/go/longrunning v0.5.7 // indirect
 	cloud.google.com/go/storage v1.42.0 // indirect
-	github.com/DATA-DOG/go-txdb v0.1.9 // indirect
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/apparentlymart/go-textseg/v15 v15.0.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect

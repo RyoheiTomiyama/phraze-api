@@ -17,6 +17,6 @@ func (r *queryResolver) Decks(ctx context.Context) ([]*model.Deck, error) {
 }
 
 // Deck is the resolver for the deck field.
-func (r *queryResolver) Deck(ctx context.Context) (*model.Deck, error) {
+func (r *queryResolver) Deck(ctx context.Context, id string) (*model.Deck, error) {
 	panic(fmt.Errorf("not implemented: Deck - deck"))
 }

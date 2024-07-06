@@ -8,5 +8,5 @@ type Deck {
 
 extend type Query {
   decks: [Deck!]!
-  deck: Deck!
+  deck(id: ID!): Deck!
 }
