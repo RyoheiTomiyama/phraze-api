@@ -1,10 +1,11 @@
 package db_test
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
-	"os"
 
+	"ariga.io/atlas-go-sdk/atlasexec"
 	"github.com/RyoheiTomiyama/phraze-api/util/env"
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/jmoiron/sqlx"
@@ -67,11 +68,10 @@ func initializeDB() error {
 	}
 	defer db.Close()
 
-	if _, err := db.Exec(`DROP DATABASE IF EXISTS "phraze_test"`); err != nil {
-		return fmt.Errorf("could not create test database: %w", err)
-	}
-
-	if _, err := db.Exec(`CREATE DATABASE "phraze_test"`); err != nil {
+	if _, err := db.Exec(fmt.Sprintf(`
+		SELECT 'CREATE DATABASE %s'
+		WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = '%s')
+	`, TestDBName, TestDBName)); err != nil {
 		return fmt.Errorf("could not create test database: %w", err)
 	}
 
@@ -79,36 +79,27 @@ func initializeDB() error {
 }
 
 func migration() error {
-	migrateFilePath := "../../../atlas/schema.sql"
-
 	config, err := env.New()
 	if err != nil {
 		return err
 	}
 
 	dataSource := fmt.Sprintf(
-		"host=%s port=%s dbname=%s sslmode=disable user=%s password=%s",
-		config.DB.HOST, config.DB.PORT, TestDBName, config.DB.USER, config.DB.PASSWORD,
+		"postgres://%s:%s@%s:%s/%s?sslmode=disable",
+		config.DB.USER, config.DB.PASSWORD, config.DB.HOST, config.DB.PORT, TestDBName,
 	)
 
-	sqlDB, err := sql.Open("pgx", dataSource)
-	db := sqlx.NewDb(sqlDB, "pgx")
+	client, err := atlasexec.NewClient("..", "atlas")
 	if err != nil {
 		return err
 	}
-	defer db.Close()
-
-	if err := db.Ping(); err != nil {
-		return fmt.Errorf("failed ping: %w", err)
-	}
-
-	content, err := os.ReadFile(migrateFilePath)
+	_, err = client.SchemaApply(context.Background(), &atlasexec.SchemaApplyParams{
+		DevURL: "docker://postgres",
+		URL:    dataSource,
+		To:     "file://atlas/schema.sql",
+	})
 	if err != nil {
-		return fmt.Errorf("could not read schema file: %w", err)
-	}
-
-	if _, err := db.Exec(string(content)); err != nil {
-		return fmt.Errorf("could not execute SQL %s: %w", string(content), err)
+		return err
 	}
 
 	return nil
