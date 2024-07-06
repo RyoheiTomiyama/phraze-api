@@ -12,11 +12,35 @@ import (
 
 const TestDBName = "phraze_test"
 
+func GetDB() (*sqlx.DB, error) {
+	config, err := env.New()
+	if err != nil {
+		return nil, err
+	}
+
+	dataSource := fmt.Sprintf(
+		"host=%s port=%s dbname=%s sslmode=disable user=%s password=%s",
+		config.DB.HOST, config.DB.PORT, TestDBName, config.DB.USER, config.DB.PASSWORD,
+	)
+
+	sqlDB, err := sql.Open("pgx", dataSource)
+	db := sqlx.NewDb(sqlDB, "pgx")
+	if err != nil {
+		return nil, err
+	}
+
+	return db, nil
+}
+
 // main_test.goから1度だけ叩く
 func SetupDB() (*sqlx.DB, error) {
+
+	fmt.Print("initialize DB...")
 	if err := initializeDB(); err != nil {
 		return nil, err
 	}
+
+	fmt.Print("migratie DB...")
 
 	if err := migration(); err != nil {
 		return nil, err
