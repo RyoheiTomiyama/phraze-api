@@ -24,11 +24,5 @@ func (c *client) GetDeck(ctx context.Context, id int64) (*domain.Deck, error) {
 		return nil, errutil.Wrap(err)
 	}
 
-	return &domain.Deck{
-		ID:        deck.ID,
-		UserID:    deck.UserID,
-		Name:      deck.Name,
-		CreateAt:  deck.CreatedAt,
-		UpdatedAt: deck.UpdatedAt,
-	}, nil
+	return deck.ToDomain(), nil
 }

@@ -3,6 +3,8 @@ package model
 import (
 	"database/sql"
 	"time"
+
+	"github.com/RyoheiTomiyama/phraze-api/domain"
 )
 
 type Card struct {
@@ -27,4 +29,14 @@ type User struct {
 	Name      string
 	CreatedAt sql.NullTime
 	UpdatedAt sql.NullTime
+}
+
+func (d *Deck) ToDomain() *domain.Deck {
+	return &domain.Deck{
+		ID:        d.ID,
+		UserID:    d.UserID,
+		Name:      d.Name,
+		CreateAt:  d.CreatedAt,
+		UpdatedAt: d.UpdatedAt,
+	}
 }

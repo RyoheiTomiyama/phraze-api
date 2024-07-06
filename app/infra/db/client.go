@@ -15,7 +15,7 @@ type client struct {
 }
 
 type IClient interface {
-	CreateDeck(ctx context.Context, deck domain.Deck) (int64, error)
+	CreateDeck(ctx context.Context, deck domain.Deck) (*domain.Deck, error)
 	GetDeck(ctx context.Context, id int64) (*domain.Deck, error)
 }
 
