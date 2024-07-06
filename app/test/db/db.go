@@ -4,19 +4,22 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"testing"
 
 	"ariga.io/atlas-go-sdk/atlasexec"
+	"github.com/DATA-DOG/go-txdb"
 	"github.com/RyoheiTomiyama/phraze-api/util/env"
+	"github.com/google/uuid"
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/jmoiron/sqlx"
 )
 
 const TestDBName = "phraze_test"
 
-func GetDB() (*sqlx.DB, error) {
+func getTestDataSource() (string, error) {
 	config, err := env.New()
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
 	dataSource := fmt.Sprintf(
@@ -24,10 +27,20 @@ func GetDB() (*sqlx.DB, error) {
 		config.DB.HOST, config.DB.PORT, TestDBName, config.DB.USER, config.DB.PASSWORD,
 	)
 
-	sqlDB, err := sql.Open("pgx", dataSource)
-	db := sqlx.NewDb(sqlDB, "pgx")
+	return dataSource, nil
+}
+
+func GetDB(t *testing.T) (*sqlx.DB, error) {
+	t.Helper()
+
+	txDB, err := sql.Open("txdb", uuid.New().String())
+	db := sqlx.NewDb(txDB, "pgx")
 	if err != nil {
-		return nil, err
+		t.Fatal(err)
+	}
+
+	if err := db.Ping(); err != nil {
+		t.Fatal(err)
 	}
 
 	return db, nil
@@ -35,6 +48,10 @@ func GetDB() (*sqlx.DB, error) {
 
 // main_test.goから1度だけ叩く
 func SetupDB() (*sqlx.DB, error) {
+	ds, err := getTestDataSource()
+	if err != nil {
+		return nil, err
+	}
 
 	fmt.Print("initialize DB...")
 	if err := initializeDB(); err != nil {
@@ -46,6 +63,8 @@ func SetupDB() (*sqlx.DB, error) {
 	if err := migration(); err != nil {
 		return nil, err
 	}
+
+	txdb.Register("txdb", "pgx", ds)
 
 	return nil, nil
 }
@@ -68,10 +87,19 @@ func initializeDB() error {
 	}
 	defer db.Close()
 
-	if _, err := db.Exec(fmt.Sprintf(`
-		SELECT 'CREATE DATABASE %s'
-		WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = '%s')
-	`, TestDBName, TestDBName)); err != nil {
+	var exist bool
+	if err := db.QueryRow(fmt.Sprintf(
+		"SELECT EXISTS(SELECT datname FROM pg_database WHERE datname='%s')",
+		TestDBName,
+	)).Scan(&exist); err != nil {
+		return fmt.Errorf("failed database exist check: %w", err)
+	}
+
+	if exist {
+		return nil
+	}
+
+	if _, err := db.Exec(fmt.Sprintf("CREATE DATABASE %s", TestDBName)); err != nil {
 		return fmt.Errorf("could not create test database: %w", err)
 	}
 
