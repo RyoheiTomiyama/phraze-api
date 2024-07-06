@@ -9,7 +9,6 @@ import (
 	"ariga.io/atlas-go-sdk/atlasexec"
 	"github.com/DATA-DOG/go-txdb"
 	"github.com/RyoheiTomiyama/phraze-api/util/env"
-	"github.com/google/uuid"
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/jmoiron/sqlx"
 )
@@ -30,29 +29,30 @@ func getTestDataSource() (string, error) {
 	return dataSource, nil
 }
 
-func GetDB(t *testing.T) (*sqlx.DB, error) {
+func GetDB(t *testing.T) *sqlx.DB {
 	t.Helper()
 
-	txDB, err := sql.Open("txdb", uuid.New().String())
-	db := sqlx.NewDb(txDB, "pgx")
+	ds, err := getTestDataSource()
 	if err != nil {
 		t.Fatal(err)
+
+		return nil
 	}
+
+	txDB := sql.OpenDB(txdb.New("pgx", ds))
+	db := sqlx.NewDb(txDB, "pgx")
 
 	if err := db.Ping(); err != nil {
 		t.Fatal(err)
+
+		return nil
 	}
 
-	return db, nil
+	return db
 }
 
 // main_test.goから1度だけ叩く
 func SetupDB() (*sqlx.DB, error) {
-	ds, err := getTestDataSource()
-	if err != nil {
-		return nil, err
-	}
-
 	fmt.Print("initialize DB...")
 	if err := initializeDB(); err != nil {
 		return nil, err
@@ -63,8 +63,6 @@ func SetupDB() (*sqlx.DB, error) {
 	if err := migration(); err != nil {
 		return nil, err
 	}
-
-	txdb.Register("txdb", "pgx", ds)
 
 	return nil, nil
 }

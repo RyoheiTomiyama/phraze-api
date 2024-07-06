@@ -1,21 +1,11 @@
 package db
 
 import (
-	db_test "github.com/RyoheiTomiyama/phraze-api/test/db"
-	"github.com/RyoheiTomiyama/phraze-api/util/env"
+	"testing"
+
+	"github.com/jmoiron/sqlx"
 )
 
-func testDataSourceOption() DataSourceOption {
-	config, err := env.New()
-	if err != nil {
-		return DataSourceOption{}
-	}
-
-	return DataSourceOption{
-		Host:     config.DB.HOST,
-		Port:     config.DB.PORT,
-		DBName:   db_test.TestDBName,
-		User:     config.DB.USER,
-		Password: config.DB.PASSWORD,
-	}
+func NewTestClient(t *testing.T, db *sqlx.DB) IClient {
+	return &client{db}
 }
