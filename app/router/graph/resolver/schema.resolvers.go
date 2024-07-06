@@ -8,8 +8,8 @@ import (
 	"context"
 	"fmt"
 
-	graph "github.com/RyoheiTomiyama/phraze-api/infra/graph/generated"
-	"github.com/RyoheiTomiyama/phraze-api/infra/graph/model"
+	"github.com/RyoheiTomiyama/phraze-api/router/graph/generated"
+	"github.com/RyoheiTomiyama/phraze-api/router/graph/model"
 )
 
 // Health is the resolver for the health field.
@@ -22,11 +22,11 @@ func (r *queryResolver) Health(ctx context.Context) (*model.Health, error) {
 	panic(fmt.Errorf("not implemented: Health - health"))
 }
 
-// Mutation returns graph.MutationResolver implementation.
-func (r *Resolver) Mutation() graph.MutationResolver { return &mutationResolver{r} }
+// Mutation returns generated.MutationResolver implementation.
+func (r *Resolver) Mutation() generated.MutationResolver { return &mutationResolver{r} }
 
-// Query returns graph.QueryResolver implementation.
-func (r *Resolver) Query() graph.QueryResolver { return &queryResolver{r} }
+// Query returns generated.QueryResolver implementation.
+func (r *Resolver) Query() generated.QueryResolver { return &queryResolver{r} }
 
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }

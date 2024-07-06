@@ -14,7 +14,7 @@ import (
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/introspection"
-	"github.com/RyoheiTomiyama/phraze-api/infra/graph/model"
+	"github.com/RyoheiTomiyama/phraze-api/router/graph/model"
 	gqlparser "github.com/vektah/gqlparser/v2"
 	"github.com/vektah/gqlparser/v2/ast"
 )
@@ -1019,7 +1019,7 @@ func (ec *executionContext) _Mutation_health(ctx context.Context, field graphql.
 	}
 	res := resTmp.(*model.Health)
 	fc.Result = res
-	return ec.marshalNHealth2ᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋinfraᚋgraphᚋmodelᚐHealth(ctx, field.Selections, res)
+	return ec.marshalNHealth2ᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐHealth(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_health(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1067,7 +1067,7 @@ func (ec *executionContext) _Query_health(ctx context.Context, field graphql.Col
 	}
 	res := resTmp.(*model.Health)
 	fc.Result = res
-	return ec.marshalNHealth2ᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋinfraᚋgraphᚋmodelᚐHealth(ctx, field.Selections, res)
+	return ec.marshalNHealth2ᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐHealth(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_health(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1115,7 +1115,7 @@ func (ec *executionContext) _Query_cards(ctx context.Context, field graphql.Coll
 	}
 	res := resTmp.([]*model.Card)
 	fc.Result = res
-	return ec.marshalNCard2ᚕᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋinfraᚋgraphᚋmodelᚐCardᚄ(ctx, field.Selections, res)
+	return ec.marshalNCard2ᚕᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐCardᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_cards(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1173,7 +1173,7 @@ func (ec *executionContext) _Query_card(ctx context.Context, field graphql.Colle
 	}
 	res := resTmp.(*model.Card)
 	fc.Result = res
-	return ec.marshalNCard2ᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋinfraᚋgraphᚋmodelᚐCard(ctx, field.Selections, res)
+	return ec.marshalNCard2ᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐCard(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_card(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1231,7 +1231,7 @@ func (ec *executionContext) _Query_decks(ctx context.Context, field graphql.Coll
 	}
 	res := resTmp.([]*model.Deck)
 	fc.Result = res
-	return ec.marshalNDeck2ᚕᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋinfraᚋgraphᚋmodelᚐDeckᚄ(ctx, field.Selections, res)
+	return ec.marshalNDeck2ᚕᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐDeckᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_decks(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1287,7 +1287,7 @@ func (ec *executionContext) _Query_deck(ctx context.Context, field graphql.Colle
 	}
 	res := resTmp.(*model.Deck)
 	fc.Result = res
-	return ec.marshalNDeck2ᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋinfraᚋgraphᚋmodelᚐDeck(ctx, field.Selections, res)
+	return ec.marshalNDeck2ᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐDeck(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_deck(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -3945,11 +3945,11 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 	return res
 }
 
-func (ec *executionContext) marshalNCard2githubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋinfraᚋgraphᚋmodelᚐCard(ctx context.Context, sel ast.SelectionSet, v model.Card) graphql.Marshaler {
+func (ec *executionContext) marshalNCard2githubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐCard(ctx context.Context, sel ast.SelectionSet, v model.Card) graphql.Marshaler {
 	return ec._Card(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNCard2ᚕᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋinfraᚋgraphᚋmodelᚐCardᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Card) graphql.Marshaler {
+func (ec *executionContext) marshalNCard2ᚕᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐCardᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Card) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -3973,7 +3973,7 @@ func (ec *executionContext) marshalNCard2ᚕᚖgithubᚗcomᚋRyoheiTomiyamaᚋp
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNCard2ᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋinfraᚋgraphᚋmodelᚐCard(ctx, sel, v[i])
+			ret[i] = ec.marshalNCard2ᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐCard(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -3993,7 +3993,7 @@ func (ec *executionContext) marshalNCard2ᚕᚖgithubᚗcomᚋRyoheiTomiyamaᚋp
 	return ret
 }
 
-func (ec *executionContext) marshalNCard2ᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋinfraᚋgraphᚋmodelᚐCard(ctx context.Context, sel ast.SelectionSet, v *model.Card) graphql.Marshaler {
+func (ec *executionContext) marshalNCard2ᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐCard(ctx context.Context, sel ast.SelectionSet, v *model.Card) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -4003,11 +4003,11 @@ func (ec *executionContext) marshalNCard2ᚖgithubᚗcomᚋRyoheiTomiyamaᚋphra
 	return ec._Card(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNDeck2githubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋinfraᚋgraphᚋmodelᚐDeck(ctx context.Context, sel ast.SelectionSet, v model.Deck) graphql.Marshaler {
+func (ec *executionContext) marshalNDeck2githubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐDeck(ctx context.Context, sel ast.SelectionSet, v model.Deck) graphql.Marshaler {
 	return ec._Deck(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNDeck2ᚕᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋinfraᚋgraphᚋmodelᚐDeckᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Deck) graphql.Marshaler {
+func (ec *executionContext) marshalNDeck2ᚕᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐDeckᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Deck) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -4031,7 +4031,7 @@ func (ec *executionContext) marshalNDeck2ᚕᚖgithubᚗcomᚋRyoheiTomiyamaᚋp
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNDeck2ᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋinfraᚋgraphᚋmodelᚐDeck(ctx, sel, v[i])
+			ret[i] = ec.marshalNDeck2ᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐDeck(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -4051,7 +4051,7 @@ func (ec *executionContext) marshalNDeck2ᚕᚖgithubᚗcomᚋRyoheiTomiyamaᚋp
 	return ret
 }
 
-func (ec *executionContext) marshalNDeck2ᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋinfraᚋgraphᚋmodelᚐDeck(ctx context.Context, sel ast.SelectionSet, v *model.Deck) graphql.Marshaler {
+func (ec *executionContext) marshalNDeck2ᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐDeck(ctx context.Context, sel ast.SelectionSet, v *model.Deck) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -4061,11 +4061,11 @@ func (ec *executionContext) marshalNDeck2ᚖgithubᚗcomᚋRyoheiTomiyamaᚋphra
 	return ec._Deck(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNHealth2githubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋinfraᚋgraphᚋmodelᚐHealth(ctx context.Context, sel ast.SelectionSet, v model.Health) graphql.Marshaler {
+func (ec *executionContext) marshalNHealth2githubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐHealth(ctx context.Context, sel ast.SelectionSet, v model.Health) graphql.Marshaler {
 	return ec._Health(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNHealth2ᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋinfraᚋgraphᚋmodelᚐHealth(ctx context.Context, sel ast.SelectionSet, v *model.Health) graphql.Marshaler {
+func (ec *executionContext) marshalNHealth2ᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐHealth(ctx context.Context, sel ast.SelectionSet, v *model.Health) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")

@@ -8,7 +8,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/RyoheiTomiyama/phraze-api/infra/graph/model"
+	"github.com/RyoheiTomiyama/phraze-api/router/graph/model"
 )
 
 // Decks is the resolver for the decks field.

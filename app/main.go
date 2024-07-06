@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/RyoheiTomiyama/phraze-api/infra/db"
-	"github.com/RyoheiTomiyama/phraze-api/infra/router"
+	"github.com/RyoheiTomiyama/phraze-api/router"
 	"github.com/RyoheiTomiyama/phraze-api/util/env"
 	"github.com/RyoheiTomiyama/phraze-api/util/logger"
 )
@@ -23,7 +23,7 @@ func main() {
 	}
 	ctx = config.WithCtx(ctx)
 
-	db, err := db.NewClient(db.DataSourceOption{
+	_, err = db.NewClient(db.DataSourceOption{
 		Host:     config.DB.HOST,
 		Port:     config.DB.PORT,
 		DBName:   config.DB.DB_NAME,
@@ -33,13 +33,6 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-
-	deck, err := db.GetDeck(ctx, 1)
-	if err != nil {
-		panic(err)
-	}
-
-	l.Debug("deck", "d", &deck)
 
 	r := router.New()
 

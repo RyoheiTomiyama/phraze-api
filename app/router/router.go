@@ -1,7 +1,7 @@
 package router
 
 import (
-	"github.com/RyoheiTomiyama/phraze-api/infra/router/handler"
+	"github.com/RyoheiTomiyama/phraze-api/router/handler"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 )

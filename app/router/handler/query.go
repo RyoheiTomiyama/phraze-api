@@ -4,8 +4,8 @@ import (
 	"net/http"
 
 	"github.com/99designs/gqlgen/graphql/handler"
-	"github.com/RyoheiTomiyama/phraze-api/infra/graph/generated"
-	"github.com/RyoheiTomiyama/phraze-api/infra/graph/resolver"
+	"github.com/RyoheiTomiyama/phraze-api/router/graph/generated"
+	"github.com/RyoheiTomiyama/phraze-api/router/graph/resolver"
 )
 
 func PostQuery() http.HandlerFunc {
