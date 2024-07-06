@@ -9,6 +9,7 @@ import (
 type execer interface {
 	sqlx.QueryerContext
 	sqlx.ExecerContext
+	sqlx.ExtContext
 }
 
 // トランザクション内でも、各メソッドが正常に実行できるように、execerで共通化する
