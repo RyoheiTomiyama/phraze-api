@@ -25,12 +25,20 @@ type logger struct {
 	// Notify NotifyFunc
 }
 
+type ILogger interface {
+	WithCtx(ctx context.Context) context.Context
+	Debug(msg string, arg ...any)
+	Info(msg string, arg ...any)
+	Warning(msg string, arg ...any)
+	Error(err error, arg ...any)
+}
+
 type Options struct {
 	Level Level
 	Debug bool
 }
 
-func New(opt Options) *logger {
+func New(opt Options) ILogger {
 	handler := lo.Ternary[slog.Handler](opt.Debug,
 		devslog.NewHandler(os.Stdout, &devslog.Options{
 			HandlerOptions: &slog.HandlerOptions{
@@ -56,7 +64,7 @@ func (l *logger) WithCtx(ctx context.Context) context.Context {
 }
 
 // context からロガーを取り出す。取り出せない場合はデフォルトのロガーを返す
-func FromCtx(ctx context.Context) *logger {
+func FromCtx(ctx context.Context) ILogger {
 	l, ok := ctx.Value(loggerCtxKey{}).(*logger)
 	if !ok {
 		return New(Options{Level: LevelDebug})
