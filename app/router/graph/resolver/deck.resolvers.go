@@ -7,9 +7,28 @@ package resolver
 import (
 	"context"
 
+	"github.com/RyoheiTomiyama/phraze-api/domain"
 	"github.com/RyoheiTomiyama/phraze-api/router/graph/model"
 	"github.com/RyoheiTomiyama/phraze-api/util/errutil"
 )
+
+// CreateDeck is the resolver for the createDeck field.
+func (r *mutationResolver) CreateDeck(ctx context.Context, input model.CreateDeckInput) (*model.Deck, error) {
+	deck := &domain.Deck{
+		Name: input.Name,
+	}
+	deck, err := r.deckUsecase.CreateDeck(ctx, deck)
+	if err != nil {
+		return nil, errutil.Wrap(err)
+	}
+
+	var m model.Deck
+	if err = model.FromDomain(ctx, deck, &m); err != nil {
+		return nil, errutil.Wrap(err)
+	}
+
+	return &m, nil
+}
 
 // Decks is the resolver for the decks field.
 func (r *queryResolver) Decks(ctx context.Context) ([]*model.Deck, error) {
@@ -29,7 +48,6 @@ func (r *queryResolver) Decks(ctx context.Context) ([]*model.Deck, error) {
 	}
 
 	return dd, nil
-
 }
 
 // Deck is the resolver for the deck field.

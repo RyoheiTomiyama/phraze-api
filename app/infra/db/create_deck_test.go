@@ -18,7 +18,7 @@ func TestCreateDeck(t *testing.T) {
 	client := NewTestClient(t, db)
 
 	t.Run("正常系", func(t *testing.T) {
-		newDeck := domain.Deck{
+		newDeck := &domain.Deck{
 			Name:   "test",
 			UserID: "user-1",
 		}

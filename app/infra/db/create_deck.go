@@ -8,7 +8,7 @@ import (
 	"github.com/RyoheiTomiyama/phraze-api/util/errutil"
 )
 
-func (c *client) CreateDeck(ctx context.Context, deck domain.Deck) (*domain.Deck, error) {
+func (c *client) CreateDeck(ctx context.Context, deck *domain.Deck) (*domain.Deck, error) {
 	e := c.execerFrom(ctx)
 
 	query := `INSERT INTO decks (user_id, name) VALUES (:user_id, :name) RETURNING *`

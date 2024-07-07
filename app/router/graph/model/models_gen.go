@@ -15,6 +15,10 @@ type Card struct {
 	UpdatedAt time.Time `json:"updatedAt"`
 }
 
+type CreateDeckInput struct {
+	Name string `json:"name"`
+}
+
 type Deck struct {
 	ID        int64     `json:"id"`
 	UserID    string    `json:"userId"`

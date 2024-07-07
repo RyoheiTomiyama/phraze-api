@@ -10,6 +10,7 @@ import (
 )
 
 type IUsecase interface {
+	CreateDeck(ctx context.Context, deck *domain.Deck) (*domain.Deck, error)
 	GetDeck(ctx context.Context, id int64) (*domain.Deck, error)
 	GetDecks(ctx context.Context) ([]*domain.Deck, error)
 }
@@ -20,6 +21,18 @@ type usecase struct {
 
 func New(dbClient db.IClient) IUsecase {
 	return &usecase{dbClient}
+}
+
+func (u *usecase) CreateDeck(ctx context.Context, deck *domain.Deck) (*domain.Deck, error) {
+	user := auth.FromCtx(ctx)
+	deck.UserID = user.ID
+
+	deck, err := u.dbClient.CreateDeck(ctx, deck)
+	if err != nil {
+		return nil, errutil.Wrap(err)
+	}
+
+	return deck, nil
 }
 
 func (u *usecase) GetDeck(ctx context.Context, id int64) (*domain.Deck, error) {

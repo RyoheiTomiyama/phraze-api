@@ -8,6 +8,8 @@ import (
 	"github.com/RyoheiTomiyama/phraze-api/util/logger"
 )
 
+// domain→modelに変換する
+// dには,*domain.Deckなど、targetには、*model.Deckなどを指定してください
 func FromDomain(ctx context.Context, d any, target interface{}) error {
 	log := logger.FromCtx(ctx)
 
@@ -29,6 +31,7 @@ func FromDomain(ctx context.Context, d any, target interface{}) error {
 		}
 
 		t.ID = v.ID
+		t.UserID = v.UserID
 		t.Name = v.Name
 		t.CreatedAt = v.CreateAt
 		t.UpdatedAt = v.UpdatedAt

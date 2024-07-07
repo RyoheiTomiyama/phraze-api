@@ -69,7 +69,8 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
-		Health func(childComplexity int) int
+		CreateDeck func(childComplexity int, input model.CreateDeckInput) int
+		Health     func(childComplexity int) int
 	}
 
 	Query struct {
@@ -83,6 +84,7 @@ type ComplexityRoot struct {
 
 type MutationResolver interface {
 	Health(ctx context.Context) (*model.Health, error)
+	CreateDeck(ctx context.Context, input model.CreateDeckInput) (*model.Deck, error)
 }
 type QueryResolver interface {
 	Health(ctx context.Context) (*model.Health, error)
@@ -195,6 +197,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Health.Healthy(childComplexity), true
 
+	case "Mutation.createDeck":
+		if e.complexity.Mutation.CreateDeck == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createDeck_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreateDeck(childComplexity, args["input"].(model.CreateDeckInput)), true
+
 	case "Mutation.health":
 		if e.complexity.Mutation.Health == nil {
 			break
@@ -249,7 +263,9 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	rc := graphql.GetOperationContext(ctx)
 	ec := executionContext{rc, e, 0, 0, make(chan graphql.DeferredResult)}
-	inputUnmarshalMap := graphql.BuildUnmarshalerMap()
+	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
+		ec.unmarshalInputCreateDeckInput,
+	)
 	first := true
 
 	switch rc.Operation.Operation {
@@ -372,6 +388,14 @@ extend type Query {
   decks: [Deck!]!
   deck(id: ID!): Deck!
 }
+
+input CreateDeckInput {
+  name: String!
+}
+
+extend type Mutation {
+  createDeck(input: CreateDeckInput!): Deck!
+}
 `, BuiltIn: false},
 	{Name: "../schema/schema.graphqls", Input: `# GraphQL schema example
 #
@@ -397,6 +421,21 @@ var parsedSchema = gqlparser.MustLoadSchema(sources...)
 // endregion ************************** generated!.gotpl **************************
 
 // region    ***************************** args.gotpl *****************************
+
+func (ec *executionContext) field_Mutation_createDeck_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.CreateDeckInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNCreateDeckInput2githubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐCreateDeckInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
 
 func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
@@ -1035,6 +1074,73 @@ func (ec *executionContext) fieldContext_Mutation_health(_ context.Context, fiel
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Health", field.Name)
 		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_createDeck(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_createDeck(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().CreateDeck(rctx, fc.Args["input"].(model.CreateDeckInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Deck)
+	fc.Result = res
+	return ec.marshalNDeck2ᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐDeck(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_createDeck(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Deck_id(ctx, field)
+			case "userId":
+				return ec.fieldContext_Deck_userId(ctx, field)
+			case "name":
+				return ec.fieldContext_Deck_name(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Deck_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_Deck_updatedAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Deck", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_createDeck_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
 	}
 	return fc, nil
 }
@@ -3228,6 +3334,33 @@ func (ec *executionContext) fieldContext___Type_specifiedByURL(_ context.Context
 
 // region    **************************** input.gotpl *****************************
 
+func (ec *executionContext) unmarshalInputCreateDeckInput(ctx context.Context, obj interface{}) (model.CreateDeckInput, error) {
+	var it model.CreateDeckInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"name"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "name":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Name = data
+		}
+	}
+
+	return it, nil
+}
+
 // endregion **************************** input.gotpl *****************************
 
 // region    ************************** interface.gotpl ***************************
@@ -3417,6 +3550,13 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		case "health":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_health(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "createDeck":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_createDeck(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
@@ -4001,6 +4141,11 @@ func (ec *executionContext) marshalNCard2ᚖgithubᚗcomᚋRyoheiTomiyamaᚋphra
 		return graphql.Null
 	}
 	return ec._Card(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNCreateDeckInput2githubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐCreateDeckInput(ctx context.Context, v interface{}) (model.CreateDeckInput, error) {
+	res, err := ec.unmarshalInputCreateDeckInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) marshalNDeck2githubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐDeck(ctx context.Context, sel ast.SelectionSet, v model.Deck) graphql.Marshaler {

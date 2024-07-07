@@ -10,3 +10,11 @@ extend type Query {
   decks: [Deck!]!
   deck(id: ID!): Deck!
 }
+
+input CreateDeckInput {
+  name: String!
+}
+
+extend type Mutation {
+  createDeck(input: CreateDeckInput!): Deck!
+}
