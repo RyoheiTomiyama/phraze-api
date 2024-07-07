@@ -5,11 +5,13 @@ import (
 
 	"github.com/RyoheiTomiyama/phraze-api/domain"
 	"github.com/RyoheiTomiyama/phraze-api/infra/db"
+	"github.com/RyoheiTomiyama/phraze-api/util/auth"
 	"github.com/RyoheiTomiyama/phraze-api/util/errutil"
 )
 
 type IUsecase interface {
 	GetDeck(ctx context.Context, id int64) (*domain.Deck, error)
+	GetDecks(ctx context.Context) ([]*domain.Deck, error)
 }
 
 type usecase struct {
@@ -27,4 +29,15 @@ func (u *usecase) GetDeck(ctx context.Context, id int64) (*domain.Deck, error) {
 	}
 
 	return deck, nil
+}
+
+func (u *usecase) GetDecks(ctx context.Context) ([]*domain.Deck, error) {
+	user := auth.FromCtx(ctx)
+
+	decks, err := u.dbClient.GetDecks(ctx, user.ID)
+	if err != nil {
+		return nil, errutil.Wrap(err)
+	}
+
+	return decks, nil
 }

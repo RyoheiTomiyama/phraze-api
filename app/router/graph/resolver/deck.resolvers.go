@@ -6,7 +6,6 @@ package resolver
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/RyoheiTomiyama/phraze-api/router/graph/model"
 	"github.com/RyoheiTomiyama/phraze-api/util/errutil"
@@ -14,7 +13,23 @@ import (
 
 // Decks is the resolver for the decks field.
 func (r *queryResolver) Decks(ctx context.Context) ([]*model.Deck, error) {
-	panic(fmt.Errorf("not implemented: Decks - decks"))
+	decks, err := r.deckUsecase.GetDecks(ctx)
+	if err != nil {
+		return nil, errutil.Wrap(err)
+	}
+
+	var dd []*model.Deck
+	for _, item := range decks {
+		var m model.Deck
+		if err = model.FromDomain(ctx, item, &m); err != nil {
+			return nil, errutil.Wrap(err)
+		}
+
+		dd = append(dd, &m)
+	}
+
+	return dd, nil
+
 }
 
 // Deck is the resolver for the deck field.
