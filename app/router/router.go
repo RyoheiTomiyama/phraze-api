@@ -27,6 +27,7 @@ func (r *router) Handler() *chi.Mux {
 	chiRouter := chi.NewRouter()
 
 	chiRouter.Use(
+		middleware.Recoverer,
 		middleware.ContextInjector(r.config, r.logger),
 		middleware.Authrization(r.authUsecase),
 	)
