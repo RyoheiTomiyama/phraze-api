@@ -39,3 +39,11 @@ func (c *customError) FormatError(p xerrors.Printer) error { // implements xerro
 
 	return c.original
 }
+
+func (c *customError) IsClient() bool {
+	return c.code.IsClientError()
+}
+
+func (c *customError) Code() int {
+	return int(c.code)
+}

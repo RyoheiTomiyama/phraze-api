@@ -11,7 +11,16 @@ import (
 // サーバエラーが発生した場合にクライアントに返すエラーメッセージ
 const InternalErrorMessage = "予期せぬエラーが発生しました"
 
-func New(code errorCode, format string, args ...interface{}) *customError {
+type IError interface {
+	Error() string
+	Message() string
+	Format(s fmt.State, r rune)
+	FormatError(p xerrors.Printer) error
+	IsClient() bool
+	Code() int
+}
+
+func New(code errorCode, format string, args ...interface{}) IError {
 	e := fmt.Errorf(format, args...)
 
 	return &customError{original: e, message: e.Error(), code: code, frame: xerrors.Caller(1)}
@@ -34,6 +43,10 @@ func Wrap(err error, msg ...string) *customError {
 		code:     CodeInternalError,
 		frame:    xerrors.Caller(1),
 	}
+}
+
+func As(e error, target interface{}) bool {
+	return errors.As(e, target)
 }
 
 func ErrorWithStackTrace(err error) string {
