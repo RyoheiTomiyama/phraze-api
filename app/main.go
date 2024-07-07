@@ -6,9 +6,11 @@ import (
 	"time"
 
 	"github.com/RyoheiTomiyama/phraze-api/application/usecase/auth"
+	"github.com/RyoheiTomiyama/phraze-api/application/usecase/deck"
 	"github.com/RyoheiTomiyama/phraze-api/infra/db"
 	firebaseAuth "github.com/RyoheiTomiyama/phraze-api/infra/firebase/auth"
 	"github.com/RyoheiTomiyama/phraze-api/router"
+	"github.com/RyoheiTomiyama/phraze-api/router/graph/resolver"
 	"github.com/RyoheiTomiyama/phraze-api/util/env"
 	"github.com/RyoheiTomiyama/phraze-api/util/logger"
 )
@@ -25,7 +27,7 @@ func main() {
 	}
 	ctx = config.WithCtx(ctx)
 
-	_, err = db.NewClient(db.DataSourceOption{
+	dbClient, err := db.NewClient(db.DataSourceOption{
 		Host:     config.DB.HOST,
 		Port:     config.DB.PORT,
 		DBName:   config.DB.DB_NAME,
@@ -44,8 +46,11 @@ func main() {
 
 	// usecase
 	authUsecase := auth.New(firebaseAuthClient)
+	deckUsecase := deck.New(dbClient)
 
-	r := router.New(config, l, authUsecase)
+	resolver := resolver.New(deckUsecase)
+
+	r := router.New(config, resolver, l, authUsecase)
 
 	server := &http.Server{
 		Addr:              ":3000",

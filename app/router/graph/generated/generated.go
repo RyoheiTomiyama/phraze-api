@@ -75,7 +75,7 @@ type ComplexityRoot struct {
 	Query struct {
 		Card   func(childComplexity int) int
 		Cards  func(childComplexity int) int
-		Deck   func(childComplexity int, id string) int
+		Deck   func(childComplexity int, id int64) int
 		Decks  func(childComplexity int) int
 		Health func(childComplexity int) int
 	}
@@ -89,7 +89,7 @@ type QueryResolver interface {
 	Cards(ctx context.Context) ([]*model.Card, error)
 	Card(ctx context.Context) (*model.Card, error)
 	Decks(ctx context.Context) ([]*model.Deck, error)
-	Deck(ctx context.Context, id string) (*model.Deck, error)
+	Deck(ctx context.Context, id int64) (*model.Deck, error)
 }
 
 type executableSchema struct {
@@ -226,7 +226,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.Deck(childComplexity, args["id"].(string)), true
+		return e.complexity.Query.Deck(childComplexity, args["id"].(int64)), true
 
 	case "Query.decks":
 		if e.complexity.Query.Decks == nil {
@@ -416,10 +416,10 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 func (ec *executionContext) field_Query_deck_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 string
+	var arg0 int64
 	if tmp, ok := rawArgs["id"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		arg0, err = ec.unmarshalNID2int64(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -492,9 +492,9 @@ func (ec *executionContext) _Card_id(ctx context.Context, field graphql.Collecte
 		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(int64)
 	fc.Result = res
-	return ec.marshalNID2string(ctx, field.Selections, res)
+	return ec.marshalNID2int64(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Card_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -536,9 +536,9 @@ func (ec *executionContext) _Card_deckID(ctx context.Context, field graphql.Coll
 		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(int64)
 	fc.Result = res
-	return ec.marshalNID2string(ctx, field.Selections, res)
+	return ec.marshalNID2int64(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Card_deckID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -756,9 +756,9 @@ func (ec *executionContext) _Deck_id(ctx context.Context, field graphql.Collecte
 		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(int64)
 	fc.Result = res
-	return ec.marshalNID2string(ctx, field.Selections, res)
+	return ec.marshalNID2int64(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Deck_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1273,7 +1273,7 @@ func (ec *executionContext) _Query_deck(ctx context.Context, field graphql.Colle
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Deck(rctx, fc.Args["id"].(string))
+		return ec.resolvers.Query().Deck(rctx, fc.Args["id"].(int64))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -4075,13 +4075,13 @@ func (ec *executionContext) marshalNHealth2ᚖgithubᚗcomᚋRyoheiTomiyamaᚋph
 	return ec._Health(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNID2string(ctx context.Context, v interface{}) (string, error) {
-	res, err := graphql.UnmarshalID(v)
+func (ec *executionContext) unmarshalNID2int64(ctx context.Context, v interface{}) (int64, error) {
+	res, err := graphql.UnmarshalInt64(v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNID2string(ctx context.Context, sel ast.SelectionSet, v string) graphql.Marshaler {
-	res := graphql.MarshalID(v)
+func (ec *executionContext) marshalNID2int64(ctx context.Context, sel ast.SelectionSet, v int64) graphql.Marshaler {
+	res := graphql.MarshalInt64(v)
 	if res == graphql.Null {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")

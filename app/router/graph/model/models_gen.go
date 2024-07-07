@@ -7,8 +7,8 @@ import (
 )
 
 type Card struct {
-	ID        string    `json:"id"`
-	DeckID    string    `json:"deckID"`
+	ID        int64     `json:"id"`
+	DeckID    int64     `json:"deckID"`
 	Question  string    `json:"question"`
 	Answer    string    `json:"answer"`
 	CreatedAt time.Time `json:"createdAt"`
@@ -16,7 +16,7 @@ type Card struct {
 }
 
 type Deck struct {
-	ID        string    `json:"id"`
+	ID        int64     `json:"id"`
 	UserID    string    `json:"userId"`
 	Name      string    `json:"name"`
 	CreatedAt time.Time `json:"createdAt"`

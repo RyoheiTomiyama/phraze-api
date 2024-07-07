@@ -14,8 +14,8 @@ import (
 	"github.com/vektah/gqlparser/v2/gqlerror"
 )
 
-func PostQuery() http.HandlerFunc {
-	srv := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &resolver.Resolver{}}))
+func PostQuery(r *resolver.Resolver) http.HandlerFunc {
+	srv := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: r}))
 
 	srv.SetErrorPresenter(func(ctx context.Context, err error) *gqlerror.Error {
 		log := logger.FromCtx(ctx)
