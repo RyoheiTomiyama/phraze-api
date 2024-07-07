@@ -2,12 +2,12 @@ package auth
 
 import (
 	"context"
+	"encoding/json"
 
 	firebase "firebase.google.com/go"
 	"firebase.google.com/go/auth"
 	"github.com/RyoheiTomiyama/phraze-api/domain"
 	"github.com/RyoheiTomiyama/phraze-api/util/errutil"
-	"github.com/RyoheiTomiyama/phraze-api/util/logger"
 )
 
 type client struct {
@@ -34,17 +34,33 @@ func New() (IClient, error) {
 	}, nil
 }
 
-func (c *client) Verify(ctx context.Context, idToken string) (*domain.User, error) {
-	l := logger.FromCtx(ctx)
+type customClaims struct {
+	Name    string `json:"name"`
+	Picture string `json:"picture"`
+	UserID  string `json:"user_id"`
+	Email   string `json:"email"`
+}
 
-	token, err := c.client.VerifyIDToken(ctx, idToken)
+func (c *client) Verify(ctx context.Context, idToken string) (*domain.User, error) {
+	token, err := c.client.VerifyIDTokenAndCheckRevoked(ctx, idToken)
 	if err != nil {
 		return nil, errutil.Wrap(err)
 	}
 
-	l.Debug("firebase auth verify token", "token", token)
+	jsonstr, err := json.Marshal(token.Claims)
+	if err != nil {
+		return nil, errutil.Wrap(err)
+	}
+
+	var claims customClaims
+	err = json.Unmarshal(jsonstr, &claims)
+	if err != nil {
+		return nil, errutil.Wrap(err)
+	}
 
 	return &domain.User{
-		ID: token.UID,
+		ID:     claims.UserID,
+		Name:   &claims.Name,
+		Avatar: &claims.Picture,
 	}, nil
 }
