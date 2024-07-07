@@ -36,9 +36,15 @@ func (u *usecase) CreateDeck(ctx context.Context, deck *domain.Deck) (*domain.De
 }
 
 func (u *usecase) GetDeck(ctx context.Context, id int64) (*domain.Deck, error) {
+	user := auth.FromCtx(ctx)
+
 	deck, err := u.dbClient.GetDeck(ctx, id)
 	if err != nil {
 		return nil, errutil.Wrap(err)
+	}
+
+	if deck.UserID != user.ID {
+		return nil, errutil.New(errutil.CodeBadRequest, "取得する権限がありません")
 	}
 
 	return deck, nil
