@@ -4,6 +4,12 @@
 
 scalar Timestamp
 
+directive @hasRole(role: Role!) on FIELD_DEFINITION
+
+enum Role {
+  USER
+}
+
 type Health {
   healthy: Boolean
 }

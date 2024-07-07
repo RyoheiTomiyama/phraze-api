@@ -10,6 +10,7 @@ import (
 	"github.com/RyoheiTomiyama/phraze-api/infra/db"
 	firebaseAuth "github.com/RyoheiTomiyama/phraze-api/infra/firebase/auth"
 	"github.com/RyoheiTomiyama/phraze-api/router"
+	"github.com/RyoheiTomiyama/phraze-api/router/graph/directive"
 	"github.com/RyoheiTomiyama/phraze-api/router/graph/resolver"
 	"github.com/RyoheiTomiyama/phraze-api/util/env"
 	"github.com/RyoheiTomiyama/phraze-api/util/logger"
@@ -49,8 +50,9 @@ func main() {
 	deckUsecase := deck.New(dbClient)
 
 	resolver := resolver.New(deckUsecase)
+	directive := directive.New()
 
-	r := router.New(config, resolver, l, authUsecase)
+	r := router.New(config, resolver, &directive, l, authUsecase)
 
 	server := &http.Server{
 		Addr:              ":3000",

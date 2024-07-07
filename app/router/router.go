@@ -2,6 +2,7 @@ package router
 
 import (
 	"github.com/RyoheiTomiyama/phraze-api/application/usecase/auth"
+	"github.com/RyoheiTomiyama/phraze-api/router/graph/generated"
 	"github.com/RyoheiTomiyama/phraze-api/router/graph/resolver"
 	"github.com/RyoheiTomiyama/phraze-api/router/handler"
 	"github.com/RyoheiTomiyama/phraze-api/router/middleware"
@@ -13,6 +14,7 @@ import (
 type router struct {
 	config      *env.Config
 	resolver    *resolver.Resolver
+	directive   *generated.DirectiveRoot
 	logger      logger.ILogger
 	authUsecase auth.IAuthUsecase
 }
@@ -21,8 +23,8 @@ type IRouter interface {
 	Handler() *chi.Mux
 }
 
-func New(config *env.Config, resolver *resolver.Resolver, l logger.ILogger, authUsecase auth.IAuthUsecase) IRouter {
-	return &router{config, resolver, l, authUsecase}
+func New(config *env.Config, resolver *resolver.Resolver, directive *generated.DirectiveRoot, l logger.ILogger, authUsecase auth.IAuthUsecase) IRouter {
+	return &router{config, resolver, directive, l, authUsecase}
 }
 
 func (r *router) Handler() *chi.Mux {
@@ -38,7 +40,7 @@ func (r *router) Handler() *chi.Mux {
 	// })
 
 	chiRouter.Get("/playground", handler.Playground())
-	chiRouter.Post("/query", handler.PostQuery(r.resolver))
+	chiRouter.Post("/query", handler.PostQuery(r.resolver, r.directive))
 
 	return chiRouter
 }
