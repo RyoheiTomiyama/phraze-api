@@ -32,6 +32,7 @@ func (r *router) Handler() *chi.Mux {
 
 	chiRouter.Use(
 		middleware.Recoverer,
+		middleware.CorsHandler(r.config),
 		middleware.ContextInjector(r.config, r.logger),
 		middleware.Authrization(r.authUsecase),
 	)

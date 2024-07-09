@@ -7,6 +7,7 @@ services:
       db:
         condition: service_healthy
     environment:
+      CORS: ${CORS}
       GOOGLE_APPLICATION_CREDENTIALS: /go/src/secrets/service-account-credentials.json
       POSTGRES_HOST: ${POSTGRES_HOST:-db}
       POSTGRES_USER: ${POSTGRES_USER:-postgres}

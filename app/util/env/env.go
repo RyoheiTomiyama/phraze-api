@@ -10,7 +10,8 @@ import (
 )
 
 type Config struct {
-	DB db
+	APP app
+	DB  db
 }
 
 type db struct {
@@ -19,6 +20,10 @@ type db struct {
 	PASSWORD string `env:"POSTGRES_PASSWORD" envDefault:"password"`
 	DB_NAME  string `env:"POSTGRES_DB" envDefault:"phraze"`
 	PORT     string `env:"POSTGRES_PORT" envDefault:"5432"`
+}
+
+type app struct {
+	CORS []string `env:"CORS" envSeparator:"," envDefault:"http://localhost:3000"`
 }
 
 func New() (*Config, error) {
