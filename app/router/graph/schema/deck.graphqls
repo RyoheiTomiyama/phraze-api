@@ -27,6 +27,10 @@ input CreateDeckInput {
   name: String!
 }
 
+type CreateDeckOutput {
+  deck: Deck!
+}
+
 extend type Mutation {
-  createDeck(input: CreateDeckInput!): Deck! @hasRole(role: USER)
+  createDeck(input: CreateDeckInput!): CreateDeckOutput! @hasRole(role: USER)
 }

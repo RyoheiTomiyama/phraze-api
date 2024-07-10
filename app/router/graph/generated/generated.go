@@ -57,6 +57,10 @@ type ComplexityRoot struct {
 		UpdatedAt func(childComplexity int) int
 	}
 
+	CreateDeckOutput struct {
+		Deck func(childComplexity int) int
+	}
+
 	Deck struct {
 		CreatedAt func(childComplexity int) int
 		ID        func(childComplexity int) int
@@ -89,7 +93,7 @@ type ComplexityRoot struct {
 
 type MutationResolver interface {
 	Health(ctx context.Context) (*model.Health, error)
-	CreateDeck(ctx context.Context, input model.CreateDeckInput) (*model.Deck, error)
+	CreateDeck(ctx context.Context, input model.CreateDeckInput) (*model.CreateDeckOutput, error)
 }
 type QueryResolver interface {
 	Health(ctx context.Context) (*model.Health, error)
@@ -159,6 +163,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Card.UpdatedAt(childComplexity), true
+
+	case "CreateDeckOutput.deck":
+		if e.complexity.CreateDeckOutput.Deck == nil {
+			break
+		}
+
+		return e.complexity.CreateDeckOutput.Deck(childComplexity), true
 
 	case "Deck.createdAt":
 		if e.complexity.Deck.CreatedAt == nil {
@@ -417,8 +428,12 @@ input CreateDeckInput {
   name: String!
 }
 
+type CreateDeckOutput {
+  deck: Deck!
+}
+
 extend type Mutation {
-  createDeck(input: CreateDeckInput!): Deck! @hasRole(role: USER)
+  createDeck(input: CreateDeckInput!): CreateDeckOutput! @hasRole(role: USER)
 }
 `, BuiltIn: false},
 	{Name: "../schema/schema.graphqls", Input: `# GraphQL schema example
@@ -809,6 +824,62 @@ func (ec *executionContext) fieldContext_Card_updatedAt(_ context.Context, field
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Timestamp does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CreateDeckOutput_deck(ctx context.Context, field graphql.CollectedField, obj *model.CreateDeckOutput) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CreateDeckOutput_deck(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Deck, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Deck)
+	fc.Result = res
+	return ec.marshalNDeck2ᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐDeck(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CreateDeckOutput_deck(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CreateDeckOutput",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Deck_id(ctx, field)
+			case "userId":
+				return ec.fieldContext_Deck_userId(ctx, field)
+			case "name":
+				return ec.fieldContext_Deck_name(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Deck_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_Deck_updatedAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Deck", field.Name)
 		},
 	}
 	return fc, nil
@@ -1211,10 +1282,10 @@ func (ec *executionContext) _Mutation_createDeck(ctx context.Context, field grap
 		if tmp == nil {
 			return nil, nil
 		}
-		if data, ok := tmp.(*model.Deck); ok {
+		if data, ok := tmp.(*model.CreateDeckOutput); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/RyoheiTomiyama/phraze-api/router/graph/model.Deck`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/RyoheiTomiyama/phraze-api/router/graph/model.CreateDeckOutput`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1226,9 +1297,9 @@ func (ec *executionContext) _Mutation_createDeck(ctx context.Context, field grap
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.Deck)
+	res := resTmp.(*model.CreateDeckOutput)
 	fc.Result = res
-	return ec.marshalNDeck2ᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐDeck(ctx, field.Selections, res)
+	return ec.marshalNCreateDeckOutput2ᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐCreateDeckOutput(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_createDeck(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1239,18 +1310,10 @@ func (ec *executionContext) fieldContext_Mutation_createDeck(ctx context.Context
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "id":
-				return ec.fieldContext_Deck_id(ctx, field)
-			case "userId":
-				return ec.fieldContext_Deck_userId(ctx, field)
-			case "name":
-				return ec.fieldContext_Deck_name(ctx, field)
-			case "createdAt":
-				return ec.fieldContext_Deck_createdAt(ctx, field)
-			case "updatedAt":
-				return ec.fieldContext_Deck_updatedAt(ctx, field)
+			case "deck":
+				return ec.fieldContext_CreateDeckOutput_deck(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type Deck", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type CreateDeckOutput", field.Name)
 		},
 	}
 	defer func() {
@@ -3595,6 +3658,45 @@ func (ec *executionContext) _Card(ctx context.Context, sel ast.SelectionSet, obj
 	return out
 }
 
+var createDeckOutputImplementors = []string{"CreateDeckOutput"}
+
+func (ec *executionContext) _CreateDeckOutput(ctx context.Context, sel ast.SelectionSet, obj *model.CreateDeckOutput) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, createDeckOutputImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("CreateDeckOutput")
+		case "deck":
+			out.Values[i] = ec._CreateDeckOutput_deck(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 var deckImplementors = []string{"Deck"}
 
 func (ec *executionContext) _Deck(ctx context.Context, sel ast.SelectionSet, obj *model.Deck) graphql.Marshaler {
@@ -4344,6 +4446,20 @@ func (ec *executionContext) marshalNCard2ᚖgithubᚗcomᚋRyoheiTomiyamaᚋphra
 func (ec *executionContext) unmarshalNCreateDeckInput2githubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐCreateDeckInput(ctx context.Context, v interface{}) (model.CreateDeckInput, error) {
 	res, err := ec.unmarshalInputCreateDeckInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNCreateDeckOutput2githubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐCreateDeckOutput(ctx context.Context, sel ast.SelectionSet, v model.CreateDeckOutput) graphql.Marshaler {
+	return ec._CreateDeckOutput(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNCreateDeckOutput2ᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐCreateDeckOutput(ctx context.Context, sel ast.SelectionSet, v *model.CreateDeckOutput) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._CreateDeckOutput(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNDeck2githubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐDeck(ctx context.Context, sel ast.SelectionSet, v model.Deck) graphql.Marshaler {

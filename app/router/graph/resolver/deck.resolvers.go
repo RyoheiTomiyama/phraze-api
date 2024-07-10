@@ -13,7 +13,7 @@ import (
 )
 
 // CreateDeck is the resolver for the createDeck field.
-func (r *mutationResolver) CreateDeck(ctx context.Context, input model.CreateDeckInput) (*model.Deck, error) {
+func (r *mutationResolver) CreateDeck(ctx context.Context, input model.CreateDeckInput) (*model.CreateDeckOutput, error) {
 	deck := &domain.Deck{
 		Name: input.Name,
 	}
@@ -27,7 +27,9 @@ func (r *mutationResolver) CreateDeck(ctx context.Context, input model.CreateDec
 		return nil, errutil.Wrap(err)
 	}
 
-	return &m, nil
+	return &model.CreateDeckOutput{
+		Deck: &m,
+	}, nil
 }
 
 // Decks is the resolver for the decks field.

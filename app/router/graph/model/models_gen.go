@@ -22,6 +22,10 @@ type CreateDeckInput struct {
 	Name string `json:"name"`
 }
 
+type CreateDeckOutput struct {
+	Deck *Deck `json:"deck"`
+}
+
 type Deck struct {
 	ID        int64     `json:"id"`
 	UserID    string    `json:"userId"`
