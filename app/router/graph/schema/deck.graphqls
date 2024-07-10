@@ -6,8 +6,20 @@ type Deck {
   updatedAt: Timestamp!
 }
 
+type DecksOutput {
+  decks: [Deck!]
+}
+
 extend type Query {
-  decks: [Deck!]! @hasRole(role: USER)
+  """
+  deck一覧
+  最大100件取得可能
+  """
+  decks: DecksOutput! @hasRole(role: USER)
+
+  """
+  deck
+  """
   deck(id: ID!): Deck! @hasRole(role: USER)
 }
 

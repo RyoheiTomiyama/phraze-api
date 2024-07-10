@@ -30,6 +30,10 @@ type Deck struct {
 	UpdatedAt time.Time `json:"updatedAt"`
 }
 
+type DecksOutput struct {
+	Decks []*Deck `json:"decks,omitempty"`
+}
+
 type Health struct {
 	Healthy *bool `json:"healthy,omitempty"`
 }

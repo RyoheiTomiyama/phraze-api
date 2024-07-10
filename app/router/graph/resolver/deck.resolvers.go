@@ -31,7 +31,7 @@ func (r *mutationResolver) CreateDeck(ctx context.Context, input model.CreateDec
 }
 
 // Decks is the resolver for the decks field.
-func (r *queryResolver) Decks(ctx context.Context) ([]*model.Deck, error) {
+func (r *queryResolver) Decks(ctx context.Context) (*model.DecksOutput, error) {
 	decks, err := r.deckUsecase.GetDecks(ctx)
 	if err != nil {
 		return nil, errutil.Wrap(err)
@@ -47,7 +47,9 @@ func (r *queryResolver) Decks(ctx context.Context) ([]*model.Deck, error) {
 		dd = append(dd, &m)
 	}
 
-	return dd, nil
+	return &model.DecksOutput{
+		Decks: dd,
+	}, nil
 }
 
 // Deck is the resolver for the deck field.

@@ -65,6 +65,10 @@ type ComplexityRoot struct {
 		UserID    func(childComplexity int) int
 	}
 
+	DecksOutput struct {
+		Decks func(childComplexity int) int
+	}
+
 	Health struct {
 		Healthy func(childComplexity int) int
 	}
@@ -91,7 +95,7 @@ type QueryResolver interface {
 	Health(ctx context.Context) (*model.Health, error)
 	Cards(ctx context.Context) ([]*model.Card, error)
 	Card(ctx context.Context) (*model.Card, error)
-	Decks(ctx context.Context) ([]*model.Deck, error)
+	Decks(ctx context.Context) (*model.DecksOutput, error)
 	Deck(ctx context.Context, id int64) (*model.Deck, error)
 }
 
@@ -190,6 +194,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Deck.UserID(childComplexity), true
+
+	case "DecksOutput.decks":
+		if e.complexity.DecksOutput.Decks == nil {
+			break
+		}
+
+		return e.complexity.DecksOutput.Decks(childComplexity), true
 
 	case "Health.healthy":
 		if e.complexity.Health.Healthy == nil {
@@ -385,8 +396,20 @@ extend type Query {
   updatedAt: Timestamp!
 }
 
+type DecksOutput {
+  decks: [Deck!]
+}
+
 extend type Query {
-  decks: [Deck!]! @hasRole(role: USER)
+  """
+  deck一覧
+  最大100件取得可能
+  """
+  decks: DecksOutput! @hasRole(role: USER)
+
+  """
+  deck
+  """
   deck(id: ID!): Deck! @hasRole(role: USER)
 }
 
@@ -1011,6 +1034,59 @@ func (ec *executionContext) fieldContext_Deck_updatedAt(_ context.Context, field
 	return fc, nil
 }
 
+func (ec *executionContext) _DecksOutput_decks(ctx context.Context, field graphql.CollectedField, obj *model.DecksOutput) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_DecksOutput_decks(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Decks, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Deck)
+	fc.Result = res
+	return ec.marshalODeck2ᚕᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐDeckᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_DecksOutput_decks(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DecksOutput",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Deck_id(ctx, field)
+			case "userId":
+				return ec.fieldContext_Deck_userId(ctx, field)
+			case "name":
+				return ec.fieldContext_Deck_name(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Deck_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_Deck_updatedAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Deck", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Health_healthy(ctx context.Context, field graphql.CollectedField, obj *model.Health) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Health_healthy(ctx, field)
 	if err != nil {
@@ -1390,10 +1466,10 @@ func (ec *executionContext) _Query_decks(ctx context.Context, field graphql.Coll
 		if tmp == nil {
 			return nil, nil
 		}
-		if data, ok := tmp.([]*model.Deck); ok {
+		if data, ok := tmp.(*model.DecksOutput); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/RyoheiTomiyama/phraze-api/router/graph/model.Deck`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/RyoheiTomiyama/phraze-api/router/graph/model.DecksOutput`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1405,9 +1481,9 @@ func (ec *executionContext) _Query_decks(ctx context.Context, field graphql.Coll
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*model.Deck)
+	res := resTmp.(*model.DecksOutput)
 	fc.Result = res
-	return ec.marshalNDeck2ᚕᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐDeckᚄ(ctx, field.Selections, res)
+	return ec.marshalNDecksOutput2ᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐDecksOutput(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_decks(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1418,18 +1494,10 @@ func (ec *executionContext) fieldContext_Query_decks(_ context.Context, field gr
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "id":
-				return ec.fieldContext_Deck_id(ctx, field)
-			case "userId":
-				return ec.fieldContext_Deck_userId(ctx, field)
-			case "name":
-				return ec.fieldContext_Deck_name(ctx, field)
-			case "createdAt":
-				return ec.fieldContext_Deck_createdAt(ctx, field)
-			case "updatedAt":
-				return ec.fieldContext_Deck_updatedAt(ctx, field)
+			case "decks":
+				return ec.fieldContext_DecksOutput_decks(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type Deck", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type DecksOutput", field.Name)
 		},
 	}
 	return fc, nil
@@ -3586,6 +3654,42 @@ func (ec *executionContext) _Deck(ctx context.Context, sel ast.SelectionSet, obj
 	return out
 }
 
+var decksOutputImplementors = []string{"DecksOutput"}
+
+func (ec *executionContext) _DecksOutput(ctx context.Context, sel ast.SelectionSet, obj *model.DecksOutput) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, decksOutputImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("DecksOutput")
+		case "decks":
+			out.Values[i] = ec._DecksOutput_decks(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 var healthImplementors = []string{"Health"}
 
 func (ec *executionContext) _Health(ctx context.Context, sel ast.SelectionSet, obj *model.Health) graphql.Marshaler {
@@ -4246,50 +4350,6 @@ func (ec *executionContext) marshalNDeck2githubᚗcomᚋRyoheiTomiyamaᚋphraze�
 	return ec._Deck(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNDeck2ᚕᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐDeckᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Deck) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalNDeck2ᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐDeck(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-
-	for _, e := range ret {
-		if e == graphql.Null {
-			return graphql.Null
-		}
-	}
-
-	return ret
-}
-
 func (ec *executionContext) marshalNDeck2ᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐDeck(ctx context.Context, sel ast.SelectionSet, v *model.Deck) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -4298,6 +4358,20 @@ func (ec *executionContext) marshalNDeck2ᚖgithubᚗcomᚋRyoheiTomiyamaᚋphra
 		return graphql.Null
 	}
 	return ec._Deck(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNDecksOutput2githubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐDecksOutput(ctx context.Context, sel ast.SelectionSet, v model.DecksOutput) graphql.Marshaler {
+	return ec._DecksOutput(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNDecksOutput2ᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐDecksOutput(ctx context.Context, sel ast.SelectionSet, v *model.DecksOutput) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._DecksOutput(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNHealth2githubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐHealth(ctx context.Context, sel ast.SelectionSet, v model.Health) graphql.Marshaler {
@@ -4646,6 +4720,53 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	}
 	res := graphql.MarshalBoolean(*v)
 	return res
+}
+
+func (ec *executionContext) marshalODeck2ᚕᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐDeckᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Deck) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNDeck2ᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐDeck(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
 }
 
 func (ec *executionContext) unmarshalOString2ᚖstring(ctx context.Context, v interface{}) (*string, error) {
