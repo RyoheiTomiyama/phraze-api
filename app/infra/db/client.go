@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"testing"
 
 	"github.com/RyoheiTomiyama/phraze-api/domain"
 	_ "github.com/jackc/pgx/v5/stdlib"
@@ -54,4 +55,8 @@ func open(opt DataSourceOption) (*sqlx.DB, error) {
 	}
 
 	return db, nil
+}
+
+func NewTestClient(t *testing.T, db *sqlx.DB) IClient {
+	return &client{db}
 }

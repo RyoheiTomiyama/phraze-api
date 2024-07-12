@@ -20,7 +20,7 @@ type IError interface {
 	Code() int
 }
 
-func New(code errorCode, format string, args ...interface{}) IError {
+func New(code ErrorCode, format string, args ...interface{}) IError {
 	e := fmt.Errorf(format, args...)
 
 	return &customError{original: e, message: e.Error(), code: code, frame: xerrors.Caller(1)}

@@ -7,7 +7,7 @@ import (
 )
 
 type customError struct {
-	code     errorCode
+	code     ErrorCode
 	message  string
 	original error
 	frame    xerrors.Frame
