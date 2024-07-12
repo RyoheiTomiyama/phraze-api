@@ -17,6 +17,7 @@ func (r *mutationResolver) CreateDeck(ctx context.Context, input model.CreateDec
 	deck := &domain.Deck{
 		Name: input.Name,
 	}
+
 	deck, err := r.deckUsecase.CreateDeck(ctx, deck)
 	if err != nil {
 		return nil, errutil.Wrap(err)
