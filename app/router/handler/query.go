@@ -26,7 +26,8 @@ func PostQuery(r *resolver.Resolver, d *generated.DirectiveRoot) http.HandlerFun
 		//       元のエラーを変更したくないので値をコピーしてデフォルトのエラーのコードを加工したエラーレスポンスを生成する
 		internalErr := *defaultError
 		internalErr.Extensions = map[string]interface{}{
-			"code": errutil.CodeInternalError,
+			"code":          errutil.CodeInternalError,
+			"clientMessage": errutil.InternalErrorMessage,
 		}
 
 		gqlErr, ok := err.(*gqlerror.Error)

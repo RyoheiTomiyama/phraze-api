@@ -32,6 +32,9 @@ func (r *mutationResolver) CreateCard(ctx context.Context, input *model.CreateCa
 	if err != nil {
 		return nil, errutil.Wrap(err)
 	}
+	if card == nil {
+		return nil, errutil.New(errutil.CodeInternalError, "cardの作成に失敗: deck_id: %d", input.DeckID)
+	}
 
 	var m model.Card
 	if err = model.FromDomain(ctx, card, &m); err != nil {

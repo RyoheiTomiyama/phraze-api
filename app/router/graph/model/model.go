@@ -13,7 +13,7 @@ import (
 func FromDomain(ctx context.Context, d any, target interface{}) error {
 	log := logger.FromCtx(ctx)
 
-	log.Debug("Fromdomai", "d", d, "target", target)
+	log.Debug("FromDomain", "d", d, "target", target)
 
 	switch v := d.(type) {
 

@@ -4,20 +4,30 @@ import (
 	"context"
 
 	"github.com/RyoheiTomiyama/phraze-api/util/errutil"
+	"github.com/go-playground/validator/v10"
 )
 
 func (i *CreateCardInput) Validate(ctx context.Context) error {
 	v := validate()
 
-	if err := v.VarCtx(ctx, i.DeckID, "required"); err != nil {
-		return errutil.New(errutil.CodeBadRequest, err.Error())
+	type input struct {
+		DeckID   int64   `json:"deckId" validate:"required"`
+		Question string  `json:"question" validate:"required,max=1000"`
+		Answer   *string `json:"answer,omitempty" validate:"omitempty,max=10000"`
 	}
-	if err := v.VarCtx(ctx, i.Question, "required,max=1000"); err != nil {
-		return errutil.New(errutil.CodeBadRequest, err.Error())
-	}
-	if err := v.VarCtx(ctx, i.Answer, "omitempty,max=10000"); err != nil {
-		return errutil.New(errutil.CodeBadRequest, err.Error())
+	err := v.StructCtx(ctx, input{
+		DeckID:   i.DeckID,
+		Question: i.Question,
+		Answer:   i.Answer,
+	})
+	if err == nil {
+		return nil
 	}
 
-	return nil
+	errs, ok := err.(validator.ValidationErrors)
+	if !ok {
+		return errutil.Wrap(err)
+	}
+
+	return errutil.New(errutil.CodeBadRequest, translateValidateError(errs[0]))
 }
