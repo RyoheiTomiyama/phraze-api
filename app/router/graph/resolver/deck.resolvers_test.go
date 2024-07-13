@@ -26,6 +26,22 @@ func assertDeck(t *testing.T, expect *domain.Deck, actual *model.Deck) {
 	assert.Equal(t, em, actual)
 }
 
+func (s *resolverSuite) TestCreateDeck() {
+	userID := "test_user"
+	ctx := context.Background()
+	ctx = auth.New(&domain.User{ID: userID}).WithCtx(ctx)
+
+	s.T().Run("Deckが作成できること", func(t *testing.T) {
+		input := model.CreateDeckInput{
+			Name: "created_test",
+		}
+		result, err := s.resolver.Mutation().CreateDeck(ctx, input)
+		assert.NoError(t, err)
+		assert.Equal(t, input.Name, result.Deck.Name)
+		assert.Equal(t, userID, result.Deck.UserID)
+	})
+}
+
 func (s *resolverSuite) TestDecks() {
 	userID := "test_user"
 	ctx := context.Background()
