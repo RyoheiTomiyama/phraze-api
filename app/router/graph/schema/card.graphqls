@@ -19,9 +19,9 @@ input CreateCardInput {
 }
 
 type CreateCardOutput {
-  card: Card
+  card: Card @hasRole(role: USER)
 }
 
 extend type Mutation {
-  createCard(input: CreateCardInput): CreateCardOutput
+  createCard(input: CreateCardInput): CreateCardOutput @hasRole(role: USER)
 }
