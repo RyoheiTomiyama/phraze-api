@@ -9,11 +9,16 @@ import (
 	"fmt"
 
 	"github.com/RyoheiTomiyama/phraze-api/router/graph/model"
+	"github.com/RyoheiTomiyama/phraze-api/util/errutil"
 )
 
 // CreateCard is the resolver for the createCard field.
 func (r *mutationResolver) CreateCard(ctx context.Context, input *model.CreateCardInput) (*model.CreateCardOutput, error) {
-	panic(fmt.Errorf("not implemented: CreateCard - createCard"))
+	if err := input.Validate(ctx); err != nil {
+		return nil, errutil.Wrap(err)
+	}
+
+	return nil, nil
 }
 
 // Cards is the resolver for the cards field.
