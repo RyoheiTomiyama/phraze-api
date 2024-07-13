@@ -2,8 +2,10 @@ package logger
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
 	"os"
+	"runtime"
 
 	"github.com/RyoheiTomiyama/phraze-api/util/errutil"
 	"github.com/golang-cz/devslog"
@@ -89,7 +91,8 @@ func (l *logger) Error(err error, arg ...any) {
 	if l.debugMode {
 		st := errutil.ErrorWithStackTrace(err)
 		if len(st) > 0 {
-			arg = append(arg, "stack_trace", st)
+			_, name, line, _ := runtime.Caller(1)
+			arg = append(arg, "call", fmt.Sprintf("%s:%d", name, line), "stack_trace", st)
 		}
 	}
 	l.logger.Error(err.Error(), arg...)
