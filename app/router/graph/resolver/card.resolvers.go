@@ -8,8 +8,10 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/RyoheiTomiyama/phraze-api/domain"
 	"github.com/RyoheiTomiyama/phraze-api/router/graph/model"
 	"github.com/RyoheiTomiyama/phraze-api/util/errutil"
+	"github.com/samber/lo"
 )
 
 // CreateCard is the resolver for the createCard field.
@@ -18,7 +20,23 @@ func (r *mutationResolver) CreateCard(ctx context.Context, input *model.CreateCa
 		return nil, errutil.Wrap(err)
 	}
 
-	return nil, nil
+	card, err := r.cardUsecase.CreateCard(ctx, &domain.Card{
+		DeckID:   input.DeckID,
+		Question: input.Question,
+		Answer:   lo.Ternary(input.Answer != nil, *input.Answer, ""),
+	})
+	if err != nil {
+		return nil, errutil.Wrap(err)
+	}
+
+	var m model.Card
+	if err = model.FromDomain(ctx, card, &m); err != nil {
+		return nil, errutil.Wrap(err)
+	}
+
+	return &model.CreateCardOutput{
+		Card: &m,
+	}, nil
 }
 
 // Cards is the resolver for the cards field.

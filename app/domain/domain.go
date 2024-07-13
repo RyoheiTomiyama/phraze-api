@@ -10,7 +10,7 @@ type Deck struct {
 	UpdatedAt time.Time
 }
 
-type Car struct {
+type Card struct {
 	ID        int64
 	DeckID    int64
 	Question  string

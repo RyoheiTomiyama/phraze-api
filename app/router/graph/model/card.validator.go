@@ -15,7 +15,7 @@ func (i *CreateCardInput) Validate(ctx context.Context) error {
 	if err := v.VarCtx(ctx, i.Question, "required,max=1000"); err != nil {
 		return errutil.New(errutil.CodeBadRequest, err.Error())
 	}
-	if err := v.VarCtx(ctx, i.Answer, "required,max=10000"); err != nil {
+	if err := v.VarCtx(ctx, i.Answer, "max=10000,omitempty"); err != nil {
 		return errutil.New(errutil.CodeBadRequest, err.Error())
 	}
 

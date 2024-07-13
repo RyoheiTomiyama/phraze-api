@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/RyoheiTomiyama/phraze-api/application/usecase/auth"
+	"github.com/RyoheiTomiyama/phraze-api/application/usecase/card"
 	"github.com/RyoheiTomiyama/phraze-api/application/usecase/deck"
 	"github.com/RyoheiTomiyama/phraze-api/infra/db"
 	firebaseAuth "github.com/RyoheiTomiyama/phraze-api/infra/firebase/auth"
@@ -47,9 +48,10 @@ func main() {
 
 	// usecase
 	authUsecase := auth.New(firebaseAuthClient)
+	cardUsecase := card.New(dbClient)
 	deckUsecase := deck.New(dbClient)
 
-	resolver := resolver.New(deckUsecase)
+	resolver := resolver.New(cardUsecase, deckUsecase)
 	directive := directive.New()
 
 	r := router.New(config, resolver, &directive, l, authUsecase)
