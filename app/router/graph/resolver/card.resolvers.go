@@ -23,7 +23,11 @@ func (r *mutationResolver) CreateCard(ctx context.Context, input *model.CreateCa
 	card, err := r.cardUsecase.CreateCard(ctx, &domain.Card{
 		DeckID:   input.DeckID,
 		Question: input.Question,
-		Answer:   lo.Ternary(input.Answer != nil, *input.Answer, ""),
+		Answer: lo.TernaryF(
+			input.Answer != nil,
+			func() string { return *input.Answer },
+			func() string { return "" },
+		),
 	})
 	if err != nil {
 		return nil, errutil.Wrap(err)
