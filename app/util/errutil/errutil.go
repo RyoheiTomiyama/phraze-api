@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/samber/lo"
 	"golang.org/x/xerrors"
 )
 
@@ -31,7 +32,7 @@ func Wrap(err error, msg ...string) *customError {
 	if errors.As(err, &ce) {
 		return &customError{
 			original: ce,
-			message:  strings.Join(msg, " "),
+			message:  lo.Ternary(len(msg) > 0, strings.Join(msg, " "), ce.message),
 			code:     ce.code,
 			frame:    xerrors.Caller(1),
 		}
