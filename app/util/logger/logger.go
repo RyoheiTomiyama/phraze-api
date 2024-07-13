@@ -89,10 +89,14 @@ func (l *logger) Warning(msg string, arg ...any) {
 
 func (l *logger) Error(err error, arg ...any) {
 	if l.debugMode {
+		_, name, line, ok := runtime.Caller(1)
+		if ok {
+			arg = append(arg, "call", fmt.Sprintf("%s:%d", name, line))
+		}
+
 		st := errutil.ErrorWithStackTrace(err)
 		if len(st) > 0 {
-			_, name, line, _ := runtime.Caller(1)
-			arg = append(arg, "call", fmt.Sprintf("%s:%d", name, line), "stack_trace", st)
+			arg = append(arg, "stack_trace", st)
 		}
 	}
 	l.logger.Error(err.Error(), arg...)
