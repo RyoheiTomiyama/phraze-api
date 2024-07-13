@@ -15,7 +15,7 @@ import (
 )
 
 // CreateCard is the resolver for the createCard field.
-func (r *mutationResolver) CreateCard(ctx context.Context, input *model.CreateCardInput) (*model.CreateCardOutput, error) {
+func (r *mutationResolver) CreateCard(ctx context.Context, input model.CreateCardInput) (*model.CreateCardOutput, error) {
 	if err := input.Validate(ctx); err != nil {
 		return nil, errutil.Wrap(err)
 	}

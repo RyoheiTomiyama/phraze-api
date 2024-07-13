@@ -3,6 +3,7 @@ package resolver
 import (
 	"testing"
 
+	"github.com/RyoheiTomiyama/phraze-api/application/usecase/card"
 	"github.com/RyoheiTomiyama/phraze-api/application/usecase/deck"
 	"github.com/RyoheiTomiyama/phraze-api/infra/db"
 	db_test "github.com/RyoheiTomiyama/phraze-api/test/db"
@@ -22,10 +23,12 @@ func TestResolverSuite(t *testing.T) {
 
 	dbClient := db.NewTestClient(t, dbx)
 
+	cardUsecase := card.New(dbClient)
 	deckUsecase := deck.New(dbClient)
 
 	resolver := &Resolver{
-		deckUsecase: deckUsecase,
+		cardUsecase,
+		deckUsecase,
 	}
 
 	suite.Run(t, &resolverSuite{resolver: resolver, dbx: dbx})

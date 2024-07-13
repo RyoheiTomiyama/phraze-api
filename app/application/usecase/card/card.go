@@ -29,10 +29,13 @@ func (u *usecase) CreateCard(ctx context.Context, card *domain.Card) (*domain.Ca
 		return nil, errutil.Wrap(err)
 	}
 	if deck == nil || deck.UserID != user.ID {
-		return nil, errutil.New(errutil.CodeBadRequest, "指定されたDeckにCardは作成できません")
+		return nil, errutil.New(errutil.CodeBadRequest, "指定されたDeckのCardは作成できません")
 	}
 
-	// TODO CREATE
+	card, err = u.dbClient.CreateCard(ctx, card)
+	if err != nil {
+		return nil, errutil.Wrap(err)
+	}
 
-	return nil, nil
+	return card, nil
 }

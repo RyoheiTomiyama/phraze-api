@@ -25,7 +25,7 @@ type CreateCardInput struct {
 }
 
 type CreateCardOutput struct {
-	Card *Card `json:"card,omitempty"`
+	Card *Card `json:"card"`
 }
 
 type CreateDeckInput struct {

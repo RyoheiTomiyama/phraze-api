@@ -82,7 +82,7 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
-		CreateCard func(childComplexity int, input *model.CreateCardInput) int
+		CreateCard func(childComplexity int, input model.CreateCardInput) int
 		CreateDeck func(childComplexity int, input model.CreateDeckInput) int
 		Health     func(childComplexity int) int
 	}
@@ -98,7 +98,7 @@ type ComplexityRoot struct {
 
 type MutationResolver interface {
 	Health(ctx context.Context) (*model.Health, error)
-	CreateCard(ctx context.Context, input *model.CreateCardInput) (*model.CreateCardOutput, error)
+	CreateCard(ctx context.Context, input model.CreateCardInput) (*model.CreateCardOutput, error)
 	CreateDeck(ctx context.Context, input model.CreateDeckInput) (*model.CreateDeckOutput, error)
 }
 type QueryResolver interface {
@@ -243,7 +243,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CreateCard(childComplexity, args["input"].(*model.CreateCardInput)), true
+		return e.complexity.Mutation.CreateCard(childComplexity, args["input"].(model.CreateCardInput)), true
 
 	case "Mutation.createDeck":
 		if e.complexity.Mutation.CreateDeck == nil {
@@ -432,11 +432,11 @@ input CreateCardInput {
 }
 
 type CreateCardOutput {
-  card: Card @hasRole(role: USER)
+  card: Card! @hasRole(role: USER)
 }
 
 extend type Mutation {
-  createCard(input: CreateCardInput): CreateCardOutput @hasRole(role: USER)
+  createCard(input: CreateCardInput!): CreateCardOutput! @hasRole(role: USER)
 }
 `, BuiltIn: false},
 	{Name: "../schema/deck.graphqls", Input: `type Deck {
@@ -525,10 +525,10 @@ func (ec *executionContext) dir_hasRole_args(ctx context.Context, rawArgs map[st
 func (ec *executionContext) field_Mutation_createCard_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 *model.CreateCardInput
+	var arg0 model.CreateCardInput
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalOCreateCardInput2ᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐCreateCardInput(ctx, tmp)
+		arg0, err = ec.unmarshalNCreateCardInput2githubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐCreateCardInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -929,11 +929,14 @@ func (ec *executionContext) _CreateCardOutput_card(ctx context.Context, field gr
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
 	res := resTmp.(*model.Card)
 	fc.Result = res
-	return ec.marshalOCard2ᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐCard(ctx, field.Selections, res)
+	return ec.marshalNCard2ᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐCard(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_CreateCardOutput_card(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1396,7 +1399,7 @@ func (ec *executionContext) _Mutation_createCard(ctx context.Context, field grap
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().CreateCard(rctx, fc.Args["input"].(*model.CreateCardInput))
+			return ec.resolvers.Mutation().CreateCard(rctx, fc.Args["input"].(model.CreateCardInput))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			role, err := ec.unmarshalNRole2githubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐRole(ctx, "USER")
@@ -1426,11 +1429,14 @@ func (ec *executionContext) _Mutation_createCard(ctx context.Context, field grap
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
 	res := resTmp.(*model.CreateCardOutput)
 	fc.Result = res
-	return ec.marshalOCreateCardOutput2ᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐCreateCardOutput(ctx, field.Selections, res)
+	return ec.marshalNCreateCardOutput2ᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐCreateCardOutput(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_createCard(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -3926,6 +3932,9 @@ func (ec *executionContext) _CreateCardOutput(ctx context.Context, sel ast.Selec
 			out.Values[i] = graphql.MarshalString("CreateCardOutput")
 		case "card":
 			out.Values[i] = ec._CreateCardOutput_card(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -4149,6 +4158,9 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_createCard(ctx, field)
 			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		case "createDeck":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_createDeck(ctx, field)
@@ -4738,6 +4750,25 @@ func (ec *executionContext) marshalNCard2ᚖgithubᚗcomᚋRyoheiTomiyamaᚋphra
 	return ec._Card(ctx, sel, v)
 }
 
+func (ec *executionContext) unmarshalNCreateCardInput2githubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐCreateCardInput(ctx context.Context, v interface{}) (model.CreateCardInput, error) {
+	res, err := ec.unmarshalInputCreateCardInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNCreateCardOutput2githubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐCreateCardOutput(ctx context.Context, sel ast.SelectionSet, v model.CreateCardOutput) graphql.Marshaler {
+	return ec._CreateCardOutput(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNCreateCardOutput2ᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐCreateCardOutput(ctx context.Context, sel ast.SelectionSet, v *model.CreateCardOutput) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._CreateCardOutput(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalNCreateDeckInput2githubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐCreateDeckInput(ctx context.Context, v interface{}) (model.CreateDeckInput, error) {
 	res, err := ec.unmarshalInputCreateDeckInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -5131,28 +5162,6 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	}
 	res := graphql.MarshalBoolean(*v)
 	return res
-}
-
-func (ec *executionContext) marshalOCard2ᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐCard(ctx context.Context, sel ast.SelectionSet, v *model.Card) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._Card(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalOCreateCardInput2ᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐCreateCardInput(ctx context.Context, v interface{}) (*model.CreateCardInput, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := ec.unmarshalInputCreateCardInput(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalOCreateCardOutput2ᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐCreateCardOutput(ctx context.Context, sel ast.SelectionSet, v *model.CreateCardOutput) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._CreateCardOutput(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalODeck2ᚕᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐDeckᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Deck) graphql.Marshaler {
