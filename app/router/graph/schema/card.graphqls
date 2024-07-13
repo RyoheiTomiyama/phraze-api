@@ -1,6 +1,6 @@
 type Card {
   id: ID!
-  deckID: ID!
+  deckId: ID!
   question: String!
   answer: String!
   createdAt: Timestamp!
@@ -10,4 +10,18 @@ type Card {
 extend type Query {
   cards: [Card!]!
   card: Card!
+}
+
+input CreateCardInput {
+  deckId: ID!
+  question: String!
+  answer: String
+}
+
+type CreateCardOutput {
+  card: Card
+}
+
+extend type Mutation {
+  createCard(input: CreateCardInput): CreateCardOutput
 }

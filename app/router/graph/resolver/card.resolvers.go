@@ -11,6 +11,11 @@ import (
 	"github.com/RyoheiTomiyama/phraze-api/router/graph/model"
 )
 
+// CreateCard is the resolver for the createCard field.
+func (r *mutationResolver) CreateCard(ctx context.Context, input *model.CreateCardInput) (*model.CreateCardOutput, error) {
+	panic(fmt.Errorf("not implemented: CreateCard - createCard"))
+}
+
 // Cards is the resolver for the cards field.
 func (r *queryResolver) Cards(ctx context.Context) ([]*model.Card, error) {
 	panic(fmt.Errorf("not implemented: Cards - cards"))

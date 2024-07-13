@@ -11,11 +11,21 @@ import (
 
 type Card struct {
 	ID        int64     `json:"id"`
-	DeckID    int64     `json:"deckID"`
+	DeckID    int64     `json:"deckId"`
 	Question  string    `json:"question"`
 	Answer    string    `json:"answer"`
 	CreatedAt time.Time `json:"createdAt"`
 	UpdatedAt time.Time `json:"updatedAt"`
+}
+
+type CreateCardInput struct {
+	DeckID   int64   `json:"deckId"`
+	Question string  `json:"question"`
+	Answer   *string `json:"answer,omitempty"`
+}
+
+type CreateCardOutput struct {
+	Card *Card `json:"card,omitempty"`
 }
 
 type CreateDeckInput struct {
