@@ -10,6 +10,11 @@ enum Role {
   USER
 }
 
+type PageInfo {
+  totalCount: Int!
+  hasNext: Boolean!
+}
+
 type Health {
   healthy: Boolean
 }

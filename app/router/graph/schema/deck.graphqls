@@ -24,6 +24,9 @@ extend type Query {
 }
 
 input CreateDeckInput {
+  """
+  Deck名
+  """
   name: String!
 }
 
@@ -32,5 +35,8 @@ type CreateDeckOutput {
 }
 
 extend type Mutation {
+  """
+  Deck作成
+  """
   createDeck(input: CreateDeckInput!): CreateDeckOutput! @hasRole(role: USER)
 }

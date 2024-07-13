@@ -1,15 +1,49 @@
 type Card {
   id: ID!
+
+  """
+  Deck ID
+  """
   deckId: ID!
+
+  """
+  英単語・フレーズ
+  """
   question: String!
+
+  """
+  解答・意味のマークダウン文字列
+  """
   answer: String!
   createdAt: Timestamp!
   updatedAt: Timestamp!
 }
 
+input CardsWhere {
+  deckId: Int
+}
+
+input CardsInput {
+  where: CardsWhere
+  limit: Int = 100
+  offset: Int = 0
+}
+type CardsOutput {
+  cards: [Card!]
+  pageInfo: PageInfo!
+}
+
 extend type Query {
-  cards: [Card!]!
-  card: Card!
+  """
+  Card一覧
+  最大100件取得可能
+  """
+  cards(input: CardsInput): CardsOutput! @hasRole(role: USER)
+
+  """
+  CardをIDで取得
+  """
+  card(id: ID!): Card! @hasRole(role: USER)
 }
 
 input CreateCardInput {
@@ -19,9 +53,12 @@ input CreateCardInput {
 }
 
 type CreateCardOutput {
-  card: Card! @hasRole(role: USER)
+  card: Card!
 }
 
 extend type Mutation {
+  """
+  Card作成
+  """
   createCard(input: CreateCardInput!): CreateCardOutput! @hasRole(role: USER)
 }

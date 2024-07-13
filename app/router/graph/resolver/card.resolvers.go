@@ -47,11 +47,11 @@ func (r *mutationResolver) CreateCard(ctx context.Context, input model.CreateCar
 }
 
 // Cards is the resolver for the cards field.
-func (r *queryResolver) Cards(ctx context.Context) ([]*model.Card, error) {
+func (r *queryResolver) Cards(ctx context.Context, input *model.CardsInput) (*model.CardsOutput, error) {
 	panic(fmt.Errorf("not implemented: Cards - cards"))
 }
 
 // Card is the resolver for the card field.
-func (r *queryResolver) Card(ctx context.Context) (*model.Card, error) {
+func (r *queryResolver) Card(ctx context.Context, id int64) (*model.Card, error) {
 	panic(fmt.Errorf("not implemented: Card - card"))
 }

@@ -10,12 +10,30 @@ import (
 )
 
 type Card struct {
-	ID        int64     `json:"id"`
-	DeckID    int64     `json:"deckId"`
-	Question  string    `json:"question"`
+	ID int64 `json:"id"`
+	// Deck ID
+	DeckID int64 `json:"deckId"`
+	// 英単語・フレーズ
+	Question string `json:"question"`
+	// 解答・意味のマークダウン文字列
 	Answer    string    `json:"answer"`
 	CreatedAt time.Time `json:"createdAt"`
 	UpdatedAt time.Time `json:"updatedAt"`
+}
+
+type CardsInput struct {
+	Where  *CardsWhere `json:"where,omitempty"`
+	Limit  *int        `json:"limit,omitempty"`
+	Offset *int        `json:"offset,omitempty"`
+}
+
+type CardsOutput struct {
+	Cards    []*Card   `json:"cards,omitempty"`
+	PageInfo *PageInfo `json:"pageInfo"`
+}
+
+type CardsWhere struct {
+	DeckID *int `json:"deckId,omitempty"`
 }
 
 type CreateCardInput struct {
@@ -29,6 +47,7 @@ type CreateCardOutput struct {
 }
 
 type CreateDeckInput struct {
+	// Deck名
 	Name string `json:"name"`
 }
 
@@ -53,6 +72,11 @@ type Health struct {
 }
 
 type Mutation struct {
+}
+
+type PageInfo struct {
+	TotalCount int  `json:"totalCount"`
+	HasNext    bool `json:"hasNext"`
 }
 
 type Query struct {
