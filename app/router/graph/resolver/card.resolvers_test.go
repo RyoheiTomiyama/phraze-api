@@ -109,8 +109,12 @@ func (s *resolverSuite) TestCards() {
 	ctx = auth.New(&domain.User{ID: userID}).WithCtx(ctx)
 
 	fx := fixture.New(s.dbx)
-	decks := fx.CreateDeck(s.T(), &fixture.DeckInput{UserID: userID})
+	decks := fx.CreateDeck(s.T(),
+		&fixture.DeckInput{UserID: userID},
+		&fixture.DeckInput{UserID: "other_user"},
+	)
 	cards := fx.CreateCard(s.T(), decks[0].ID, make([]fixture.CardInput, 10)...)
+	fx.CreateCard(s.T(), decks[1].ID, make([]fixture.CardInput, 10)...)
 
 	s.T().Run("Validationエラー", func(t *testing.T) {
 		testCases := []struct {
@@ -154,5 +158,17 @@ func (s *resolverSuite) TestCards() {
 			assertCard(t, cards[len(cards)-1].ToDomain(), result.Cards[0])
 			assertCard(t, cards[len(cards)-2].ToDomain(), result.Cards[1])
 		}
+	})
+
+	s.T().Run("他ユーザのDeckのCardsを取得しようとした場合", func(t *testing.T) {
+		result, err := s.resolver.Query().Cards(ctx, &model.CardsInput{
+			Where: &model.CardsWhere{
+				DeckID: decks[1].ID,
+			},
+			Limit:  lo.ToPtr(2),
+			Offset: lo.ToPtr(0),
+		})
+		assert.Nil(t, result)
+		assertion.AssertError(t, "指定されたDeckのCardは取得できません", errutil.CodeForbidden, err)
 	})
 }
