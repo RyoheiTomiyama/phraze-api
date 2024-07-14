@@ -11,6 +11,7 @@ import (
 
 type IUsecase interface {
 	CreateCard(ctx context.Context, card *domain.Card) (*domain.Card, error)
+	GetCards(ctx context.Context, input domain.GetCardsInput) (*GetCardsOutput, error)
 }
 
 type usecase struct {
