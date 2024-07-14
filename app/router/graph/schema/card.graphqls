@@ -56,9 +56,23 @@ type CreateCardOutput {
   card: Card!
 }
 
+input UpdateCardInput {
+  ID: ID!
+  question: String
+  answer: String
+}
+
+type UpdateCardOutput {
+  card: Card!
+}
+
 extend type Mutation {
   """
   Card作成
   """
   createCard(input: CreateCardInput!): CreateCardOutput! @hasRole(role: USER)
+  """
+  Card更新
+  """
+  updateCard(input: UpdateCardInput!): UpdateCardOutput! @hasRole(role: USER)
 }

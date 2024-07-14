@@ -81,6 +81,16 @@ type PageInfo struct {
 type Query struct {
 }
 
+type UpdateCardInput struct {
+	ID       int64   `json:"ID"`
+	Question *string `json:"question,omitempty"`
+	Answer   *string `json:"answer,omitempty"`
+}
+
+type UpdateCardOutput struct {
+	Card *Card `json:"card"`
+}
+
 type Role string
 
 const (

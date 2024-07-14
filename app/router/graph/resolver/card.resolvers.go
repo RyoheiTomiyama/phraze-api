@@ -46,6 +46,11 @@ func (r *mutationResolver) CreateCard(ctx context.Context, input model.CreateCar
 	}, nil
 }
 
+// UpdateCard is the resolver for the updateCard field.
+func (r *mutationResolver) UpdateCard(ctx context.Context, input model.UpdateCardInput) (*model.UpdateCardOutput, error) {
+	panic(fmt.Errorf("not implemented: UpdateCard - updateCard"))
+}
+
 // Cards is the resolver for the cards field.
 func (r *queryResolver) Cards(ctx context.Context, input *model.CardsInput) (*model.CardsOutput, error) {
 	if err := input.Validate(ctx); err != nil {
