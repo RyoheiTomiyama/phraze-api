@@ -48,6 +48,10 @@ func (r *mutationResolver) CreateCard(ctx context.Context, input model.CreateCar
 
 // Cards is the resolver for the cards field.
 func (r *queryResolver) Cards(ctx context.Context, input *model.CardsInput) (*model.CardsOutput, error) {
+	if err := input.Validate(ctx); err != nil {
+		return nil, errutil.Wrap(err)
+	}
+
 	output, err := r.cardUsecase.GetCards(ctx, domain.GetCardsInput{
 		Where: &domain.CardsWhere{
 			DeckID: int64(input.Where.DeckID),

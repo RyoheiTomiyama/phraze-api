@@ -102,3 +102,41 @@ func (s *resolverSuite) TestCreateCard() {
 		assertion.AssertError(t, "指定されたDeckのCardは作成できません", errutil.CodeBadRequest, err)
 	})
 }
+
+func (s *resolverSuite) TestCards() {
+	userID := "test_user"
+	ctx := context.Background()
+	ctx = auth.New(&domain.User{ID: userID}).WithCtx(ctx)
+
+	// fx := fixture.New(s.dbx)
+	// decks := fx.CreateDeck(s.T(), &fixture.DeckInput{UserID: userID})
+
+	s.T().Run("Validationエラー", func(t *testing.T) {
+		testCases := []struct {
+			name   string
+			input  model.CardsInput
+			assert func(err error)
+		}{
+			{
+				name:  "DeckIDが0値の場合",
+				input: model.CardsInput{Where: &model.CardsWhere{}},
+				assert: func(err error) {
+					assertion.AssertError(t, "DeckIDは必須項目です", errutil.CodeBadRequest, err)
+				},
+			},
+			{
+				name:  "Limitが100より大きい場合",
+				input: model.CardsInput{Where: &model.CardsWhere{DeckID: 100}, Limit: lo.ToPtr(101)},
+				assert: func(err error) {
+					assertion.AssertError(t, "Limitは100が最大です", errutil.CodeBadRequest, err)
+				},
+			},
+		}
+
+		for _, tc := range testCases {
+			result, err := s.resolver.Query().Cards(ctx, &tc.input)
+			assert.Nil(t, result)
+			tc.assert(err)
+		}
+	})
+}
