@@ -7,6 +7,7 @@ import (
 
 type fixture struct {
 	db    *sqlx.DB
+	Cards []*model.Card
 	Decks []*model.Deck
 }
 
