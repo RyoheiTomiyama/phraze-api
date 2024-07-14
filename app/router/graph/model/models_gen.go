@@ -33,7 +33,7 @@ type CardsOutput struct {
 }
 
 type CardsWhere struct {
-	DeckID int `json:"deckId"`
+	DeckID int64 `json:"deckId"`
 }
 
 type CreateCardInput struct {

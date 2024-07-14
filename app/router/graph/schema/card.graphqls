@@ -20,7 +20,7 @@ type Card {
 }
 
 input CardsWhere {
-  deckId: Int!
+  deckId: ID!
 }
 
 input CardsInput {

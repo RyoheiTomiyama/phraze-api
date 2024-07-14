@@ -54,7 +54,7 @@ func (r *queryResolver) Cards(ctx context.Context, input *model.CardsInput) (*mo
 
 	output, err := r.cardUsecase.GetCards(ctx, domain.GetCardsInput{
 		Where: &domain.CardsWhere{
-			DeckID: int64(input.Where.DeckID),
+			DeckID: input.Where.DeckID,
 		},
 		Limit:  input.Limit,
 		Offset: input.Offset,

@@ -475,7 +475,7 @@ var sources = []*ast.Source{
 }
 
 input CardsWhere {
-  deckId: Int!
+  deckId: ID!
 }
 
 input CardsInput {
@@ -4147,7 +4147,7 @@ func (ec *executionContext) unmarshalInputCardsWhere(ctx context.Context, obj in
 		switch k {
 		case "deckId":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deckId"))
-			data, err := ec.unmarshalNInt2int(ctx, v)
+			data, err := ec.unmarshalNID2int64(ctx, v)
 			if err != nil {
 				return it, err
 			}
