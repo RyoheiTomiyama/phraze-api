@@ -17,7 +17,7 @@ func TestUpdateCardByID(t *testing.T) {
 
 	fx := fixture.New(db)
 	decks := fx.CreateDeck(t, &fixture.DeckInput{UserID: "own"}, &fixture.DeckInput{UserID: "own"})
-	cards := fx.CreateCard(t, decks[0].ID, fixture.CardInput{})
+	cards := fx.CreateCard(t, decks[0].ID, make([]fixture.CardInput, 2)...)
 
 	t.Run("正常系", func(t *testing.T) {
 		client := NewTestClient(t, db)
@@ -28,7 +28,7 @@ func TestUpdateCardByID(t *testing.T) {
 			assert  func(result *domain.Card)
 		}{
 			{
-				name: "where句なしの場合",
+				name: "全更新の場合",
 				arrange: func() (int64, *domain.UpdateCardInput) {
 					return cards[0].ID, &domain.UpdateCardInput{
 						Field: domain.UpdateCardField{
@@ -42,10 +42,31 @@ func TestUpdateCardByID(t *testing.T) {
 					t.Run("更新できること", func(t *testing.T) {
 						assert.NotEqual(t, cards[0].UpdatedAt.UnixMilli(), result.UpdatedAt.UnixMilli())
 
-						expect := cards[0]
+						expect := *cards[0]
 						expect.DeckID = decks[1].ID
 						expect.Question = "question-updated-full"
 						expect.Answer = "answer-updated-full"
+						expect.UpdatedAt = result.UpdatedAt
+
+						assert.Equal(t, expect.ToDomain(), result)
+					})
+				},
+			},
+			{
+				name: "Questionのみ更新の場合",
+				arrange: func() (int64, *domain.UpdateCardInput) {
+					return cards[1].ID, &domain.UpdateCardInput{
+						Field: domain.UpdateCardField{
+							Question: lo.ToPtr("question-updated-only-question"),
+						},
+					}
+				},
+				assert: func(result *domain.Card) {
+					t.Run("更新できること", func(t *testing.T) {
+						assert.NotEqual(t, cards[1].UpdatedAt.UnixMilli(), result.UpdatedAt.UnixMilli())
+
+						expect := *cards[1]
+						expect.Question = "question-updated-only-question"
 						expect.UpdatedAt = result.UpdatedAt
 
 						assert.Equal(t, expect.ToDomain(), result)
