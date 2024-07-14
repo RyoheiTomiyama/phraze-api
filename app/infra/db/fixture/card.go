@@ -16,7 +16,7 @@ type CardInput struct {
 	UpdatedAt time.Time
 }
 
-func (f *fixture) CreateCard(t *testing.T, deckID int64, cards ...*CardInput) []*model.Card {
+func (f *fixture) CreateCard(t *testing.T, deckID int64, cards ...CardInput) []*model.Card {
 	var list []*model.Card
 	offset := len(f.Cards)
 	for i, d := range cards {
@@ -27,6 +27,8 @@ func (f *fixture) CreateCard(t *testing.T, deckID int64, cards ...*CardInput) []
 			CreatedAt: lo.Ternary(d.CreatedAt.IsZero(), time.Now(), d.CreatedAt),
 			UpdatedAt: lo.Ternary(d.CreatedAt.IsZero(), time.Now(), d.UpdatedAt),
 		})
+		// 作成日の作成順を担保するためスリープする
+		time.Sleep(time.Millisecond)
 	}
 
 	query := `

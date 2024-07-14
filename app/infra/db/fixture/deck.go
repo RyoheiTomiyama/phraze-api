@@ -26,6 +26,8 @@ func (f *fixture) CreateDeck(t *testing.T, decks ...*DeckInput) []*model.Deck {
 			CreatedAt: lo.Ternary(d.CreatedAt.IsZero(), time.Now(), d.CreatedAt),
 			UpdatedAt: lo.Ternary(d.CreatedAt.IsZero(), time.Now(), d.UpdatedAt),
 		})
+		// 作成日の作成順を担保するためスリープする
+		time.Sleep(time.Millisecond)
 	}
 
 	query := `

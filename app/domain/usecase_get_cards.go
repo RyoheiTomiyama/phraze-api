@@ -7,5 +7,5 @@ type GetCardsInput struct {
 }
 
 type CardsWhere struct {
-	DeckID *int
+	DeckID *int64
 }

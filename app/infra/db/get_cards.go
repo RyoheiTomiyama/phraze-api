@@ -15,7 +15,7 @@ import (
 func (c *client) GetCards(ctx context.Context, where *domain.CardsWhere, limit, offset int) ([]*domain.Card, error) {
 	e := c.execerFrom(ctx)
 
-	query := `SELECT * FROM cards WHERE %s ORDER BY %s LIMIT %d OFFSET %d`
+	query := `SELECT * FROM cards`
 
 	var wheres []string
 	arg := map[string]interface{}{}
@@ -26,7 +26,11 @@ func (c *client) GetCards(ctx context.Context, where *domain.CardsWhere, limit, 
 		}
 	}
 
-	query = fmt.Sprintf(query, strings.Join(wheres, " AND "), "updated_at DESC", limit, offset)
+	if len(wheres) > 0 {
+		query = query + " WHERE " + strings.Join(wheres, " AND ")
+	}
+	query = query + " ORDER BY %s LIMIT %d OFFSET %d"
+	query = fmt.Sprintf(query, "updated_at DESC", limit, offset)
 
 	query, args, err := e.BindNamed(query, arg)
 	if err != nil {
