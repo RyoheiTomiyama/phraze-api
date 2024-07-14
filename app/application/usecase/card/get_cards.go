@@ -4,6 +4,8 @@ import (
 	"context"
 
 	"github.com/RyoheiTomiyama/phraze-api/domain"
+	"github.com/RyoheiTomiyama/phraze-api/util/auth"
+	"github.com/RyoheiTomiyama/phraze-api/util/errutil"
 )
 
 type CardsWhere struct {
@@ -11,9 +13,28 @@ type CardsWhere struct {
 }
 
 type GetCardsOutput struct {
-	Cards []*domain.Card
+	Cards      []*domain.Card
+	TotalCount int
 }
 
 func (u *usecase) GetCards(ctx context.Context, input domain.GetCardsInput) (*GetCardsOutput, error) {
-	return nil, nil
+	user := auth.FromCtx(ctx)
+
+	deck, err := u.dbClient.GetDeck(ctx, input.Where.DeckID)
+	if err != nil {
+		return nil, errutil.Wrap(err)
+	}
+	if deck == nil || deck.UserID != user.ID {
+		return nil, errutil.New(errutil.CodeForbidden, "指定されたDeckのCardは取得できません")
+	}
+
+	cards, err := u.dbClient.GetCards(ctx, input.Where, *input.Limit, *input.Offset)
+	if err != nil {
+		return nil, errutil.Wrap(err)
+	}
+
+	return &GetCardsOutput{
+		Cards:      cards,
+		TotalCount: 0,
+	}, nil
 }

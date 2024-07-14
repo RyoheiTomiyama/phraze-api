@@ -22,7 +22,7 @@ type Card struct {
 }
 
 type CardsInput struct {
-	Where  *CardsWhere `json:"where,omitempty"`
+	Where  *CardsWhere `json:"where"`
 	Limit  *int        `json:"limit,omitempty"`
 	Offset *int        `json:"offset,omitempty"`
 }
@@ -33,7 +33,7 @@ type CardsOutput struct {
 }
 
 type CardsWhere struct {
-	DeckID *int `json:"deckId,omitempty"`
+	DeckID int `json:"deckId"`
 }
 
 type CreateCardInput struct {
@@ -75,8 +75,7 @@ type Mutation struct {
 }
 
 type PageInfo struct {
-	TotalCount int  `json:"totalCount"`
-	HasNext    bool `json:"hasNext"`
+	TotalCount int `json:"totalCount"`
 }
 
 type Query struct {

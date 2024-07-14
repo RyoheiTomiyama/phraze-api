@@ -7,7 +7,6 @@ import (
 	"github.com/RyoheiTomiyama/phraze-api/domain"
 	"github.com/RyoheiTomiyama/phraze-api/infra/db/fixture"
 	db_test "github.com/RyoheiTomiyama/phraze-api/test/db"
-	"github.com/samber/lo"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -50,7 +49,7 @@ func TestGetCards(t *testing.T) {
 				name: "DeckIDで絞り込んだ場合",
 				arrange: func() (where *domain.CardsWhere, limit int, offset int) {
 					return &domain.CardsWhere{
-						DeckID: lo.ToPtr(decks[0].ID),
+						DeckID: decks[0].ID,
 					}, 2, 0
 				},
 				assert: func(result []*domain.Card) {

@@ -48,7 +48,33 @@ func (r *mutationResolver) CreateCard(ctx context.Context, input model.CreateCar
 
 // Cards is the resolver for the cards field.
 func (r *queryResolver) Cards(ctx context.Context, input *model.CardsInput) (*model.CardsOutput, error) {
-	panic(fmt.Errorf("not implemented: Cards - cards"))
+	output, err := r.cardUsecase.GetCards(ctx, domain.GetCardsInput{
+		Where: &domain.CardsWhere{
+			DeckID: int64(input.Where.DeckID),
+		},
+		Limit:  input.Limit,
+		Offset: input.Offset,
+	})
+	if err != nil {
+		return nil, errutil.Wrap(err)
+	}
+
+	var cards []*model.Card
+	for _, item := range output.Cards {
+		var m model.Card
+		if err = model.FromDomain(ctx, item, &m); err != nil {
+			return nil, errutil.Wrap(err)
+		}
+
+		cards = append(cards, &m)
+	}
+
+	return &model.CardsOutput{
+		Cards: cards,
+		PageInfo: &model.PageInfo{
+			TotalCount: output.TotalCount,
+		},
+	}, nil
 }
 
 // Card is the resolver for the card field.

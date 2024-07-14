@@ -93,7 +93,6 @@ type ComplexityRoot struct {
 	}
 
 	PageInfo struct {
-		HasNext    func(childComplexity int) int
 		TotalCount func(childComplexity int) int
 	}
 
@@ -288,13 +287,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.Health(childComplexity), true
 
-	case "PageInfo.hasNext":
-		if e.complexity.PageInfo.HasNext == nil {
-			break
-		}
-
-		return e.complexity.PageInfo.HasNext(childComplexity), true
-
 	case "PageInfo.totalCount":
 		if e.complexity.PageInfo.TotalCount == nil {
 			break
@@ -483,11 +475,11 @@ var sources = []*ast.Source{
 }
 
 input CardsWhere {
-  deckId: Int
+  deckId: Int!
 }
 
 input CardsInput {
-  where: CardsWhere
+  where: CardsWhere!
   limit: Int = 100
   offset: Int = 0
 }
@@ -583,7 +575,6 @@ enum Role {
 
 type PageInfo {
   totalCount: Int!
-  hasNext: Boolean!
 }
 
 type Health {
@@ -1108,8 +1099,6 @@ func (ec *executionContext) fieldContext_CardsOutput_pageInfo(_ context.Context,
 			switch field.Name {
 			case "totalCount":
 				return ec.fieldContext_PageInfo_totalCount(ctx, field)
-			case "hasNext":
-				return ec.fieldContext_PageInfo_hasNext(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type PageInfo", field.Name)
 		},
@@ -1798,50 +1787,6 @@ func (ec *executionContext) fieldContext_PageInfo_totalCount(_ context.Context, 
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Int does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _PageInfo_hasNext(ctx context.Context, field graphql.CollectedField, obj *model.PageInfo) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_PageInfo_hasNext(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.HasNext, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(bool)
-	fc.Result = res
-	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_PageInfo_hasNext(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "PageInfo",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Boolean does not have child fields")
 		},
 	}
 	return fc, nil
@@ -4161,7 +4106,7 @@ func (ec *executionContext) unmarshalInputCardsInput(ctx context.Context, obj in
 		switch k {
 		case "where":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("where"))
-			data, err := ec.unmarshalOCardsWhere2ᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐCardsWhere(ctx, v)
+			data, err := ec.unmarshalNCardsWhere2ᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐCardsWhere(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -4202,7 +4147,7 @@ func (ec *executionContext) unmarshalInputCardsWhere(ctx context.Context, obj in
 		switch k {
 		case "deckId":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deckId"))
-			data, err := ec.unmarshalOInt2ᚖint(ctx, v)
+			data, err := ec.unmarshalNInt2int(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -4679,11 +4624,6 @@ func (ec *executionContext) _PageInfo(ctx context.Context, sel ast.SelectionSet,
 			out.Values[i] = graphql.MarshalString("PageInfo")
 		case "totalCount":
 			out.Values[i] = ec._PageInfo_totalCount(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "hasNext":
-			out.Values[i] = ec._PageInfo_hasNext(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -5239,6 +5179,11 @@ func (ec *executionContext) marshalNCardsOutput2ᚖgithubᚗcomᚋRyoheiTomiyama
 	return ec._CardsOutput(ctx, sel, v)
 }
 
+func (ec *executionContext) unmarshalNCardsWhere2ᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐCardsWhere(ctx context.Context, v interface{}) (*model.CardsWhere, error) {
+	res, err := ec.unmarshalInputCardsWhere(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNCreateCardInput2githubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐCreateCardInput(ctx context.Context, v interface{}) (model.CreateCardInput, error) {
 	res, err := ec.unmarshalInputCreateCardInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -5730,14 +5675,6 @@ func (ec *executionContext) unmarshalOCardsInput2ᚖgithubᚗcomᚋRyoheiTomiyam
 		return nil, nil
 	}
 	res, err := ec.unmarshalInputCardsInput(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) unmarshalOCardsWhere2ᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐCardsWhere(ctx context.Context, v interface{}) (*model.CardsWhere, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := ec.unmarshalInputCardsWhere(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 

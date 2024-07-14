@@ -20,11 +20,11 @@ type Card {
 }
 
 input CardsWhere {
-  deckId: Int
+  deckId: Int!
 }
 
 input CardsInput {
-  where: CardsWhere
+  where: CardsWhere!
   limit: Int = 100
   offset: Int = 0
 }

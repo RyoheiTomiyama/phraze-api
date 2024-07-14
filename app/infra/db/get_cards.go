@@ -20,10 +20,8 @@ func (c *client) GetCards(ctx context.Context, where *domain.CardsWhere, limit, 
 	var wheres []string
 	arg := map[string]interface{}{}
 	if where != nil {
-		if where.DeckID != nil {
-			wheres = append(wheres, "deck_id=:deck_id")
-			arg["deck_id"] = *where.DeckID
-		}
+		wheres = append(wheres, "deck_id=:deck_id")
+		arg["deck_id"] = where.DeckID
 	}
 
 	if len(wheres) > 0 {
