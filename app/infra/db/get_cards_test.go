@@ -33,7 +33,7 @@ func TestGetCards(t *testing.T) {
 			assert  func(result []*domain.Card)
 		}{
 			{
-				name: "where区なしの場合",
+				name: "where句なしの場合",
 				arrange: func() (where *domain.CardsWhere, limit int, offset int) {
 					return nil, 2, 0
 				},
