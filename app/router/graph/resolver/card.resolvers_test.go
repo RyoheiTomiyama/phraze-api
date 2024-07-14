@@ -108,8 +108,9 @@ func (s *resolverSuite) TestCards() {
 	ctx := context.Background()
 	ctx = auth.New(&domain.User{ID: userID}).WithCtx(ctx)
 
-	// fx := fixture.New(s.dbx)
-	// decks := fx.CreateDeck(s.T(), &fixture.DeckInput{UserID: userID})
+	fx := fixture.New(s.dbx)
+	decks := fx.CreateDeck(s.T(), &fixture.DeckInput{UserID: userID})
+	cards := fx.CreateCard(s.T(), decks[0].ID, make([]fixture.CardInput, 10)...)
 
 	s.T().Run("Validationエラー", func(t *testing.T) {
 		testCases := []struct {
@@ -137,6 +138,21 @@ func (s *resolverSuite) TestCards() {
 			result, err := s.resolver.Query().Cards(ctx, &tc.input)
 			assert.Nil(t, result)
 			tc.assert(err)
+		}
+	})
+
+	s.T().Run("Cardsが取得できること", func(t *testing.T) {
+		result, err := s.resolver.Query().Cards(ctx, &model.CardsInput{
+			Where: &model.CardsWhere{
+				DeckID: decks[0].ID,
+			},
+			Limit:  lo.ToPtr(2),
+			Offset: lo.ToPtr(0),
+		})
+		if assert.Nil(t, err) {
+			assert.Len(t, result.Cards, 2)
+			assertCard(t, cards[len(cards)-1].ToDomain(), result.Cards[0])
+			assertCard(t, cards[len(cards)-2].ToDomain(), result.Cards[1])
 		}
 	})
 }
