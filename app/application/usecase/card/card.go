@@ -12,6 +12,7 @@ import (
 type IUsecase interface {
 	CreateCard(ctx context.Context, card *domain.Card) (*domain.Card, error)
 	GetCards(ctx context.Context, input domain.GetCardsInput) (*GetCardsOutput, error)
+	UpdateCard(ctx context.Context, id int64, input domain.UpdateCardInput) (*domain.Card, error)
 }
 
 type usecase struct {
@@ -34,6 +35,15 @@ func (u *usecase) CreateCard(ctx context.Context, card *domain.Card) (*domain.Ca
 	}
 
 	card, err = u.dbClient.CreateCard(ctx, card)
+	if err != nil {
+		return nil, errutil.Wrap(err)
+	}
+
+	return card, nil
+}
+
+func (u *usecase) UpdateCard(ctx context.Context, id int64, input domain.UpdateCardInput) (*domain.Card, error) {
+	card, err := u.dbClient.UpdateCardByID(ctx, id, &input)
 	if err != nil {
 		return nil, errutil.Wrap(err)
 	}
