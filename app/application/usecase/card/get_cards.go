@@ -33,8 +33,13 @@ func (u *usecase) GetCards(ctx context.Context, input domain.GetCardsInput) (*Ge
 		return nil, errutil.Wrap(err)
 	}
 
+	count, err := u.dbClient.CountCards(ctx, input.Where)
+	if err != nil {
+		return nil, errutil.Wrap(err)
+	}
+
 	return &GetCardsOutput{
 		Cards:      cards,
-		TotalCount: 0,
+		TotalCount: count,
 	}, nil
 }
