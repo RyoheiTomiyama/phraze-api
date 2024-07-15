@@ -48,6 +48,10 @@ func (r *mutationResolver) CreateCard(ctx context.Context, input model.CreateCar
 
 // UpdateCard is the resolver for the updateCard field.
 func (r *mutationResolver) UpdateCard(ctx context.Context, input model.UpdateCardInput) (*model.UpdateCardOutput, error) {
+	if err := input.Validate(ctx); err != nil {
+		return nil, errutil.Wrap(err)
+	}
+
 	card, err := r.cardUsecase.UpdateCard(ctx, input.ID, domain.UpdateCardInput{
 		Field: domain.UpdateCardField{
 			Question: input.Question,

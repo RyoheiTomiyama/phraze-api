@@ -17,6 +17,7 @@ type client struct {
 
 type IClient interface {
 	CreateCard(ctx context.Context, card *domain.Card) (*domain.Card, error)
+	GetCard(ctx context.Context, id int64) (*domain.Card, error)
 	GetCards(ctx context.Context, where *domain.CardsWhere, limit, offset int) ([]*domain.Card, error)
 	UpdateCardByID(ctx context.Context, id int64, input *domain.UpdateCardInput) (*domain.Card, error)
 	CountCards(ctx context.Context, where *domain.CardsWhere) (*int, error)
