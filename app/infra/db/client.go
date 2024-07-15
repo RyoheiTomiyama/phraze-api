@@ -20,7 +20,8 @@ type IClient interface {
 	GetCard(ctx context.Context, id int64) (*domain.Card, error)
 	GetCards(ctx context.Context, where *domain.CardsWhere, limit, offset int) ([]*domain.Card, error)
 	UpdateCardByID(ctx context.Context, id int64, input *domain.UpdateCardInput) (*domain.Card, error)
-	CountCards(ctx context.Context, where *domain.CardsWhere) (*int, error)
+	CountCards(ctx context.Context, where *domain.CardsWhere) (int, error)
+
 	CreateDeck(ctx context.Context, deck *domain.Deck) (*domain.Deck, error)
 	GetDeck(ctx context.Context, id int64) (*domain.Deck, error)
 	GetDecks(ctx context.Context, userID string) ([]*domain.Deck, error)

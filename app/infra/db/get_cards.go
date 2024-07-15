@@ -3,9 +3,9 @@ package db
 import (
 	"context"
 	"fmt"
-	"strings"
 
 	"github.com/RyoheiTomiyama/phraze-api/domain"
+	"github.com/RyoheiTomiyama/phraze-api/infra/db/builder"
 	"github.com/RyoheiTomiyama/phraze-api/infra/db/model"
 	"github.com/RyoheiTomiyama/phraze-api/util/errutil"
 	"github.com/jmoiron/sqlx"
@@ -16,17 +16,13 @@ func (c *client) GetCards(ctx context.Context, where *domain.CardsWhere, limit, 
 	e := c.execerFrom(ctx)
 
 	query := `SELECT * FROM cards`
-
-	var wheres []string
 	arg := map[string]interface{}{}
+
 	if where != nil {
-		wheres = append(wheres, "deck_id=:deck_id")
-		arg["deck_id"] = where.DeckID
+		b := builder.CardsWhere(*where)
+		query, arg = b.BuildNamedWhere(ctx, query, arg)
 	}
 
-	if len(wheres) > 0 {
-		query = query + " WHERE " + strings.Join(wheres, " AND ")
-	}
 	query = query + " ORDER BY %s LIMIT %d OFFSET %d"
 	query = fmt.Sprintf(query, "updated_at DESC", limit, offset)
 
