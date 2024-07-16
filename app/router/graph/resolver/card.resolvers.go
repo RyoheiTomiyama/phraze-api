@@ -6,7 +6,6 @@ package resolver
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/RyoheiTomiyama/phraze-api/domain"
 	"github.com/RyoheiTomiyama/phraze-api/router/graph/model"
@@ -109,5 +108,18 @@ func (r *queryResolver) Cards(ctx context.Context, input *model.CardsInput) (*mo
 
 // Card is the resolver for the card field.
 func (r *queryResolver) Card(ctx context.Context, id int64) (*model.Card, error) {
-	panic(fmt.Errorf("not implemented: Card - card"))
+	card, err := r.cardUsecase.GetCard(ctx, id)
+	if err != nil {
+		return nil, errutil.Wrap(err)
+	}
+	if card == nil {
+		return nil, errutil.New(errutil.CodeNotFound, "Cardが見つかりませんでした")
+	}
+
+	var m model.Card
+	if err = model.FromDomain(ctx, card, &m); err != nil {
+		return nil, errutil.Wrap(err)
+	}
+
+	return &m, nil
 }
