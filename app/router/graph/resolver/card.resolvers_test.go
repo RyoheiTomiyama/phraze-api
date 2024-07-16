@@ -172,3 +172,38 @@ func (s *resolverSuite) TestCards() {
 		assertion.AssertError(t, "指定されたDeckのCardは取得できません", errutil.CodeForbidden, err)
 	})
 }
+
+func (s *resolverSuite) TestCard() {
+	userID := "test_user"
+	ctx := context.Background()
+	ctx = auth.New(&domain.User{ID: userID}).WithCtx(ctx)
+
+	fx := fixture.New(s.dbx)
+	decks := fx.CreateDeck(s.T(),
+		&fixture.DeckInput{UserID: userID},
+		&fixture.DeckInput{UserID: "other_user"},
+	)
+	cards := fx.CreateCard(s.T(), decks[0].ID, make([]fixture.CardInput, 1)...)
+	cards2 := fx.CreateCard(s.T(), decks[1].ID, make([]fixture.CardInput, 1)...)
+
+	s.T().Run("Cardsが取得できること", func(t *testing.T) {
+		result, err := s.resolver.Query().Card(ctx, cards[0].ID)
+		if assert.Nil(t, err) {
+			assertCard(t, cards[0].ToDomain(), result)
+		}
+	})
+
+	s.T().Run("存在しないカードの場合", func(t *testing.T) {
+		result, err := s.resolver.Query().Card(ctx, -1)
+		assert.Nil(t, result)
+		assertion.AssertError(t, "Cardが見つかりませんでした", errutil.CodeNotFound, err)
+
+	})
+
+	s.T().Run("他ユーザのCardを取得しようとした場合", func(t *testing.T) {
+		otherCard := cards2[0]
+		result, err := s.resolver.Query().Card(ctx, otherCard.ID)
+		assert.Nil(t, result)
+		assertion.AssertError(t, "指定されたCardは取得できません", errutil.CodeForbidden, err)
+	})
+}

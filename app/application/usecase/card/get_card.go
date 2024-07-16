@@ -24,7 +24,7 @@ func (u *usecase) GetCard(ctx context.Context, id int64) (*domain.Card, error) {
 		return nil, errutil.Wrap(err)
 	}
 	if deck != nil && deck.UserID != user.ID {
-		return nil, errutil.New(errutil.CodeForbidden, "権限がありません")
+		return nil, errutil.New(errutil.CodeForbidden, "指定されたCardは取得できません")
 	}
 
 	return card, nil
