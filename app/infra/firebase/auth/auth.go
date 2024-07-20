@@ -42,7 +42,8 @@ type customClaims struct {
 }
 
 func (c *client) Verify(ctx context.Context, idToken string) (*domain.User, error) {
-	token, err := c.client.VerifyIDTokenAndCheckRevoked(ctx, idToken)
+	// VerifyIDTokenAndCheckRevoked は遅いので使わない
+	token, err := c.client.VerifyIDToken(ctx, idToken)
 	if err != nil {
 		return nil, errutil.Wrap(err)
 	}
