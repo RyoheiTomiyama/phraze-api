@@ -82,7 +82,7 @@ type Query struct {
 }
 
 type UpdateCardInput struct {
-	ID       int64   `json:"ID"`
+	ID       int64   `json:"id"`
 	Question *string `json:"question,omitempty"`
 	Answer   *string `json:"answer,omitempty"`
 }

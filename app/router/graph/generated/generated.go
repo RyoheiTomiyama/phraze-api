@@ -538,7 +538,7 @@ type CreateCardOutput {
 }
 
 input UpdateCardInput {
-  ID: ID!
+  id: ID!
   question: String
   answer: String
 }
@@ -4429,15 +4429,15 @@ func (ec *executionContext) unmarshalInputUpdateCardInput(ctx context.Context, o
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"ID", "question", "answer"}
+	fieldsInOrder := [...]string{"id", "question", "answer"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
-		case "ID":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ID"))
+		case "id":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
 			data, err := ec.unmarshalNID2int64(ctx, v)
 			if err != nil {
 				return it, err
