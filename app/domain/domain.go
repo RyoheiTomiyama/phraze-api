@@ -18,3 +18,18 @@ type Card struct {
 	CreateAt  time.Time
 	UpdatedAt time.Time
 }
+
+type CardReview struct {
+	ID         int64
+	CardID     int64
+	ReviewedAt time.Time
+	Grade      int64
+}
+
+type CardSchedule struct {
+	ID         int64
+	CardID     int64
+	ScheduleAt time.Time
+	Interval   int64
+	Efactor    float64
+}
