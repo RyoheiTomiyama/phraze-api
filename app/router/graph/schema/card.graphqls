@@ -28,6 +28,13 @@ input CardsInput {
   limit: Int = 100
   offset: Int = 0
 }
+
+input PendingCardsInput {
+  where: CardsWhere!
+  limit: Int = 100
+  offset: Int = 0
+}
+
 type CardsOutput {
   cards: [Card!]
   pageInfo: PageInfo!
@@ -44,6 +51,12 @@ extend type Query {
   CardをIDで取得
   """
   card(id: ID!): Card! @hasRole(role: USER)
+
+  """
+  学習すべきCard一覧
+  最大100件取得可能
+  """
+  pendingCards(input: PendingCardsInput): CardsOutput! @hasRole(role: USER)
 }
 
 input CreateCardInput {

@@ -78,6 +78,12 @@ type PageInfo struct {
 	TotalCount int `json:"totalCount"`
 }
 
+type PendingCardsInput struct {
+	Where  *CardsWhere `json:"where"`
+	Limit  *int        `json:"limit,omitempty"`
+	Offset *int        `json:"offset,omitempty"`
+}
+
 type Query struct {
 }
 

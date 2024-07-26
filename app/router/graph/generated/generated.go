@@ -98,11 +98,12 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		Card   func(childComplexity int, id int64) int
-		Cards  func(childComplexity int, input *model.CardsInput) int
-		Deck   func(childComplexity int, id int64) int
-		Decks  func(childComplexity int) int
-		Health func(childComplexity int) int
+		Card         func(childComplexity int, id int64) int
+		Cards        func(childComplexity int, input *model.CardsInput) int
+		Deck         func(childComplexity int, id int64) int
+		Decks        func(childComplexity int) int
+		Health       func(childComplexity int) int
+		PendingCards func(childComplexity int, input *model.PendingCardsInput) int
 	}
 
 	UpdateCardOutput struct {
@@ -120,6 +121,7 @@ type QueryResolver interface {
 	Health(ctx context.Context) (*model.Health, error)
 	Cards(ctx context.Context, input *model.CardsInput) (*model.CardsOutput, error)
 	Card(ctx context.Context, id int64) (*model.Card, error)
+	PendingCards(ctx context.Context, input *model.PendingCardsInput) (*model.CardsOutput, error)
 	Decks(ctx context.Context) (*model.DecksOutput, error)
 	Deck(ctx context.Context, id int64) (*model.Deck, error)
 }
@@ -362,6 +364,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.Health(childComplexity), true
 
+	case "Query.pendingCards":
+		if e.complexity.Query.PendingCards == nil {
+			break
+		}
+
+		args, err := ec.field_Query_pendingCards_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.PendingCards(childComplexity, args["input"].(*model.PendingCardsInput)), true
+
 	case "UpdateCardOutput.card":
 		if e.complexity.UpdateCardOutput.Card == nil {
 			break
@@ -381,6 +395,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputCardsWhere,
 		ec.unmarshalInputCreateCardInput,
 		ec.unmarshalInputCreateDeckInput,
+		ec.unmarshalInputPendingCardsInput,
 		ec.unmarshalInputUpdateCardInput,
 	)
 	first := true
@@ -509,6 +524,13 @@ input CardsInput {
   limit: Int = 100
   offset: Int = 0
 }
+
+input PendingCardsInput {
+  where: CardsWhere!
+  limit: Int = 100
+  offset: Int = 0
+}
+
 type CardsOutput {
   cards: [Card!]
   pageInfo: PageInfo!
@@ -525,6 +547,12 @@ extend type Query {
   CardをIDで取得
   """
   card(id: ID!): Card! @hasRole(role: USER)
+
+  """
+  学習すべきCard一覧
+  最大100件取得可能
+  """
+  pendingCards(input: PendingCardsInput): CardsOutput! @hasRole(role: USER)
 }
 
 input CreateCardInput {
@@ -753,6 +781,21 @@ func (ec *executionContext) field_Query_deck_args(ctx context.Context, rawArgs m
 		}
 	}
 	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_pendingCards_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *model.PendingCardsInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalOPendingCardsInput2ᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐPendingCardsInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
 	return args, nil
 }
 
@@ -2150,6 +2193,91 @@ func (ec *executionContext) fieldContext_Query_card(ctx context.Context, field g
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_card_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_pendingCards(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_pendingCards(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().PendingCards(rctx, fc.Args["input"].(*model.PendingCardsInput))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			role, err := ec.unmarshalNRole2githubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐRole(ctx, "USER")
+			if err != nil {
+				return nil, err
+			}
+			if ec.directives.HasRole == nil {
+				return nil, errors.New("directive hasRole is not implemented")
+			}
+			return ec.directives.HasRole(ctx, nil, directive0, role)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.CardsOutput); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/RyoheiTomiyama/phraze-api/router/graph/model.CardsOutput`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.CardsOutput)
+	fc.Result = res
+	return ec.marshalNCardsOutput2ᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐCardsOutput(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_pendingCards(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "cards":
+				return ec.fieldContext_CardsOutput_cards(ctx, field)
+			case "pageInfo":
+				return ec.fieldContext_CardsOutput_pageInfo(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type CardsOutput", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_pendingCards_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -4422,6 +4550,54 @@ func (ec *executionContext) unmarshalInputCreateDeckInput(ctx context.Context, o
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputPendingCardsInput(ctx context.Context, obj interface{}) (model.PendingCardsInput, error) {
+	var it model.PendingCardsInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	if _, present := asMap["limit"]; !present {
+		asMap["limit"] = 100
+	}
+	if _, present := asMap["offset"]; !present {
+		asMap["offset"] = 0
+	}
+
+	fieldsInOrder := [...]string{"where", "limit", "offset"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "where":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("where"))
+			data, err := ec.unmarshalNCardsWhere2ᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐCardsWhere(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Where = data
+		case "limit":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("limit"))
+			data, err := ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Limit = data
+		case "offset":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("offset"))
+			data, err := ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Offset = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputUpdateCardInput(ctx context.Context, obj interface{}) (model.UpdateCardInput, error) {
 	var it model.UpdateCardInput
 	asMap := map[string]interface{}{}
@@ -4967,6 +5143,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_card(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "pendingCards":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_pendingCards(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
@@ -6041,6 +6239,14 @@ func (ec *executionContext) marshalOInt2ᚖint(ctx context.Context, sel ast.Sele
 	}
 	res := graphql.MarshalInt(*v)
 	return res
+}
+
+func (ec *executionContext) unmarshalOPendingCardsInput2ᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐPendingCardsInput(ctx context.Context, v interface{}) (*model.PendingCardsInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputPendingCardsInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalOString2ᚖstring(ctx context.Context, v interface{}) (*string, error) {

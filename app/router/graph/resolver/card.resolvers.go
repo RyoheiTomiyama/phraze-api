@@ -6,6 +6,7 @@ package resolver
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/RyoheiTomiyama/phraze-api/domain"
 	"github.com/RyoheiTomiyama/phraze-api/router/graph/model"
@@ -122,4 +123,9 @@ func (r *queryResolver) Card(ctx context.Context, id int64) (*model.Card, error)
 	}
 
 	return &m, nil
+}
+
+// PendingCards is the resolver for the pendingCards field.
+func (r *queryResolver) PendingCards(ctx context.Context, input *model.PendingCardsInput) (*model.CardsOutput, error) {
+	panic(fmt.Errorf("not implemented: PendingCards - pendingCards"))
 }
