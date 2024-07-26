@@ -6,7 +6,6 @@ package resolver
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/RyoheiTomiyama/phraze-api/domain"
 	"github.com/RyoheiTomiyama/phraze-api/router/graph/model"
@@ -127,5 +126,35 @@ func (r *queryResolver) Card(ctx context.Context, id int64) (*model.Card, error)
 
 // PendingCards is the resolver for the pendingCards field.
 func (r *queryResolver) PendingCards(ctx context.Context, input *model.PendingCardsInput) (*model.CardsOutput, error) {
-	panic(fmt.Errorf("not implemented: PendingCards - pendingCards"))
+	if err := input.Validate(ctx); err != nil {
+		return nil, errutil.Wrap(err)
+	}
+
+	output, err := r.cardUsecase.GetPendingCards(ctx, domain.GetPendingCardsInput{
+		Where: &domain.CardsWhere{
+			DeckID: input.Where.DeckID,
+		},
+		Limit:  input.Limit,
+		Offset: input.Offset,
+	})
+	if err != nil {
+		return nil, errutil.Wrap(err)
+	}
+
+	var cards []*model.Card
+	for _, item := range output.Cards {
+		var m model.Card
+		if err = model.FromDomain(ctx, item, &m); err != nil {
+			return nil, errutil.Wrap(err)
+		}
+
+		cards = append(cards, &m)
+	}
+
+	return &model.CardsOutput{
+		Cards: cards,
+		PageInfo: &model.PageInfo{
+			TotalCount: output.TotalCount,
+		},
+	}, nil
 }

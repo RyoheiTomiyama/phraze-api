@@ -13,6 +13,7 @@ type IUsecase interface {
 	CreateCard(ctx context.Context, card *domain.Card) (*domain.Card, error)
 	GetCard(ctx context.Context, id int64) (*domain.Card, error)
 	GetCards(ctx context.Context, input domain.GetCardsInput) (*GetCardsOutput, error)
+	GetPendingCards(ctx context.Context, input domain.GetPendingCardsInput) (*GetCardsOutput, error)
 	UpdateCard(ctx context.Context, id int64, input domain.UpdateCardInput) (*domain.Card, error)
 }
 

@@ -5,6 +5,11 @@ type GetCardsInput struct {
 	Limit  *int
 	Offset *int
 }
+type GetPendingCardsInput struct {
+	Where  *CardsWhere
+	Limit  *int
+	Offset *int
+}
 
 type CardsWhere struct {
 	DeckID int64
