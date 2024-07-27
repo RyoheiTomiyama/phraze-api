@@ -30,8 +30,8 @@ func (f *fixture) CreateCardSchedule(t *testing.T, cardSchedules ...CardSchedule
 	}
 
 	query := `
-		INSERT INTO card_schedules (card_id, interval, efactor) 
-		VALUES (:card_id, :interval, :efactor)
+		INSERT INTO card_schedules (card_id, interval, efactor, schedule_at) 
+		VALUES (:card_id, :interval, :efactor, :schedule_at)
 		RETURNING *
 	`
 
