@@ -4,6 +4,8 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"os"
+	"path/filepath"
 	"testing"
 
 	"ariga.io/atlas-go-sdk/atlasexec"
@@ -115,10 +117,16 @@ func migration() error {
 		config.DB.USER, config.DB.PASSWORD, config.DB.HOST, config.DB.PORT, TestDBName,
 	)
 
-	client, err := atlasexec.NewClient("..", "atlas")
+	dir, err := os.Getwd()
 	if err != nil {
 		return err
 	}
+
+	client, err := atlasexec.NewClient(filepath.Join(dir, "../../.."), "atlas")
+	if err != nil {
+		return err
+	}
+
 	_, err = client.SchemaApply(context.Background(), &atlasexec.SchemaApplyParams{
 		DevURL: "docker://postgres",
 		URL:    dataSource,
