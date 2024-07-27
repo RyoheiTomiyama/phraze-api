@@ -23,13 +23,13 @@ type CardReview struct {
 	ID         int64
 	CardID     int64
 	ReviewedAt time.Time
-	Grade      int64
+	Grade      int
 }
 
 type CardSchedule struct {
 	ID         int64
 	CardID     int64
 	ScheduleAt time.Time
-	Interval   int64
+	Interval   int
 	Efactor    float64
 }

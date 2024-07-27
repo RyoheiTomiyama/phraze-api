@@ -51,3 +51,37 @@ func (d *Deck) ToDomain() *domain.Deck {
 		UpdatedAt: d.UpdatedAt,
 	}
 }
+
+type CardSchedule struct {
+	ID         int64     `db:"id"`
+	CardID     int64     `db:"card_id"`
+	ScheduleAt time.Time `db:"schedule_at"`
+	Interval   int       `db:"interval"`
+	Efactor    float64   `db:"efactor"`
+}
+
+func (m *CardSchedule) ToCardSchedule() *domain.CardSchedule {
+	return &domain.CardSchedule{
+		ID:         m.ID,
+		CardID:     m.CardID,
+		ScheduleAt: m.ScheduleAt,
+		Interval:   m.Interval,
+		Efactor:    m.Efactor,
+	}
+}
+
+type CardReview struct {
+	ID         int64     `db:"id"`
+	CardID     int64     `db:"card_id"`
+	ReviewedAt time.Time `db:"reviewed_at"`
+	Grade      int       `db:"grade"`
+}
+
+func (m *CardReview) ToDomain() *domain.CardReview {
+	return &domain.CardReview{
+		ID:         m.ID,
+		CardID:     m.CardID,
+		ReviewedAt: m.ReviewedAt,
+		Grade:      m.Grade,
+	}
+}
