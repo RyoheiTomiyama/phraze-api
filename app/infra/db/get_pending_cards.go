@@ -12,13 +12,14 @@ import (
 	"github.com/samber/lo"
 )
 
-func (c *client) GetPendingCards(ctx context.Context, deckID int, to time.Time, limit, offset int) ([]*domain.Card, error) {
+func (c *client) GetPendingCards(ctx context.Context, deckID int64, to time.Time, limit, offset int) ([]*domain.Card, error) {
 	e := c.execerFrom(ctx)
 
 	query := `
-		SELECT * FROM cards
-		INNER JOIN card_schedules ON card_schedules.card_id = cards.id AND 
-		WHERE cards.deck_id=:deck_id AND card_schedules.schedule_at < :schedule_at
+		SELECT cards.* FROM cards
+		LEFT JOIN card_schedules ON card_schedules.card_id = cards.id
+		WHERE cards.deck_id=:deck_id 
+			AND (card_schedules.schedule_at IS NULL OR card_schedules.schedule_at < :schedule_at)
 	`
 	arg := map[string]interface{}{
 		"deck_id":     deckID,
@@ -26,7 +27,7 @@ func (c *client) GetPendingCards(ctx context.Context, deckID int, to time.Time, 
 	}
 
 	query = query + " ORDER BY %s LIMIT %d OFFSET %d"
-	query = fmt.Sprintf(query, "card_schedules.schedule_at ASC", limit, offset)
+	query = fmt.Sprintf(query, "card_schedules.schedule_at ASC NULLS FIRST", limit, offset)
 
 	query, args, err := e.BindNamed(query, arg)
 	if err != nil {
