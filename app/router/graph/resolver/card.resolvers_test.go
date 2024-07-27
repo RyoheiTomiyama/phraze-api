@@ -3,6 +3,7 @@ package resolver
 import (
 	"context"
 	"testing"
+	"time"
 
 	"github.com/RyoheiTomiyama/phraze-api/domain"
 	"github.com/RyoheiTomiyama/phraze-api/infra/db/fixture"
@@ -205,5 +206,69 @@ func (s *resolverSuite) TestCard() {
 		result, err := s.resolver.Query().Card(ctx, otherCard.ID)
 		assert.Nil(t, result)
 		assertion.AssertError(t, "指定されたCardは取得できません", errutil.CodeForbidden, err)
+	})
+}
+
+func (s *resolverSuite) TestPendingCards() {
+	userID := "test_user"
+	ctx := context.Background()
+	ctx = auth.New(&domain.User{ID: userID}).WithCtx(ctx)
+
+	fx := fixture.New(s.dbx)
+	decks := fx.CreateDeck(s.T(),
+		&fixture.DeckInput{UserID: userID},
+	)
+	cards := fx.CreateCard(s.T(), decks[0].ID, make([]fixture.CardInput, 5)...)
+	fx.CreateCardSchedule(s.T(), []fixture.CardScheduleInput{
+		{CardID: cards[2].ID, ScheduleAt: time.Now().Add(-10 * time.Hour)},
+		{CardID: cards[1].ID, ScheduleAt: time.Now().Add(-1 * time.Hour)},
+		// 学習済みのカード
+		{CardID: cards[4].ID, ScheduleAt: time.Now().Add(10 * time.Hour)},
+	}...)
+
+	s.T().Run("Validationエラー", func(t *testing.T) {
+		testCases := []struct {
+			name   string
+			input  model.PendingCardsInput
+			assert func(err error)
+		}{
+			{
+				name:  "DeckIDが0値の場合",
+				input: model.PendingCardsInput{Where: &model.CardsWhere{}},
+				assert: func(err error) {
+					assertion.AssertError(t, "DeckIDは必須項目です", errutil.CodeBadRequest, err)
+				},
+			},
+			{
+				name:  "Limitが100より大きい場合",
+				input: model.PendingCardsInput{Where: &model.CardsWhere{DeckID: 100}, Limit: lo.ToPtr(101)},
+				assert: func(err error) {
+					assertion.AssertError(t, "Limitは100が最大です", errutil.CodeBadRequest, err)
+				},
+			},
+		}
+
+		for _, tc := range testCases {
+			result, err := s.resolver.Query().PendingCards(ctx, &tc.input)
+			assert.Nil(t, result)
+			tc.assert(err)
+		}
+	})
+
+	s.T().Run("未学習のCardsがSchedule古い順に取得できること", func(t *testing.T) {
+		result, err := s.resolver.Query().PendingCards(ctx, &model.PendingCardsInput{
+			Where: &model.CardsWhere{
+				DeckID: decks[0].ID,
+			},
+			Limit:  lo.ToPtr(100),
+			Offset: lo.ToPtr(0),
+		})
+		if assert.Nil(t, err) {
+			assert.Len(t, result.Cards, 4)
+			assertCard(t, cards[0].ToDomain(), result.Cards[0])
+			assertCard(t, cards[3].ToDomain(), result.Cards[1])
+			assertCard(t, cards[2].ToDomain(), result.Cards[2])
+			assertCard(t, cards[1].ToDomain(), result.Cards[3])
+		}
 	})
 }

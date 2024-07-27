@@ -13,8 +13,6 @@ import (
 func FromDomain(ctx context.Context, d any, target interface{}) error {
 	log := logger.FromCtx(ctx)
 
-	log.Debug("FromDomain", "d", d, "target", target)
-
 	switch v := d.(type) {
 
 	case *domain.Deck:
