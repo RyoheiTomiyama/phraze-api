@@ -90,6 +90,7 @@ type ComplexityRoot struct {
 		CreateCard func(childComplexity int, input model.CreateCardInput) int
 		CreateDeck func(childComplexity int, input model.CreateDeckInput) int
 		Health     func(childComplexity int) int
+		ReviewCard func(childComplexity int, input model.ReviewCardInput) int
 		UpdateCard func(childComplexity int, input model.UpdateCardInput) int
 	}
 
@@ -110,6 +111,10 @@ type ComplexityRoot struct {
 		PendingCards func(childComplexity int, input *model.PendingCardsInput) int
 	}
 
+	ReviewCardOutput struct {
+		CardID func(childComplexity int) int
+	}
+
 	UpdateCardOutput struct {
 		Card func(childComplexity int) int
 	}
@@ -120,6 +125,7 @@ type MutationResolver interface {
 	CreateCard(ctx context.Context, input model.CreateCardInput) (*model.CreateCardOutput, error)
 	UpdateCard(ctx context.Context, input model.UpdateCardInput) (*model.UpdateCardOutput, error)
 	CreateDeck(ctx context.Context, input model.CreateDeckInput) (*model.CreateDeckOutput, error)
+	ReviewCard(ctx context.Context, input model.ReviewCardInput) (*model.ReviewCardOutput, error)
 }
 type QueryResolver interface {
 	Health(ctx context.Context) (*model.Health, error)
@@ -299,6 +305,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.Health(childComplexity), true
 
+	case "Mutation.reviewCard":
+		if e.complexity.Mutation.ReviewCard == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_reviewCard_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.ReviewCard(childComplexity, args["input"].(model.ReviewCardInput)), true
+
 	case "Mutation.updateCard":
 		if e.complexity.Mutation.UpdateCard == nil {
 			break
@@ -387,6 +405,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.PendingCards(childComplexity, args["input"].(*model.PendingCardsInput)), true
 
+	case "ReviewCardOutput.cardId":
+		if e.complexity.ReviewCardOutput.CardID == nil {
+			break
+		}
+
+		return e.complexity.ReviewCardOutput.CardID(childComplexity), true
+
 	case "UpdateCardOutput.card":
 		if e.complexity.UpdateCardOutput.Card == nil {
 			break
@@ -407,6 +432,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputCreateCardInput,
 		ec.unmarshalInputCreateDeckInput,
 		ec.unmarshalInputPendingCardsInput,
+		ec.unmarshalInputReviewCardInput,
 		ec.unmarshalInputUpdateCardInput,
 	)
 	first := true
@@ -645,6 +671,19 @@ extend type Mutation {
   createDeck(input: CreateDeckInput!): CreateDeckOutput! @hasRole(role: USER)
 }
 `, BuiltIn: false},
+	{Name: "../schema/review_card.graphqls", Input: `input ReviewCardInput {
+  cardId: ID!
+  grade: Int!
+}
+
+type ReviewCardOutput {
+  cardId: ID!
+}
+
+extend type Mutation {
+  reviewCard(input: ReviewCardInput!): ReviewCardOutput! @hasRole(role: USER)
+}
+`, BuiltIn: false},
 	{Name: "../schema/schema.graphqls", Input: `# GraphQL schema example
 #
 # https://gqlgen.com/getting-started/
@@ -717,6 +756,21 @@ func (ec *executionContext) field_Mutation_createDeck_args(ctx context.Context, 
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg0, err = ec.unmarshalNCreateDeckInput2githubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐCreateDeckInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_reviewCard_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.ReviewCardInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNReviewCardInput2githubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐReviewCardInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -1945,6 +1999,89 @@ func (ec *executionContext) fieldContext_Mutation_createDeck(ctx context.Context
 	return fc, nil
 }
 
+func (ec *executionContext) _Mutation_reviewCard(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_reviewCard(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().ReviewCard(rctx, fc.Args["input"].(model.ReviewCardInput))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			role, err := ec.unmarshalNRole2githubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐRole(ctx, "USER")
+			if err != nil {
+				return nil, err
+			}
+			if ec.directives.HasRole == nil {
+				return nil, errors.New("directive hasRole is not implemented")
+			}
+			return ec.directives.HasRole(ctx, nil, directive0, role)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.ReviewCardOutput); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/RyoheiTomiyama/phraze-api/router/graph/model.ReviewCardOutput`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.ReviewCardOutput)
+	fc.Result = res
+	return ec.marshalNReviewCardOutput2ᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐReviewCardOutput(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_reviewCard(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "cardId":
+				return ec.fieldContext_ReviewCardOutput_cardId(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type ReviewCardOutput", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_reviewCard_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _PageInfo_totalCount(ctx context.Context, field graphql.CollectedField, obj *model.PageInfo) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_PageInfo_totalCount(ctx, field)
 	if err != nil {
@@ -2640,6 +2777,50 @@ func (ec *executionContext) fieldContext_Query___schema(_ context.Context, field
 				return ec.fieldContext___Schema_directives(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type __Schema", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ReviewCardOutput_cardId(ctx context.Context, field graphql.CollectedField, obj *model.ReviewCardOutput) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ReviewCardOutput_cardId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CardID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int64)
+	fc.Result = res
+	return ec.marshalNID2int64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ReviewCardOutput_cardId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ReviewCardOutput",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
 		},
 	}
 	return fc, nil
@@ -4667,6 +4848,40 @@ func (ec *executionContext) unmarshalInputPendingCardsInput(ctx context.Context,
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputReviewCardInput(ctx context.Context, obj interface{}) (model.ReviewCardInput, error) {
+	var it model.ReviewCardInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"cardId", "grade"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "cardId":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("cardId"))
+			data, err := ec.unmarshalNID2int64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CardID = data
+		case "grade":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("grade"))
+			data, err := ec.unmarshalNInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Grade = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputUpdateCardInput(ctx context.Context, obj interface{}) (model.UpdateCardInput, error) {
 	var it model.UpdateCardInput
 	asMap := map[string]interface{}{}
@@ -5077,6 +5292,13 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		case "reviewCard":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_reviewCard(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -5334,6 +5556,45 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Query___schema(ctx, field)
 			})
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var reviewCardOutputImplementors = []string{"ReviewCardOutput"}
+
+func (ec *executionContext) _ReviewCardOutput(ctx context.Context, sel ast.SelectionSet, obj *model.ReviewCardOutput) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, reviewCardOutputImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ReviewCardOutput")
+		case "cardId":
+			out.Values[i] = ec._ReviewCardOutput_cardId(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -5902,6 +6163,25 @@ func (ec *executionContext) marshalNPendingCardsOutput2ᚖgithubᚗcomᚋRyoheiT
 		return graphql.Null
 	}
 	return ec._PendingCardsOutput(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNReviewCardInput2githubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐReviewCardInput(ctx context.Context, v interface{}) (model.ReviewCardInput, error) {
+	res, err := ec.unmarshalInputReviewCardInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNReviewCardOutput2githubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐReviewCardOutput(ctx context.Context, sel ast.SelectionSet, v model.ReviewCardOutput) graphql.Marshaler {
+	return ec._ReviewCardOutput(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNReviewCardOutput2ᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐReviewCardOutput(ctx context.Context, sel ast.SelectionSet, v *model.ReviewCardOutput) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._ReviewCardOutput(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNRole2githubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐRole(ctx context.Context, v interface{}) (model.Role, error) {

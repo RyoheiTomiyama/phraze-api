@@ -91,6 +91,15 @@ type PendingCardsOutput struct {
 type Query struct {
 }
 
+type ReviewCardInput struct {
+	CardID int64 `json:"cardId"`
+	Grade  int   `json:"grade"`
+}
+
+type ReviewCardOutput struct {
+	CardID int64 `json:"cardId"`
+}
+
 type UpdateCardInput struct {
 	ID       int64   `json:"id"`
 	Question *string `json:"question,omitempty"`

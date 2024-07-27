@@ -1,0 +1,12 @@
+input ReviewCardInput {
+  cardId: ID!
+  grade: Int!
+}
+
+type ReviewCardOutput {
+  cardId: ID!
+}
+
+extend type Mutation {
+  reviewCard(input: ReviewCardInput!): ReviewCardOutput! @hasRole(role: USER)
+}
