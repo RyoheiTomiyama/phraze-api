@@ -84,6 +84,10 @@ type PendingCardsInput struct {
 	Offset *int        `json:"offset,omitempty"`
 }
 
+type PendingCardsOutput struct {
+	Cards []*Card `json:"cards,omitempty"`
+}
+
 type Query struct {
 }
 

@@ -125,7 +125,7 @@ func (r *queryResolver) Card(ctx context.Context, id int64) (*model.Card, error)
 }
 
 // PendingCards is the resolver for the pendingCards field.
-func (r *queryResolver) PendingCards(ctx context.Context, input *model.PendingCardsInput) (*model.CardsOutput, error) {
+func (r *queryResolver) PendingCards(ctx context.Context, input *model.PendingCardsInput) (*model.PendingCardsOutput, error) {
 	if err := input.Validate(ctx); err != nil {
 		return nil, errutil.Wrap(err)
 	}
@@ -151,10 +151,7 @@ func (r *queryResolver) PendingCards(ctx context.Context, input *model.PendingCa
 		cards = append(cards, &m)
 	}
 
-	return &model.CardsOutput{
+	return &model.PendingCardsOutput{
 		Cards: cards,
-		PageInfo: &model.PageInfo{
-			TotalCount: output.TotalCount,
-		},
 	}, nil
 }
