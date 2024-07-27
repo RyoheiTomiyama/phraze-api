@@ -60,7 +60,7 @@ type CardSchedule struct {
 	Efactor    float64   `db:"efactor"`
 }
 
-func (m *CardSchedule) ToCardSchedule() *domain.CardSchedule {
+func (m *CardSchedule) ToDomain() *domain.CardSchedule {
 	return &domain.CardSchedule{
 		ID:         m.ID,
 		CardID:     m.CardID,
