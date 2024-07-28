@@ -15,7 +15,8 @@ import (
 func assertUpsertedCardSchedule(t *testing.T, expect *domain.CardSchedule, actual *domain.CardSchedule) {
 	t.Helper()
 
-	assert.Equal(t, expect.ScheduleAt.Format(time.RFC3339Nano), actual.ScheduleAt.Format(time.RFC3339Nano))
+	// 環境によってtime.TimeがLocal/UTC、nano秒/micro秒のズレが起こるのでFormatして比較
+	assert.Equal(t, expect.ScheduleAt.Format(time.StampMicro), actual.ScheduleAt.Format(time.StampMicro))
 	expect.ID = actual.ID
 	expect.ScheduleAt = actual.ScheduleAt
 	assert.Equal(t, expect, actual)
