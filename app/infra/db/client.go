@@ -29,6 +29,7 @@ type IClient interface {
 	UpsertCardReview(ctx context.Context, review *domain.CardReview) (*domain.CardReview, error)
 
 	/* card_schedules */
+	GetCardSchedule(ctx context.Context, cardID int64) (*domain.CardSchedule, error)
 	UpsertCardSchedule(ctx context.Context, schedule *domain.CardSchedule) (*domain.CardSchedule, error)
 
 	CreateDeck(ctx context.Context, deck *domain.Deck) (*domain.Deck, error)
