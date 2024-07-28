@@ -32,8 +32,14 @@ func (u *usecase) ReviewCard(ctx context.Context, id int64, grade int) error {
 	if err != nil {
 		return errutil.Wrap(err)
 	}
+	if schedule == nil {
+		schedule = &domain.CardSchedule{CardID: id}
+	}
 
-	schedule = u.cardService.EvalSchedule(ctx, grade, schedule)
+	schedule, err = u.cardService.EvalSchedule(ctx, grade, schedule)
+	if err != nil {
+		return errutil.Wrap(err)
+	}
 
 	if err = u.dbClient.Tx(ctx, func(ctx context.Context) error {
 		if _, err := u.dbClient.UpsertCardReview(ctx, &domain.CardReview{

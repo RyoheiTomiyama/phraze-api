@@ -6,25 +6,26 @@ import (
 	"time"
 
 	"github.com/RyoheiTomiyama/phraze-api/domain"
+	"github.com/RyoheiTomiyama/phraze-api/util/errutil"
+	"github.com/samber/lo"
 )
 
 type cardService struct{}
 
 type ICardService interface {
-	EvalSchedule(ctx context.Context, grade int, prevSchedule *domain.CardSchedule) *domain.CardSchedule
+	EvalSchedule(ctx context.Context, grade int, prevSchedule *domain.CardSchedule) (*domain.CardSchedule, error)
 }
 
 func NewService() ICardService {
 	return &cardService{}
 }
 
-func (s *cardService) EvalSchedule(ctx context.Context, grade int, prevSchedule *domain.CardSchedule) *domain.CardSchedule {
-	factor := 1.0
-	interval := 20
-	if prevSchedule != nil {
-		factor = prevSchedule.Efactor
-		interval = prevSchedule.Interval
+func (s *cardService) EvalSchedule(ctx context.Context, grade int, prevSchedule *domain.CardSchedule) (*domain.CardSchedule, error) {
+	if prevSchedule == nil {
+		return nil, errutil.New(errutil.CodeInternalError, "prevScheduleは必須")
 	}
+	factor := lo.Ternary(prevSchedule.Efactor == 0, 1.0, prevSchedule.Efactor)
+	interval := lo.Ternary(prevSchedule.Interval == 0, 20, prevSchedule.Interval)
 
 	interval, factor = calcEvaluation(grade, interval, factor)
 
@@ -33,7 +34,7 @@ func (s *cardService) EvalSchedule(ctx context.Context, grade int, prevSchedule 
 	nextSchedule.Interval = interval
 	nextSchedule.ScheduleAt = time.Now().Add(time.Duration(interval) * time.Minute)
 
-	return nextSchedule
+	return nextSchedule, nil
 }
 
 func calcEvaluation(grade, interval int, factor float64) (nextInterval int, nextFactor float64) {

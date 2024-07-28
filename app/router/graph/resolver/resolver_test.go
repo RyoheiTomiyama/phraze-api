@@ -16,6 +16,7 @@ type resolverSuite struct {
 	suite.Suite
 	resolver *Resolver
 	dbx      *sqlx.DB
+	dbClient db.IClient
 }
 
 func TestResolverSuite(t *testing.T) {
@@ -33,5 +34,5 @@ func TestResolverSuite(t *testing.T) {
 		deckUsecase,
 	}
 
-	suite.Run(t, &resolverSuite{resolver: resolver, dbx: dbx})
+	suite.Run(t, &resolverSuite{resolver: resolver, dbx: dbx, dbClient: dbClient})
 }
