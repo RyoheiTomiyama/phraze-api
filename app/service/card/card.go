@@ -1,6 +1,5 @@
-package service
+package card
 
-import "math"
 
 type cardService struct{}
 

@@ -13,6 +13,7 @@ import (
 	"github.com/RyoheiTomiyama/phraze-api/router"
 	"github.com/RyoheiTomiyama/phraze-api/router/graph/directive"
 	"github.com/RyoheiTomiyama/phraze-api/router/graph/resolver"
+	card_service "github.com/RyoheiTomiyama/phraze-api/service/card"
 	"github.com/RyoheiTomiyama/phraze-api/util/env"
 	"github.com/RyoheiTomiyama/phraze-api/util/logger"
 )
@@ -46,9 +47,12 @@ func main() {
 		panic(err)
 	}
 
+	// service
+	cardService := card_service.NewService()
+
 	// usecase
 	authUsecase := auth.New(firebaseAuthClient)
-	cardUsecase := card.New(dbClient)
+	cardUsecase := card.New(dbClient, cardService)
 	deckUsecase := deck.New(dbClient)
 
 	resolver := resolver.New(cardUsecase, deckUsecase)

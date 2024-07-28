@@ -5,6 +5,7 @@ import (
 
 	"github.com/RyoheiTomiyama/phraze-api/domain"
 	"github.com/RyoheiTomiyama/phraze-api/infra/db"
+	"github.com/RyoheiTomiyama/phraze-api/service/card"
 	"github.com/RyoheiTomiyama/phraze-api/util/auth"
 	"github.com/RyoheiTomiyama/phraze-api/util/errutil"
 )
@@ -19,11 +20,12 @@ type IUsecase interface {
 }
 
 type usecase struct {
-	dbClient db.IClient
+	dbClient    db.IClient
+	cardService card.ICardService
 }
 
-func New(dbClient db.IClient) IUsecase {
-	return &usecase{dbClient}
+func New(dbClient db.IClient, cardService card.ICardService) IUsecase {
+	return &usecase{dbClient, cardService}
 }
 
 func (u *usecase) CreateCard(ctx context.Context, card *domain.Card) (*domain.Card, error) {

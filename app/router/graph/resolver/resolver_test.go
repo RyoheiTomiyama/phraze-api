@@ -6,6 +6,7 @@ import (
 	"github.com/RyoheiTomiyama/phraze-api/application/usecase/card"
 	"github.com/RyoheiTomiyama/phraze-api/application/usecase/deck"
 	"github.com/RyoheiTomiyama/phraze-api/infra/db"
+	card_service "github.com/RyoheiTomiyama/phraze-api/service/card"
 	db_test "github.com/RyoheiTomiyama/phraze-api/test/db"
 	"github.com/jmoiron/sqlx"
 	"github.com/stretchr/testify/suite"
@@ -22,8 +23,9 @@ func TestResolverSuite(t *testing.T) {
 	defer dbx.Close()
 
 	dbClient := db.NewTestClient(t, dbx)
+	cardService := card_service.NewService()
 
-	cardUsecase := card.New(dbClient)
+	cardUsecase := card.New(dbClient, cardService)
 	deckUsecase := deck.New(dbClient)
 
 	resolver := &Resolver{
