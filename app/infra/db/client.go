@@ -26,6 +26,7 @@ type IClient interface {
 	CountCards(ctx context.Context, where *domain.CardsWhere) (int, error)
 
 	/* card_reviews */
+	GetCardReview(ctx context.Context, cardID int64) (*domain.CardReview, error)
 	UpsertCardReview(ctx context.Context, review *domain.CardReview) (*domain.CardReview, error)
 
 	/* card_schedules */
