@@ -24,8 +24,8 @@ func (s *cardService) EvalSchedule(ctx context.Context, grade int, prevSchedule 
 	if prevSchedule == nil {
 		return nil, errutil.New(errutil.CodeInternalError, "prevScheduleは必須")
 	}
-	factor := lo.Ternary(prevSchedule.Efactor == 0, 1.0, prevSchedule.Efactor)
-	interval := lo.Ternary(prevSchedule.Interval == 0, 20, prevSchedule.Interval)
+	factor := lo.Ternary(prevSchedule.Efactor > 1.0, prevSchedule.Efactor, 1.0)
+	interval := lo.Ternary(prevSchedule.Interval > 20, prevSchedule.Interval, 20)
 
 	interval, factor = calcEvaluation(grade, interval, factor)
 
@@ -38,10 +38,14 @@ func (s *cardService) EvalSchedule(ctx context.Context, grade int, prevSchedule 
 }
 
 func calcEvaluation(grade, interval int, factor float64) (nextInterval int, nextFactor float64) {
+	if grade < 3 {
+		return 0, 1.0
+	}
+
 	factor += (0.2 - float64(5-grade)*(0.08+float64(5-grade)*0.02)) / (factor * factor * factor)
 	factor = round(max(1.0, factor), 2)
 
-	interval = int(float64(interval) * float64(grade-2) * factor)
+	interval += int(float64(interval) * (float64(grade-2)*factor - 1))
 
 	return interval, factor
 }
