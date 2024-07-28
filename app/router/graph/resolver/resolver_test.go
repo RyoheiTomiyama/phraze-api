@@ -1,4 +1,4 @@
-package resolver
+package resolver_test
 
 import (
 	"testing"
@@ -6,6 +6,7 @@ import (
 	"github.com/RyoheiTomiyama/phraze-api/application/usecase/card"
 	"github.com/RyoheiTomiyama/phraze-api/application/usecase/deck"
 	"github.com/RyoheiTomiyama/phraze-api/infra/db"
+	"github.com/RyoheiTomiyama/phraze-api/router/graph/resolver"
 	card_service "github.com/RyoheiTomiyama/phraze-api/service/card"
 	db_test "github.com/RyoheiTomiyama/phraze-api/test/db"
 	"github.com/jmoiron/sqlx"
@@ -14,7 +15,7 @@ import (
 
 type resolverSuite struct {
 	suite.Suite
-	resolver *Resolver
+	resolver *resolver.Resolver
 	dbx      *sqlx.DB
 	dbClient db.IClient
 }
@@ -32,10 +33,7 @@ func (s *resolverSuite) SetupTest() {
 	cardUsecase := card.New(dbClient, cardService)
 	deckUsecase := deck.New(dbClient)
 
-	resolver := &Resolver{
-		cardUsecase,
-		deckUsecase,
-	}
+	resolver := resolver.New(cardUsecase, deckUsecase)
 
 	s.resolver = resolver
 	s.dbx = dbx
