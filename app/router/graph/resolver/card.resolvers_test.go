@@ -23,7 +23,7 @@ func assertCard(t *testing.T, expect *domain.Card, actual *model.Card) {
 		DeckID:    expect.DeckID,
 		Question:  expect.Question,
 		Answer:    expect.Answer,
-		CreatedAt: expect.CreateAt,
+		CreatedAt: expect.CreatedAt,
 		UpdatedAt: expect.UpdatedAt,
 	}
 	assert.Equal(t, em, actual)

@@ -6,7 +6,7 @@ type Deck struct {
 	ID        int64
 	UserID    string
 	Name      string
-	CreateAt  time.Time
+	CreatedAt time.Time
 	UpdatedAt time.Time
 }
 
@@ -15,7 +15,7 @@ type Card struct {
 	DeckID    int64
 	Question  string
 	Answer    string
-	CreateAt  time.Time
+	CreatedAt time.Time
 	UpdatedAt time.Time
 }
 

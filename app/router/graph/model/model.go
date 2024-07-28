@@ -31,7 +31,7 @@ func FromDomain(ctx context.Context, d any, target interface{}) error {
 		t.ID = v.ID
 		t.UserID = v.UserID
 		t.Name = v.Name
-		t.CreatedAt = v.CreateAt
+		t.CreatedAt = v.CreatedAt
 		t.UpdatedAt = v.UpdatedAt
 
 		return nil
@@ -52,7 +52,7 @@ func FromDomain(ctx context.Context, d any, target interface{}) error {
 		t.DeckID = v.DeckID
 		t.Question = v.Question
 		t.Answer = v.Answer
-		t.CreatedAt = v.CreateAt
+		t.CreatedAt = v.CreatedAt
 		t.UpdatedAt = v.UpdatedAt
 
 		return nil

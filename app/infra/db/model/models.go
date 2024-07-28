@@ -37,7 +37,7 @@ func (d *Card) ToDomain() *domain.Card {
 		DeckID:    d.DeckID,
 		Question:  d.Question,
 		Answer:    d.Answer,
-		CreateAt:  d.CreatedAt,
+		CreatedAt: d.CreatedAt,
 		UpdatedAt: d.UpdatedAt,
 	}
 }
@@ -47,7 +47,7 @@ func (d *Deck) ToDomain() *domain.Deck {
 		ID:        d.ID,
 		UserID:    d.UserID,
 		Name:      d.Name,
-		CreateAt:  d.CreatedAt,
+		CreatedAt: d.CreatedAt,
 		UpdatedAt: d.UpdatedAt,
 	}
 }

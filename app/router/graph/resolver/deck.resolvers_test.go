@@ -20,7 +20,7 @@ func assertDeck(t *testing.T, expect *domain.Deck, actual *model.Deck) {
 		ID:        expect.ID,
 		UserID:    expect.UserID,
 		Name:      expect.Name,
-		CreatedAt: expect.CreateAt,
+		CreatedAt: expect.CreatedAt,
 		UpdatedAt: expect.UpdatedAt,
 	}
 	assert.Equal(t, em, actual)
