@@ -28,6 +28,13 @@ func (u *usecase) ReviewCard(ctx context.Context, id int64, grade int) error {
 		return errutil.New(errutil.CodeBadRequest, "指定されたCardのレビューはできません")
 	}
 
+	schedule, err := u.dbClient.GetCardSchedule(ctx, id)
+	if err != nil {
+		return errutil.Wrap(err)
+	}
+
+	schedule = u.cardService.EvalSchedule(ctx, grade, schedule)
+
 	if err = u.dbClient.Tx(ctx, func(ctx context.Context) error {
 		if _, err := u.dbClient.UpsertCardReview(ctx, &domain.CardReview{
 			CardID:     id,
@@ -37,12 +44,7 @@ func (u *usecase) ReviewCard(ctx context.Context, id int64, grade int) error {
 			return nil
 		}
 
-		if _, err = u.dbClient.UpsertCardSchedule(ctx, &domain.CardSchedule{
-			CardID:     id,
-			ScheduleAt: time.Now(), // TODO
-			Interval:   20,         // TODO
-			Efactor:    1.0,        // TODO
-		}); err != nil {
+		if _, err = u.dbClient.UpsertCardSchedule(ctx, schedule); err != nil {
 			return nil
 		}
 

@@ -1,17 +1,42 @@
 package card
 
+import (
+	"context"
+	"math"
+	"time"
+
+	"github.com/RyoheiTomiyama/phraze-api/domain"
+)
 
 type cardService struct{}
 
 type ICardService interface {
-	CalcSchedule(grade int, interval int, factor float64) (nextInterval int, nextFactor float64)
+	EvalSchedule(ctx context.Context, grade int, prevSchedule *domain.CardSchedule) *domain.CardSchedule
 }
 
-func NewCardService() ICardService {
+func NewService() ICardService {
 	return &cardService{}
 }
 
-func (s *cardService) CalcSchedule(grade int, interval int, factor float64) (nextInterval int, nextFactor float64) {
+func (s *cardService) EvalSchedule(ctx context.Context, grade int, prevSchedule *domain.CardSchedule) *domain.CardSchedule {
+	factor := 1.0
+	interval := 20
+	if prevSchedule != nil {
+		factor = prevSchedule.Efactor
+		interval = prevSchedule.Interval
+	}
+
+	interval, factor = calcEvaluation(grade, interval, factor)
+
+	nextSchedule := prevSchedule
+	nextSchedule.Efactor = factor
+	nextSchedule.Interval = interval
+	nextSchedule.ScheduleAt = time.Now().Add(time.Duration(interval) * time.Minute)
+
+	return nextSchedule
+}
+
+func calcEvaluation(grade, interval int, factor float64) (nextInterval int, nextFactor float64) {
 	factor += (0.2 - float64(5-grade)*(0.08+float64(5-grade)*0.02)) / (factor * factor * factor)
 	factor = round(max(1.0, factor), 2)
 
