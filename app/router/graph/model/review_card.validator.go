@@ -12,7 +12,7 @@ func (i *ReviewCardInput) Validate(ctx context.Context) error {
 
 	type input struct {
 		CardID int64 `json:"cardId" validate:"required"`
-		Grade  int   `json:"grade" validate:"required,min=1,max=5"`
+		Grade  int   `json:"grade" validate:"min=1,max=5"`
 	}
 	err := v.StructCtx(ctx, input(*i))
 	if err == nil {

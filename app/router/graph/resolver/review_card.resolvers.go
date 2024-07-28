@@ -6,12 +6,20 @@ package resolver
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/RyoheiTomiyama/phraze-api/router/graph/model"
+	"github.com/RyoheiTomiyama/phraze-api/util/errutil"
 )
 
 // ReviewCard is the resolver for the reviewCard field.
 func (r *mutationResolver) ReviewCard(ctx context.Context, input model.ReviewCardInput) (*model.ReviewCardOutput, error) {
-	panic(fmt.Errorf("not implemented: ReviewCard - reviewCard"))
+	if err := input.Validate(ctx); err != nil {
+		return nil, errutil.Wrap(err)
+	}
+
+	if err := r.cardUsecase.ReviewCard(ctx, input.CardID, input.Grade); err != nil {
+		return nil, errutil.Wrap(err)
+	}
+
+	return &model.ReviewCardOutput{CardID: input.CardID}, nil
 }
