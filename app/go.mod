@@ -12,6 +12,7 @@ require (
 	github.com/go-playground/validator/v10 v10.22.0
 	github.com/stretchr/testify v1.9.0
 	github.com/vektah/gqlparser/v2 v2.5.16
+	github.com/vikstrous/dataloadgen v0.0.6
 )
 
 require (

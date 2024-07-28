@@ -39,6 +39,7 @@ type Config struct {
 }
 
 type ResolverRoot interface {
+	Deck() DeckResolver
 	Mutation() MutationResolver
 	Query() QueryResolver
 }
@@ -71,11 +72,12 @@ type ComplexityRoot struct {
 	}
 
 	Deck struct {
-		CreatedAt func(childComplexity int) int
-		ID        func(childComplexity int) int
-		Name      func(childComplexity int) int
-		UpdatedAt func(childComplexity int) int
-		UserID    func(childComplexity int) int
+		CreatedAt  func(childComplexity int) int
+		ID         func(childComplexity int) int
+		Name       func(childComplexity int) int
+		ScheduleAt func(childComplexity int) int
+		UpdatedAt  func(childComplexity int) int
+		UserID     func(childComplexity int) int
 	}
 
 	DecksOutput struct {
@@ -120,6 +122,9 @@ type ComplexityRoot struct {
 	}
 }
 
+type DeckResolver interface {
+	ScheduleAt(ctx context.Context, obj *model.Deck) (*time.Time, error)
+}
 type MutationResolver interface {
 	Health(ctx context.Context) (*model.Health, error)
 	CreateCard(ctx context.Context, input model.CreateCardInput) (*model.CreateCardOutput, error)
@@ -245,6 +250,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Deck.Name(childComplexity), true
+
+	case "Deck.scheduleAt":
+		if e.complexity.Deck.ScheduleAt == nil {
+			break
+		}
+
+		return e.complexity.Deck.ScheduleAt(childComplexity), true
 
 	case "Deck.updatedAt":
 		if e.complexity.Deck.UpdatedAt == nil {
@@ -634,6 +646,7 @@ extend type Mutation {
   name: String!
   createdAt: Timestamp!
   updatedAt: Timestamp!
+  scheduleAt: Timestamp
 }
 
 type DecksOutput {
@@ -1381,6 +1394,8 @@ func (ec *executionContext) fieldContext_CreateDeckOutput_deck(_ context.Context
 				return ec.fieldContext_Deck_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Deck_updatedAt(ctx, field)
+			case "scheduleAt":
+				return ec.fieldContext_Deck_scheduleAt(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Deck", field.Name)
 		},
@@ -1608,6 +1623,47 @@ func (ec *executionContext) fieldContext_Deck_updatedAt(_ context.Context, field
 	return fc, nil
 }
 
+func (ec *executionContext) _Deck_scheduleAt(ctx context.Context, field graphql.CollectedField, obj *model.Deck) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Deck_scheduleAt(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Deck().ScheduleAt(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*time.Time)
+	fc.Result = res
+	return ec.marshalOTimestamp2ᚖtimeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Deck_scheduleAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Deck",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Timestamp does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _DecksOutput_decks(ctx context.Context, field graphql.CollectedField, obj *model.DecksOutput) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_DecksOutput_decks(ctx, field)
 	if err != nil {
@@ -1654,6 +1710,8 @@ func (ec *executionContext) fieldContext_DecksOutput_decks(_ context.Context, fi
 				return ec.fieldContext_Deck_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Deck_updatedAt(ctx, field)
+			case "scheduleAt":
+				return ec.fieldContext_Deck_scheduleAt(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Deck", field.Name)
 		},
@@ -2635,6 +2693,8 @@ func (ec *executionContext) fieldContext_Query_deck(ctx context.Context, field g
 				return ec.fieldContext_Deck_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Deck_updatedAt(ctx, field)
+			case "scheduleAt":
+				return ec.fieldContext_Deck_scheduleAt(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Deck", field.Name)
 		},
@@ -5128,28 +5188,61 @@ func (ec *executionContext) _Deck(ctx context.Context, sel ast.SelectionSet, obj
 		case "id":
 			out.Values[i] = ec._Deck_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "userId":
 			out.Values[i] = ec._Deck_userId(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "name":
 			out.Values[i] = ec._Deck_name(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "createdAt":
 			out.Values[i] = ec._Deck_createdAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "updatedAt":
 			out.Values[i] = ec._Deck_updatedAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
+		case "scheduleAt":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Deck_scheduleAt(ctx, field, obj)
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -6661,6 +6754,22 @@ func (ec *executionContext) marshalOString2ᚖstring(ctx context.Context, sel as
 		return graphql.Null
 	}
 	res := graphql.MarshalString(*v)
+	return res
+}
+
+func (ec *executionContext) unmarshalOTimestamp2ᚖtimeᚐTime(ctx context.Context, v interface{}) (*time.Time, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := graphql.UnmarshalTime(v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOTimestamp2ᚖtimeᚐTime(ctx context.Context, sel ast.SelectionSet, v *time.Time) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	res := graphql.MarshalTime(*v)
 	return res
 }
 

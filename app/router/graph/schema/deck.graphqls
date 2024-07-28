@@ -4,6 +4,7 @@ type Deck {
   name: String!
   createdAt: Timestamp!
   updatedAt: Timestamp!
+  scheduleAt: Timestamp
 }
 
 type DecksOutput {

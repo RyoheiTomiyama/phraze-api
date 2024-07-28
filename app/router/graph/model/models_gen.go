@@ -56,11 +56,12 @@ type CreateDeckOutput struct {
 }
 
 type Deck struct {
-	ID        int64     `json:"id"`
-	UserID    string    `json:"userId"`
-	Name      string    `json:"name"`
-	CreatedAt time.Time `json:"createdAt"`
-	UpdatedAt time.Time `json:"updatedAt"`
+	ID         int64      `json:"id"`
+	UserID     string     `json:"userId"`
+	Name       string     `json:"name"`
+	CreatedAt  time.Time  `json:"createdAt"`
+	UpdatedAt  time.Time  `json:"updatedAt"`
+	ScheduleAt *time.Time `json:"scheduleAt,omitempty"`
 }
 
 type DecksOutput struct {

@@ -6,11 +6,23 @@ package resolver
 
 import (
 	"context"
+	"time"
 
 	"github.com/RyoheiTomiyama/phraze-api/domain"
+	"github.com/RyoheiTomiyama/phraze-api/router/graph/generated"
 	"github.com/RyoheiTomiyama/phraze-api/router/graph/model"
 	"github.com/RyoheiTomiyama/phraze-api/util/errutil"
 )
+
+// ScheduleAt is the resolver for the scheduleAt field.
+func (r *deckResolver) ScheduleAt(ctx context.Context, obj *model.Deck) (*time.Time, error) {
+	scheduleAt, err := r.deckLoader.GetScheduleAt(ctx, obj.ID)
+	if err != nil {
+		return nil, errutil.Wrap(err)
+	}
+
+	return scheduleAt, nil
+}
 
 // CreateDeck is the resolver for the createDeck field.
 func (r *mutationResolver) CreateDeck(ctx context.Context, input model.CreateDeckInput) (*model.CreateDeckOutput, error) {
@@ -73,3 +85,8 @@ func (r *queryResolver) Deck(ctx context.Context, id int64) (*model.Deck, error)
 
 	return &m, nil
 }
+
+// Deck returns generated.DeckResolver implementation.
+func (r *Resolver) Deck() generated.DeckResolver { return &deckResolver{r} }
+
+type deckResolver struct{ *Resolver }
