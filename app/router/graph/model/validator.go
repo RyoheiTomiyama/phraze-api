@@ -20,6 +20,8 @@ func translateValidateError(e validator.FieldError) string {
 	switch e.Tag() {
 	case "required":
 		return fmt.Sprintf("%sは必須項目です", e.StructField())
+	case "min":
+		return fmt.Sprintf("%sは%sが最小です", e.StructField(), e.Param())
 	case "max":
 		return fmt.Sprintf("%sは%sが最大です", e.StructField(), e.Param())
 	}
