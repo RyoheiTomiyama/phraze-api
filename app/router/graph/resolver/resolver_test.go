@@ -20,10 +20,13 @@ type resolverSuite struct {
 }
 
 func TestResolverSuite(t *testing.T) {
-	dbx := db_test.GetDB(t)
-	defer dbx.Close()
+	suite.Run(t, &resolverSuite{})
+}
 
-	dbClient := db.NewTestClient(t, dbx)
+// テスト間で干渉してしまうので、テストごとにtxdbをリセットする
+func (s *resolverSuite) SetupTest() {
+	dbx := db_test.GetDB(s.T())
+	dbClient := db.NewTestClient(s.T(), dbx)
 	cardService := card_service.NewService()
 
 	cardUsecase := card.New(dbClient, cardService)
@@ -34,5 +37,11 @@ func TestResolverSuite(t *testing.T) {
 		deckUsecase,
 	}
 
-	suite.Run(t, &resolverSuite{resolver: resolver, dbx: dbx, dbClient: dbClient})
+	s.resolver = resolver
+	s.dbx = dbx
+	s.dbClient = dbClient
+}
+
+func (s *resolverSuite) TearDownTest() {
+	s.dbx.Close()
 }
