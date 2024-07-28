@@ -4,8 +4,8 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"os"
 	"path/filepath"
+	"runtime"
 	"testing"
 
 	"ariga.io/atlas-go-sdk/atlasexec"
@@ -117,10 +117,10 @@ func migration() error {
 		config.DB.USER, config.DB.PASSWORD, config.DB.HOST, config.DB.PORT, TestDBName,
 	)
 
-	dir, err := os.Getwd()
-	if err != nil {
-		return err
-	}
+	_, testSourceFile, _, _ := runtime.Caller(0)
+	dir := filepath.Dir(testSourceFile)
+
+	fmt.Println(filepath.Join(dir, "../../.."))
 
 	client, err := atlasexec.NewClient(filepath.Join(dir, "../../.."), "atlas")
 	if err != nil {
