@@ -14,6 +14,7 @@ type IUsecase interface {
 	GetCard(ctx context.Context, id int64) (*domain.Card, error)
 	GetCards(ctx context.Context, input domain.GetCardsInput) (*GetCardsOutput, error)
 	GetPendingCards(ctx context.Context, input domain.GetPendingCardsInput) (*GetPendingCardsOutput, error)
+	ReviewCard(ctx context.Context, id int64, grade int) error
 	UpdateCard(ctx context.Context, id int64, input domain.UpdateCardInput) (*domain.Card, error)
 }
 

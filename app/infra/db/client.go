@@ -34,6 +34,8 @@ type IClient interface {
 	CreateDeck(ctx context.Context, deck *domain.Deck) (*domain.Deck, error)
 	GetDeck(ctx context.Context, id int64) (*domain.Deck, error)
 	GetDecks(ctx context.Context, userID string) ([]*domain.Deck, error)
+
+	Tx(ctx context.Context, fn func(ctx context.Context) error) error
 }
 
 type DataSourceOption struct {
