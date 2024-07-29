@@ -16,7 +16,7 @@ func (c *client) GetLatestCardSchedulesByDeckID(ctx context.Context, deckIDs []i
 		WITH ranked_schedules AS (
 			SELECT 
 				cs.*,
-				c.deck_id as deck_id
+				c.deck_id as deck_id,
 				ROW_NUMBER() OVER (PARTITION BY c.deck_id ORDER BY cs.schedule_at ASC) AS rn
 			FROM 
 				card_schedules cs
@@ -36,10 +36,17 @@ func (c *client) GetLatestCardSchedulesByDeckID(ctx context.Context, deckIDs []i
 		"deck_ids": deckIDs,
 	}
 
-	query, args, err := e.BindNamed(query, arg)
+	query, args, err := sqlx.Named(query, arg)
 	if err != nil {
 		return nil, errutil.Wrap(err)
 	}
+
+	query, args, err = sqlx.In(query, args...)
+	if err != nil {
+		return nil, errutil.Wrap(err)
+	}
+
+	query = e.Rebind(query)
 
 	type scheduleWithDeckID struct {
 		model.CardSchedule
