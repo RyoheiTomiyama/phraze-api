@@ -31,6 +31,7 @@ type IClient interface {
 
 	/* card_schedules */
 	GetCardSchedule(ctx context.Context, cardID int64) (*domain.CardSchedule, error)
+	GetLatestCardSchedulesByDeckID(ctx context.Context, deckIDs []int64) (map[int64]*domain.CardSchedule, error)
 	UpsertCardSchedule(ctx context.Context, schedule *domain.CardSchedule) (*domain.CardSchedule, error)
 
 	CreateDeck(ctx context.Context, deck *domain.Deck) (*domain.Deck, error)
