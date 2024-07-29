@@ -6,7 +6,6 @@ import (
 
 	"github.com/RyoheiTomiyama/phraze-api/application/usecase/card"
 	"github.com/RyoheiTomiyama/phraze-api/util/errutil"
-	"github.com/samber/lo"
 	"github.com/vikstrous/dataloadgen"
 )
 
@@ -40,7 +39,10 @@ type deckReader struct {
 }
 
 func (r *deckReader) ReadScheduleAt(ctx context.Context, deckIDs []int64) ([]*time.Time, []error) {
-	return lo.Map(make([]*time.Time, len(deckIDs)), func(t *time.Time, i int) *time.Time {
-		return lo.ToPtr(time.Now())
-	}), nil
+	schedules, err := r.cardUsecase.ReadScheduleAt(ctx, deckIDs)
+	if err != nil {
+		return nil, []error{errutil.Wrap(err)}
+	}
+
+	return schedules, nil
 }
