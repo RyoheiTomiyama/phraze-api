@@ -9,6 +9,7 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
+// 直近のスケジュールをDeckIDごとに取得する
 func (c *client) GetLatestCardSchedulesByDeckID(ctx context.Context, deckIDs []int64) (map[int64]*domain.CardSchedule, error) {
 	e := c.execerFrom(ctx)
 
@@ -23,7 +24,7 @@ func (c *client) GetLatestCardSchedulesByDeckID(ctx context.Context, deckIDs []i
 			JOIN 
 				cards c ON cs.card_id = c.id
 			WHERE 
-				c.deck_id IN (:deck_ids)
+				c.deck_id IN (:deck_ids) AND cs.schedule_at > NOW()
 		)
 		SELECT 
 			id, card_id, schedule_at, interval, efactor, deck_id

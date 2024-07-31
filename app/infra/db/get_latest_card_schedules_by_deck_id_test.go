@@ -8,6 +8,7 @@ import (
 
 	"github.com/RyoheiTomiyama/phraze-api/infra/db/fixture"
 	db_test "github.com/RyoheiTomiyama/phraze-api/test/db"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestGetLatestCardSchedulesByDeckID(t *testing.T) {
@@ -26,7 +27,7 @@ func TestGetLatestCardSchedulesByDeckID(t *testing.T) {
 	cards3 := fx.CreateCard(t, decks[2].ID, make([]fixture.CardInput, 2)...)
 	cards4 := fx.CreateCard(t, decks[3].ID, make([]fixture.CardInput, 3)...)
 
-	fx.CreateCardSchedule(t, []fixture.CardScheduleInput{
+	schedules := fx.CreateCardSchedule(t, []fixture.CardScheduleInput{
 		//過去日のみ
 		{CardID: cards1[0].ID, ScheduleAt: time.Now().Add(-3 * time.Hour)},
 		{CardID: cards1[1].ID, ScheduleAt: time.Now().Add(-10 * time.Hour)},
@@ -48,5 +49,11 @@ func TestGetLatestCardSchedulesByDeckID(t *testing.T) {
 		)
 		fmt.Println(err)
 		t.Log(result, err)
+
+		assert.Nil(t, result[decks[0].ID])
+		assert.Equal(t, schedules[2].ID, result[decks[1].ID].ID)
+		assert.Equal(t, schedules[5].ID, result[decks[2].ID].ID)
+		assert.Equal(t, schedules[7].ID, result[decks[3].ID].ID)
+		assert.Nil(t, result[decks[4].ID])
 	})
 }
