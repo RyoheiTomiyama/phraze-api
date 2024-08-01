@@ -38,6 +38,8 @@ type IClient interface {
 	GetDeck(ctx context.Context, id int64) (*domain.Deck, error)
 	GetDecks(ctx context.Context, userID string) ([]*domain.Deck, error)
 
+	GetDeckInfosByDeckID(ctx context.Context, deckIDs []int64) (map[int64]*domain.DeckInfo, error)
+
 	Tx(ctx context.Context, fn func(ctx context.Context) error) error
 }
 

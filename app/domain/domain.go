@@ -10,6 +10,12 @@ type Deck struct {
 	UpdatedAt time.Time
 }
 
+type DeckInfo struct {
+	TotalCardCount    int
+	ScheduleCardCount int
+	ScheduleAt        *time.Time
+}
+
 type Card struct {
 	ID        int64
 	DeckID    int64
