@@ -87,5 +87,5 @@ models:
       - github.com/99designs/gqlgen/graphql.Time
   Deck:
     fields:
-      scheduleAt:
+      deckInfo:
         resolver: true

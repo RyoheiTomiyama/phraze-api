@@ -6,7 +6,7 @@ package resolver
 
 import (
 	"context"
-	"time"
+	"fmt"
 
 	"github.com/RyoheiTomiyama/phraze-api/domain"
 	"github.com/RyoheiTomiyama/phraze-api/router/graph/generated"
@@ -14,14 +14,9 @@ import (
 	"github.com/RyoheiTomiyama/phraze-api/util/errutil"
 )
 
-// ScheduleAt is the resolver for the scheduleAt field.
-func (r *deckResolver) ScheduleAt(ctx context.Context, obj *model.Deck) (*time.Time, error) {
-	scheduleAt, err := r.deckLoader.GetScheduleAt(ctx, obj.ID)
-	if err != nil {
-		return nil, errutil.Wrap(err)
-	}
-
-	return scheduleAt, nil
+// DeckInfo is the resolver for the deckInfo field.
+func (r *deckResolver) DeckInfo(ctx context.Context, obj *model.Deck) (*model.DeckInfo, error) {
+	panic(fmt.Errorf("not implemented: DeckInfo - deckInfo"))
 }
 
 // CreateDeck is the resolver for the createDeck field.

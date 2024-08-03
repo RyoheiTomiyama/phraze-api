@@ -4,7 +4,15 @@ type Deck {
   name: String!
   createdAt: Timestamp!
   updatedAt: Timestamp!
-  scheduleAt: Timestamp
+
+  deckInfo: DeckInfo!
+}
+
+type DeckInfo {
+  TotalCardCount: Int!
+  PendingCardCount: Int!
+  LearnedCardCount: Int!
+  ScheduleAt: Timestamp
 }
 
 type DecksOutput {

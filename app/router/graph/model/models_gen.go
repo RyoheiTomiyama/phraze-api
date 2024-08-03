@@ -56,12 +56,19 @@ type CreateDeckOutput struct {
 }
 
 type Deck struct {
-	ID         int64      `json:"id"`
-	UserID     string     `json:"userId"`
-	Name       string     `json:"name"`
-	CreatedAt  time.Time  `json:"createdAt"`
-	UpdatedAt  time.Time  `json:"updatedAt"`
-	ScheduleAt *time.Time `json:"scheduleAt,omitempty"`
+	ID        int64     `json:"id"`
+	UserID    string    `json:"userId"`
+	Name      string    `json:"name"`
+	CreatedAt time.Time `json:"createdAt"`
+	UpdatedAt time.Time `json:"updatedAt"`
+	DeckInfo  *DeckInfo `json:"deckInfo"`
+}
+
+type DeckInfo struct {
+	TotalCardCount   int        `json:"TotalCardCount"`
+	PendingCardCount int        `json:"PendingCardCount"`
+	LearnedCardCount int        `json:"LearnedCardCount"`
+	ScheduleAt       *time.Time `json:"ScheduleAt,omitempty"`
 }
 
 type DecksOutput struct {

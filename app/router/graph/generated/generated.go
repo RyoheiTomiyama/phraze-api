@@ -72,12 +72,19 @@ type ComplexityRoot struct {
 	}
 
 	Deck struct {
-		CreatedAt  func(childComplexity int) int
-		ID         func(childComplexity int) int
-		Name       func(childComplexity int) int
-		ScheduleAt func(childComplexity int) int
-		UpdatedAt  func(childComplexity int) int
-		UserID     func(childComplexity int) int
+		CreatedAt func(childComplexity int) int
+		DeckInfo  func(childComplexity int) int
+		ID        func(childComplexity int) int
+		Name      func(childComplexity int) int
+		UpdatedAt func(childComplexity int) int
+		UserID    func(childComplexity int) int
+	}
+
+	DeckInfo struct {
+		LearnedCardCount func(childComplexity int) int
+		PendingCardCount func(childComplexity int) int
+		ScheduleAt       func(childComplexity int) int
+		TotalCardCount   func(childComplexity int) int
 	}
 
 	DecksOutput struct {
@@ -123,7 +130,7 @@ type ComplexityRoot struct {
 }
 
 type DeckResolver interface {
-	ScheduleAt(ctx context.Context, obj *model.Deck) (*time.Time, error)
+	DeckInfo(ctx context.Context, obj *model.Deck) (*model.DeckInfo, error)
 }
 type MutationResolver interface {
 	Health(ctx context.Context) (*model.Health, error)
@@ -237,6 +244,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Deck.CreatedAt(childComplexity), true
 
+	case "Deck.deckInfo":
+		if e.complexity.Deck.DeckInfo == nil {
+			break
+		}
+
+		return e.complexity.Deck.DeckInfo(childComplexity), true
+
 	case "Deck.id":
 		if e.complexity.Deck.ID == nil {
 			break
@@ -251,13 +265,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Deck.Name(childComplexity), true
 
-	case "Deck.scheduleAt":
-		if e.complexity.Deck.ScheduleAt == nil {
-			break
-		}
-
-		return e.complexity.Deck.ScheduleAt(childComplexity), true
-
 	case "Deck.updatedAt":
 		if e.complexity.Deck.UpdatedAt == nil {
 			break
@@ -271,6 +278,34 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Deck.UserID(childComplexity), true
+
+	case "DeckInfo.LearnedCardCount":
+		if e.complexity.DeckInfo.LearnedCardCount == nil {
+			break
+		}
+
+		return e.complexity.DeckInfo.LearnedCardCount(childComplexity), true
+
+	case "DeckInfo.PendingCardCount":
+		if e.complexity.DeckInfo.PendingCardCount == nil {
+			break
+		}
+
+		return e.complexity.DeckInfo.PendingCardCount(childComplexity), true
+
+	case "DeckInfo.ScheduleAt":
+		if e.complexity.DeckInfo.ScheduleAt == nil {
+			break
+		}
+
+		return e.complexity.DeckInfo.ScheduleAt(childComplexity), true
+
+	case "DeckInfo.TotalCardCount":
+		if e.complexity.DeckInfo.TotalCardCount == nil {
+			break
+		}
+
+		return e.complexity.DeckInfo.TotalCardCount(childComplexity), true
 
 	case "DecksOutput.decks":
 		if e.complexity.DecksOutput.Decks == nil {
@@ -646,7 +681,15 @@ extend type Mutation {
   name: String!
   createdAt: Timestamp!
   updatedAt: Timestamp!
-  scheduleAt: Timestamp
+
+  deckInfo: DeckInfo!
+}
+
+type DeckInfo {
+  TotalCardCount: Int!
+  PendingCardCount: Int!
+  LearnedCardCount: Int!
+  ScheduleAt: Timestamp
 }
 
 type DecksOutput {
@@ -1394,8 +1437,8 @@ func (ec *executionContext) fieldContext_CreateDeckOutput_deck(_ context.Context
 				return ec.fieldContext_Deck_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Deck_updatedAt(ctx, field)
-			case "scheduleAt":
-				return ec.fieldContext_Deck_scheduleAt(ctx, field)
+			case "deckInfo":
+				return ec.fieldContext_Deck_deckInfo(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Deck", field.Name)
 		},
@@ -1623,8 +1666,8 @@ func (ec *executionContext) fieldContext_Deck_updatedAt(_ context.Context, field
 	return fc, nil
 }
 
-func (ec *executionContext) _Deck_scheduleAt(ctx context.Context, field graphql.CollectedField, obj *model.Deck) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Deck_scheduleAt(ctx, field)
+func (ec *executionContext) _Deck_deckInfo(ctx context.Context, field graphql.CollectedField, obj *model.Deck) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Deck_deckInfo(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1637,7 +1680,193 @@ func (ec *executionContext) _Deck_scheduleAt(ctx context.Context, field graphql.
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Deck().ScheduleAt(rctx, obj)
+		return ec.resolvers.Deck().DeckInfo(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.DeckInfo)
+	fc.Result = res
+	return ec.marshalNDeckInfo2ᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐDeckInfo(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Deck_deckInfo(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Deck",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "TotalCardCount":
+				return ec.fieldContext_DeckInfo_TotalCardCount(ctx, field)
+			case "PendingCardCount":
+				return ec.fieldContext_DeckInfo_PendingCardCount(ctx, field)
+			case "LearnedCardCount":
+				return ec.fieldContext_DeckInfo_LearnedCardCount(ctx, field)
+			case "ScheduleAt":
+				return ec.fieldContext_DeckInfo_ScheduleAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type DeckInfo", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DeckInfo_TotalCardCount(ctx context.Context, field graphql.CollectedField, obj *model.DeckInfo) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_DeckInfo_TotalCardCount(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalCardCount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_DeckInfo_TotalCardCount(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DeckInfo",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DeckInfo_PendingCardCount(ctx context.Context, field graphql.CollectedField, obj *model.DeckInfo) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_DeckInfo_PendingCardCount(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PendingCardCount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_DeckInfo_PendingCardCount(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DeckInfo",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DeckInfo_LearnedCardCount(ctx context.Context, field graphql.CollectedField, obj *model.DeckInfo) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_DeckInfo_LearnedCardCount(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.LearnedCardCount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_DeckInfo_LearnedCardCount(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DeckInfo",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DeckInfo_ScheduleAt(ctx context.Context, field graphql.CollectedField, obj *model.DeckInfo) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_DeckInfo_ScheduleAt(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ScheduleAt, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1651,12 +1880,12 @@ func (ec *executionContext) _Deck_scheduleAt(ctx context.Context, field graphql.
 	return ec.marshalOTimestamp2ᚖtimeᚐTime(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Deck_scheduleAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_DeckInfo_ScheduleAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "Deck",
+		Object:     "DeckInfo",
 		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
+		IsMethod:   false,
+		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Timestamp does not have child fields")
 		},
@@ -1710,8 +1939,8 @@ func (ec *executionContext) fieldContext_DecksOutput_decks(_ context.Context, fi
 				return ec.fieldContext_Deck_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Deck_updatedAt(ctx, field)
-			case "scheduleAt":
-				return ec.fieldContext_Deck_scheduleAt(ctx, field)
+			case "deckInfo":
+				return ec.fieldContext_Deck_deckInfo(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Deck", field.Name)
 		},
@@ -2693,8 +2922,8 @@ func (ec *executionContext) fieldContext_Query_deck(ctx context.Context, field g
 				return ec.fieldContext_Deck_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Deck_updatedAt(ctx, field)
-			case "scheduleAt":
-				return ec.fieldContext_Deck_scheduleAt(ctx, field)
+			case "deckInfo":
+				return ec.fieldContext_Deck_deckInfo(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Deck", field.Name)
 		},
@@ -5210,16 +5439,19 @@ func (ec *executionContext) _Deck(ctx context.Context, sel ast.SelectionSet, obj
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
-		case "scheduleAt":
+		case "deckInfo":
 			field := field
 
-			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Deck_scheduleAt(ctx, field, obj)
+				res = ec._Deck_deckInfo(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
 				return res
 			}
 
@@ -5243,6 +5475,57 @@ func (ec *executionContext) _Deck(ctx context.Context, sel ast.SelectionSet, obj
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var deckInfoImplementors = []string{"DeckInfo"}
+
+func (ec *executionContext) _DeckInfo(ctx context.Context, sel ast.SelectionSet, obj *model.DeckInfo) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, deckInfoImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("DeckInfo")
+		case "TotalCardCount":
+			out.Values[i] = ec._DeckInfo_TotalCardCount(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "PendingCardCount":
+			out.Values[i] = ec._DeckInfo_PendingCardCount(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "LearnedCardCount":
+			out.Values[i] = ec._DeckInfo_LearnedCardCount(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "ScheduleAt":
+			out.Values[i] = ec._DeckInfo_ScheduleAt(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -6174,6 +6457,20 @@ func (ec *executionContext) marshalNDeck2ᚖgithubᚗcomᚋRyoheiTomiyamaᚋphra
 		return graphql.Null
 	}
 	return ec._Deck(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNDeckInfo2githubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐDeckInfo(ctx context.Context, sel ast.SelectionSet, v model.DeckInfo) graphql.Marshaler {
+	return ec._DeckInfo(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNDeckInfo2ᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐDeckInfo(ctx context.Context, sel ast.SelectionSet, v *model.DeckInfo) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._DeckInfo(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNDecksOutput2githubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐDecksOutput(ctx context.Context, sel ast.SelectionSet, v model.DecksOutput) graphql.Marshaler {
