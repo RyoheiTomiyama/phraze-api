@@ -23,7 +23,7 @@ func New(
 	cardUsecase card.IUsecase,
 	deckUsecase deck.IUsecase,
 ) *Resolver {
-	deckLoader := loader.NewDeckLoader(cardUsecase)
+	deckLoader := loader.NewDeckLoader(deckUsecase)
 
 	return &Resolver{
 		deckLoader,

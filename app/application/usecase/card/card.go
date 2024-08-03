@@ -2,7 +2,6 @@ package card
 
 import (
 	"context"
-	"time"
 
 	"github.com/RyoheiTomiyama/phraze-api/domain"
 	"github.com/RyoheiTomiyama/phraze-api/infra/db"
@@ -18,8 +17,6 @@ type IUsecase interface {
 	GetPendingCards(ctx context.Context, input domain.GetPendingCardsInput) (*GetPendingCardsOutput, error)
 	ReviewCard(ctx context.Context, id int64, grade int) error
 	UpdateCard(ctx context.Context, id int64, input domain.UpdateCardInput) (*domain.Card, error)
-
-	ReadScheduleAt(ctx context.Context, deckIDs []int64) ([]*time.Time, error)
 }
 
 type usecase struct {
