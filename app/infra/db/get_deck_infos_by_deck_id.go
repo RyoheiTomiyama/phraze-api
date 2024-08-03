@@ -8,6 +8,7 @@ import (
 	"github.com/RyoheiTomiyama/phraze-api/domain"
 	"github.com/RyoheiTomiyama/phraze-api/util/errutil"
 	"github.com/jmoiron/sqlx"
+	"github.com/samber/lo"
 )
 
 func (c *client) GetDeckInfosByDeckID(ctx context.Context, deckIDs []int64) (map[int64]*domain.DeckInfo, error) {
@@ -18,7 +19,7 @@ func (c *client) GetDeckInfosByDeckID(ctx context.Context, deckIDs []int64) (map
 		SELECT
 			c.deck_id,
 			COUNT(c.id) AS total_card_count,
-			COUNT(cs.card_id) FILTER(WHERE cs.schedule_at > NOW()) AS schedule_card_count,
+			COUNT(cs.card_id) FILTER(WHERE cs.schedule_at > NOW()) AS learned_card_count,
 			MIN(cs.schedule_at) FILTER(WHERE cs.schedule_at > NOW()) AS schedule_at
 		FROM
 			cards c
@@ -47,10 +48,10 @@ func (c *client) GetDeckInfosByDeckID(ctx context.Context, deckIDs []int64) (map
 	query = e.Rebind(query)
 
 	type scheduleWithDeckID struct {
-		DeckID            int64      `db:"deck_id"`
-		TotalCardCount    int        `db:"total_card_count"`
-		ScheduleCardCount int        `db:"schedule_card_count"`
-		SchedulaAt        *time.Time `db:"schedule_at"`
+		DeckID           int64      `db:"deck_id"`
+		TotalCardCount   int        `db:"total_card_count"`
+		LearnedCardCount int        `db:"learned_card_count"`
+		SchedulaAt       *time.Time `db:"schedule_at"`
 	}
 	var schedulesWithDeckID []*scheduleWithDeckID
 	if err = sqlx.SelectContext(ctx, e, &schedulesWithDeckID, query, args...); err != nil {
@@ -65,11 +66,17 @@ func (c *client) GetDeckInfosByDeckID(ctx context.Context, deckIDs []int64) (map
 			continue
 		}
 		deckInfo := &domain.DeckInfo{
-			TotalCardCount:    s.TotalCardCount,
-			ScheduleCardCount: s.ScheduleCardCount,
-			ScheduleAt:        s.SchedulaAt,
+			TotalCardCount:   s.TotalCardCount,
+			PendingCardCount: s.TotalCardCount - s.LearnedCardCount,
+			LearnedCardCount: s.LearnedCardCount,
+			ScheduleAt:       lo.Ternary(s.TotalCardCount == s.LearnedCardCount, s.SchedulaAt, nil),
 		}
 		smap[s.DeckID] = deckInfo
+	}
+	for _, id := range deckIDs {
+		if smap[id] == nil {
+			smap[id] = &domain.DeckInfo{}
+		}
 	}
 
 	return smap, nil

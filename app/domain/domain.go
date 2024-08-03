@@ -11,9 +11,10 @@ type Deck struct {
 }
 
 type DeckInfo struct {
-	TotalCardCount    int
-	ScheduleCardCount int
-	ScheduleAt        *time.Time
+	TotalCardCount   int
+	PendingCardCount int
+	LearnedCardCount int
+	ScheduleAt       *time.Time // 学習開始予定時間（Pendingがある場合はnil）
 }
 
 type Card struct {
