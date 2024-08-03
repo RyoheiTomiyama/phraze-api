@@ -610,7 +610,7 @@ input CardsInput {
 }
 
 type CardsOutput {
-  cards: [Card!]
+  cards: [Card!]!
   pageInfo: PageInfo!
 }
 
@@ -621,7 +621,7 @@ input PendingCardsInput {
 }
 
 type PendingCardsOutput {
-  cards: [Card!]
+  cards: [Card!]!
 }
 
 extend type Query {
@@ -693,7 +693,7 @@ type DeckInfo {
 }
 
 type DecksOutput {
-  decks: [Deck!]
+  decks: [Deck!]!
 }
 
 extend type Query {
@@ -1248,11 +1248,14 @@ func (ec *executionContext) _CardsOutput_cards(ctx context.Context, field graphq
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
 	res := resTmp.([]*model.Card)
 	fc.Result = res
-	return ec.marshalOCard2ᚕᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐCardᚄ(ctx, field.Selections, res)
+	return ec.marshalNCard2ᚕᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐCardᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_CardsOutput_cards(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1914,11 +1917,14 @@ func (ec *executionContext) _DecksOutput_decks(ctx context.Context, field graphq
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
 	res := resTmp.([]*model.Deck)
 	fc.Result = res
-	return ec.marshalODeck2ᚕᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐDeckᚄ(ctx, field.Selections, res)
+	return ec.marshalNDeck2ᚕᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐDeckᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_DecksOutput_decks(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -2434,11 +2440,14 @@ func (ec *executionContext) _PendingCardsOutput_cards(ctx context.Context, field
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
 	res := resTmp.([]*model.Card)
 	fc.Result = res
-	return ec.marshalOCard2ᚕᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐCardᚄ(ctx, field.Selections, res)
+	return ec.marshalNCard2ᚕᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐCardᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_PendingCardsOutput_cards(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -5297,6 +5306,9 @@ func (ec *executionContext) _CardsOutput(ctx context.Context, sel ast.SelectionS
 			out.Values[i] = graphql.MarshalString("CardsOutput")
 		case "cards":
 			out.Values[i] = ec._CardsOutput_cards(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		case "pageInfo":
 			out.Values[i] = ec._CardsOutput_pageInfo(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -5562,6 +5574,9 @@ func (ec *executionContext) _DecksOutput(ctx context.Context, sel ast.SelectionS
 			out.Values[i] = graphql.MarshalString("DecksOutput")
 		case "decks":
 			out.Values[i] = ec._DecksOutput_decks(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -5750,6 +5765,9 @@ func (ec *executionContext) _PendingCardsOutput(ctx context.Context, sel ast.Sel
 			out.Values[i] = graphql.MarshalString("PendingCardsOutput")
 		case "cards":
 			out.Values[i] = ec._PendingCardsOutput_cards(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -6378,6 +6396,50 @@ func (ec *executionContext) marshalNCard2githubᚗcomᚋRyoheiTomiyamaᚋphraze�
 	return ec._Card(ctx, sel, &v)
 }
 
+func (ec *executionContext) marshalNCard2ᚕᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐCardᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Card) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNCard2ᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐCard(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
 func (ec *executionContext) marshalNCard2ᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐCard(ctx context.Context, sel ast.SelectionSet, v *model.Card) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -6447,6 +6509,50 @@ func (ec *executionContext) marshalNCreateDeckOutput2ᚖgithubᚗcomᚋRyoheiTom
 
 func (ec *executionContext) marshalNDeck2githubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐDeck(ctx context.Context, sel ast.SelectionSet, v model.Deck) graphql.Marshaler {
 	return ec._Deck(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNDeck2ᚕᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐDeckᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Deck) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNDeck2ᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐDeck(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
 }
 
 func (ec *executionContext) marshalNDeck2ᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐDeck(ctx context.Context, sel ast.SelectionSet, v *model.Deck) graphql.Marshaler {
@@ -6912,106 +7018,12 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	return res
 }
 
-func (ec *executionContext) marshalOCard2ᚕᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐCardᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Card) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalNCard2ᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐCard(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-
-	for _, e := range ret {
-		if e == graphql.Null {
-			return graphql.Null
-		}
-	}
-
-	return ret
-}
-
 func (ec *executionContext) unmarshalOCardsInput2ᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐCardsInput(ctx context.Context, v interface{}) (*model.CardsInput, error) {
 	if v == nil {
 		return nil, nil
 	}
 	res, err := ec.unmarshalInputCardsInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalODeck2ᚕᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐDeckᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Deck) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalNDeck2ᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐDeck(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-
-	for _, e := range ret {
-		if e == graphql.Null {
-			return graphql.Null
-		}
-	}
-
-	return ret
 }
 
 func (ec *executionContext) unmarshalOInt2ᚖint(ctx context.Context, v interface{}) (*int, error) {

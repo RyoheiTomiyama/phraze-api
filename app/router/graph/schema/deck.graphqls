@@ -16,7 +16,7 @@ type DeckInfo {
 }
 
 type DecksOutput {
-  decks: [Deck!]
+  decks: [Deck!]!
 }
 
 extend type Query {

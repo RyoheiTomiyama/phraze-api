@@ -28,7 +28,7 @@ type CardsInput struct {
 }
 
 type CardsOutput struct {
-	Cards    []*Card   `json:"cards,omitempty"`
+	Cards    []*Card   `json:"cards"`
 	PageInfo *PageInfo `json:"pageInfo"`
 }
 
@@ -72,7 +72,7 @@ type DeckInfo struct {
 }
 
 type DecksOutput struct {
-	Decks []*Deck `json:"decks,omitempty"`
+	Decks []*Deck `json:"decks"`
 }
 
 type Health struct {
@@ -93,7 +93,7 @@ type PendingCardsInput struct {
 }
 
 type PendingCardsOutput struct {
-	Cards []*Card `json:"cards,omitempty"`
+	Cards []*Card `json:"cards"`
 }
 
 type Query struct {

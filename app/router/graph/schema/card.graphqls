@@ -30,7 +30,7 @@ input CardsInput {
 }
 
 type CardsOutput {
-  cards: [Card!]
+  cards: [Card!]!
   pageInfo: PageInfo!
 }
 
@@ -41,7 +41,7 @@ input PendingCardsInput {
 }
 
 type PendingCardsOutput {
-  cards: [Card!]
+  cards: [Card!]!
 }
 
 extend type Query {
