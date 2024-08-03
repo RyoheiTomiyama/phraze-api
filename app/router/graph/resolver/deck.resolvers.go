@@ -6,7 +6,6 @@ package resolver
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/RyoheiTomiyama/phraze-api/domain"
 	"github.com/RyoheiTomiyama/phraze-api/router/graph/generated"
@@ -16,7 +15,17 @@ import (
 
 // DeckInfo is the resolver for the deckInfo field.
 func (r *deckResolver) DeckInfo(ctx context.Context, obj *model.Deck) (*model.DeckInfo, error) {
-	panic(fmt.Errorf("not implemented: DeckInfo - deckInfo"))
+	di, err := r.deckLoader.GetScheduleAt(ctx, obj.ID)
+	if err != nil {
+		return nil, errutil.Wrap(err)
+	}
+
+	var m model.DeckInfo
+	if err = model.FromDomain(ctx, di, &m); err != nil {
+		return nil, errutil.Wrap(err)
+	}
+
+	return &m, nil
 }
 
 // CreateDeck is the resolver for the createDeck field.

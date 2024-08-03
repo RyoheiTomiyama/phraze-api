@@ -9,10 +9,10 @@ type Deck {
 }
 
 type DeckInfo {
-  TotalCardCount: Int!
-  PendingCardCount: Int!
-  LearnedCardCount: Int!
-  ScheduleAt: Timestamp
+  totalCardCount: Int!
+  pendingCardCount: Int!
+  learnedCardCount: Int!
+  scheduleAt: Timestamp
 }
 
 type DecksOutput {

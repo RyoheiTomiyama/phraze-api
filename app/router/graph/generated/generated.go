@@ -279,28 +279,28 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Deck.UserID(childComplexity), true
 
-	case "DeckInfo.LearnedCardCount":
+	case "DeckInfo.learnedCardCount":
 		if e.complexity.DeckInfo.LearnedCardCount == nil {
 			break
 		}
 
 		return e.complexity.DeckInfo.LearnedCardCount(childComplexity), true
 
-	case "DeckInfo.PendingCardCount":
+	case "DeckInfo.pendingCardCount":
 		if e.complexity.DeckInfo.PendingCardCount == nil {
 			break
 		}
 
 		return e.complexity.DeckInfo.PendingCardCount(childComplexity), true
 
-	case "DeckInfo.ScheduleAt":
+	case "DeckInfo.scheduleAt":
 		if e.complexity.DeckInfo.ScheduleAt == nil {
 			break
 		}
 
 		return e.complexity.DeckInfo.ScheduleAt(childComplexity), true
 
-	case "DeckInfo.TotalCardCount":
+	case "DeckInfo.totalCardCount":
 		if e.complexity.DeckInfo.TotalCardCount == nil {
 			break
 		}
@@ -686,10 +686,10 @@ extend type Mutation {
 }
 
 type DeckInfo {
-  TotalCardCount: Int!
-  PendingCardCount: Int!
-  LearnedCardCount: Int!
-  ScheduleAt: Timestamp
+  totalCardCount: Int!
+  pendingCardCount: Int!
+  learnedCardCount: Int!
+  scheduleAt: Timestamp
 }
 
 type DecksOutput {
@@ -1705,14 +1705,14 @@ func (ec *executionContext) fieldContext_Deck_deckInfo(_ context.Context, field 
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "TotalCardCount":
-				return ec.fieldContext_DeckInfo_TotalCardCount(ctx, field)
-			case "PendingCardCount":
-				return ec.fieldContext_DeckInfo_PendingCardCount(ctx, field)
-			case "LearnedCardCount":
-				return ec.fieldContext_DeckInfo_LearnedCardCount(ctx, field)
-			case "ScheduleAt":
-				return ec.fieldContext_DeckInfo_ScheduleAt(ctx, field)
+			case "totalCardCount":
+				return ec.fieldContext_DeckInfo_totalCardCount(ctx, field)
+			case "pendingCardCount":
+				return ec.fieldContext_DeckInfo_pendingCardCount(ctx, field)
+			case "learnedCardCount":
+				return ec.fieldContext_DeckInfo_learnedCardCount(ctx, field)
+			case "scheduleAt":
+				return ec.fieldContext_DeckInfo_scheduleAt(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type DeckInfo", field.Name)
 		},
@@ -1720,8 +1720,8 @@ func (ec *executionContext) fieldContext_Deck_deckInfo(_ context.Context, field 
 	return fc, nil
 }
 
-func (ec *executionContext) _DeckInfo_TotalCardCount(ctx context.Context, field graphql.CollectedField, obj *model.DeckInfo) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_DeckInfo_TotalCardCount(ctx, field)
+func (ec *executionContext) _DeckInfo_totalCardCount(ctx context.Context, field graphql.CollectedField, obj *model.DeckInfo) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_DeckInfo_totalCardCount(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1751,7 +1751,7 @@ func (ec *executionContext) _DeckInfo_TotalCardCount(ctx context.Context, field 
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_DeckInfo_TotalCardCount(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_DeckInfo_totalCardCount(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "DeckInfo",
 		Field:      field,
@@ -1764,8 +1764,8 @@ func (ec *executionContext) fieldContext_DeckInfo_TotalCardCount(_ context.Conte
 	return fc, nil
 }
 
-func (ec *executionContext) _DeckInfo_PendingCardCount(ctx context.Context, field graphql.CollectedField, obj *model.DeckInfo) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_DeckInfo_PendingCardCount(ctx, field)
+func (ec *executionContext) _DeckInfo_pendingCardCount(ctx context.Context, field graphql.CollectedField, obj *model.DeckInfo) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_DeckInfo_pendingCardCount(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1795,7 +1795,7 @@ func (ec *executionContext) _DeckInfo_PendingCardCount(ctx context.Context, fiel
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_DeckInfo_PendingCardCount(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_DeckInfo_pendingCardCount(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "DeckInfo",
 		Field:      field,
@@ -1808,8 +1808,8 @@ func (ec *executionContext) fieldContext_DeckInfo_PendingCardCount(_ context.Con
 	return fc, nil
 }
 
-func (ec *executionContext) _DeckInfo_LearnedCardCount(ctx context.Context, field graphql.CollectedField, obj *model.DeckInfo) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_DeckInfo_LearnedCardCount(ctx, field)
+func (ec *executionContext) _DeckInfo_learnedCardCount(ctx context.Context, field graphql.CollectedField, obj *model.DeckInfo) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_DeckInfo_learnedCardCount(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1839,7 +1839,7 @@ func (ec *executionContext) _DeckInfo_LearnedCardCount(ctx context.Context, fiel
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_DeckInfo_LearnedCardCount(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_DeckInfo_learnedCardCount(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "DeckInfo",
 		Field:      field,
@@ -1852,8 +1852,8 @@ func (ec *executionContext) fieldContext_DeckInfo_LearnedCardCount(_ context.Con
 	return fc, nil
 }
 
-func (ec *executionContext) _DeckInfo_ScheduleAt(ctx context.Context, field graphql.CollectedField, obj *model.DeckInfo) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_DeckInfo_ScheduleAt(ctx, field)
+func (ec *executionContext) _DeckInfo_scheduleAt(ctx context.Context, field graphql.CollectedField, obj *model.DeckInfo) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_DeckInfo_scheduleAt(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1880,7 +1880,7 @@ func (ec *executionContext) _DeckInfo_ScheduleAt(ctx context.Context, field grap
 	return ec.marshalOTimestamp2ᚖtimeᚐTime(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_DeckInfo_ScheduleAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_DeckInfo_scheduleAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "DeckInfo",
 		Field:      field,
@@ -5509,23 +5509,23 @@ func (ec *executionContext) _DeckInfo(ctx context.Context, sel ast.SelectionSet,
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("DeckInfo")
-		case "TotalCardCount":
-			out.Values[i] = ec._DeckInfo_TotalCardCount(ctx, field, obj)
+		case "totalCardCount":
+			out.Values[i] = ec._DeckInfo_totalCardCount(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "PendingCardCount":
-			out.Values[i] = ec._DeckInfo_PendingCardCount(ctx, field, obj)
+		case "pendingCardCount":
+			out.Values[i] = ec._DeckInfo_pendingCardCount(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "LearnedCardCount":
-			out.Values[i] = ec._DeckInfo_LearnedCardCount(ctx, field, obj)
+		case "learnedCardCount":
+			out.Values[i] = ec._DeckInfo_learnedCardCount(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "ScheduleAt":
-			out.Values[i] = ec._DeckInfo_ScheduleAt(ctx, field, obj)
+		case "scheduleAt":
+			out.Values[i] = ec._DeckInfo_scheduleAt(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}

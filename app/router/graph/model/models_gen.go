@@ -65,10 +65,10 @@ type Deck struct {
 }
 
 type DeckInfo struct {
-	TotalCardCount   int        `json:"TotalCardCount"`
-	PendingCardCount int        `json:"PendingCardCount"`
-	LearnedCardCount int        `json:"LearnedCardCount"`
-	ScheduleAt       *time.Time `json:"ScheduleAt,omitempty"`
+	TotalCardCount   int        `json:"totalCardCount"`
+	PendingCardCount int        `json:"pendingCardCount"`
+	LearnedCardCount int        `json:"learnedCardCount"`
+	ScheduleAt       *time.Time `json:"scheduleAt,omitempty"`
 }
 
 type DecksOutput struct {

@@ -35,6 +35,24 @@ func FromDomain(ctx context.Context, d any, target interface{}) error {
 		t.UpdatedAt = v.UpdatedAt
 
 		return nil
+	case *domain.DeckInfo:
+		if v == nil {
+			return nil
+		}
+
+		t, ok := target.(*DeckInfo)
+		if !ok {
+			err := errutil.New(errutil.CodeInternalError, "targetとdomainの型が違います")
+			log.Error(err, "domain", d, "target", target)
+
+			return err
+		}
+		t.TotalCardCount = v.TotalCardCount
+		t.LearnedCardCount = v.LearnedCardCount
+		t.PendingCardCount = v.PendingCardCount
+		t.ScheduleAt = v.ScheduleAt
+
+		return nil
 	case *domain.Card:
 		if v == nil {
 			return nil
