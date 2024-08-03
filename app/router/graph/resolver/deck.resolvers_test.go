@@ -3,6 +3,7 @@ package resolver_test
 import (
 	"context"
 	"testing"
+	"time"
 
 	"github.com/RyoheiTomiyama/phraze-api/domain"
 	"github.com/RyoheiTomiyama/phraze-api/infra/db/fixture"
@@ -103,5 +104,50 @@ func (s *resolverSuite) TestDeck() {
 		deck, err := s.resolver.Query().Deck(ctx, decks[0].ID)
 		assert.Nil(t, deck)
 		assertion.AssertError(t, "取得する権限がありません", errutil.CodeBadRequest, err)
+	})
+}
+
+func (s *resolverSuite) TestDeckInfo() {
+	userID := "test_user"
+	ctx := context.Background()
+	ctx = auth.New(&domain.User{ID: userID}).WithCtx(ctx)
+
+	fx := fixture.New(s.dbx)
+	decks := fx.CreateDeck(s.T(), &fixture.DeckInput{UserID: userID}, &fixture.DeckInput{UserID: userID})
+	cards1 := fx.CreateCard(s.T(), decks[0].ID, make([]fixture.CardInput, 2)...)
+	cards2 := fx.CreateCard(s.T(), decks[1].ID, make([]fixture.CardInput, 2)...)
+
+	fx.CreateCardSchedule(s.T(), []fixture.CardScheduleInput{
+		//過去日のみ
+		{CardID: cards1[0].ID, ScheduleAt: time.Now().Add(-3 * time.Hour)},
+		{CardID: cards1[1].ID, ScheduleAt: time.Now().Add(-10 * time.Hour)},
+	}...)
+	schedules2 := fx.CreateCardSchedule(s.T(), []fixture.CardScheduleInput{
+		// 未来日のみ
+		{CardID: cards2[0].ID, ScheduleAt: time.Now().Add(3 * time.Hour)},
+		{CardID: cards2[1].ID, ScheduleAt: time.Now().Add(10 * time.Hour)},
+	}...)
+
+	s.T().Run("正常系", func(t *testing.T) {
+		t.Run("学習待ちデッキの場合", func(t *testing.T) {
+			di, err := s.resolver.Deck().DeckInfo(ctx, &model.Deck{ID: decks[0].ID})
+			assert.Nil(t, err)
+			assert.Equal(t, &model.DeckInfo{
+				TotalCardCount:   2,
+				PendingCardCount: 2,
+				LearnedCardCount: 0,
+				ScheduleAt:       nil,
+			}, di)
+		})
+		t.Run("学習待ちデッキの場合", func(t *testing.T) {
+			di, err := s.resolver.Deck().DeckInfo(ctx, &model.Deck{ID: decks[1].ID})
+			assert.Nil(t, err)
+			assert.Equal(t, &model.DeckInfo{
+				TotalCardCount:   2,
+				PendingCardCount: 0,
+				LearnedCardCount: 2,
+				ScheduleAt:       &schedules2[0].ScheduleAt,
+			}, di)
+		})
 	})
 }
