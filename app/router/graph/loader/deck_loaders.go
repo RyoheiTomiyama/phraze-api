@@ -40,10 +40,10 @@ type deckReader struct {
 }
 
 func (r *deckReader) ReadDeckInfo(ctx context.Context, deckIDs []int64) ([]*domain.DeckInfo, []error) {
-	schedules, err := r.deckUsecase.ReadDeckInfo(ctx, deckIDs)
+	deckInfoList, err := r.deckUsecase.ReadDeckInfo(ctx, deckIDs)
 	if err != nil {
 		return nil, []error{errutil.Wrap(err)}
 	}
 
-	return schedules, nil
+	return deckInfoList, nil
 }
