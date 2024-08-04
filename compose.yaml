@@ -10,6 +10,7 @@ services:
       TZ: UTC
       CORS: ${CORS}
       GOOGLE_APPLICATION_CREDENTIALS: /go/src/secrets/service-account-credentials.json
+      GOOGLE_GEMINI_API_SECRET_KEY: ${GOOGLE_GEMINI_API_SECRET_KEY}
       POSTGRES_HOST: ${POSTGRES_HOST:-db}
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}

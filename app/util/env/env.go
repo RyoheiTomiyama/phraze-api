@@ -10,8 +10,9 @@ import (
 )
 
 type Config struct {
-	APP app
-	DB  db
+	APP    app
+	DB     db
+	Genemi genemi
 }
 
 type db struct {
@@ -20,6 +21,10 @@ type db struct {
 	PASSWORD string `env:"POSTGRES_PASSWORD" envDefault:"password"`
 	DB_NAME  string `env:"POSTGRES_DB" envDefault:"phraze"`
 	PORT     string `env:"POSTGRES_PORT" envDefault:"5432"`
+}
+
+type genemi struct {
+	API_KEY string `env:"GOOGLE_GEMINI_API_SECRET_KEY"`
 }
 
 type app struct {
