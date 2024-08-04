@@ -23,4 +23,5 @@ type UpdateCardField struct {
 	DeckID   *int64
 	Question *string
 	Answer   *string
+	AIAnswer *string
 }
