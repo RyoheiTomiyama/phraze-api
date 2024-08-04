@@ -34,7 +34,7 @@ func New(opts ClientOption) (IClient, error) {
 	model.SetTopK(64)
 	model.SetTopP(0.95)
 	model.SetMaxOutputTokens(8192)
-	model.ResponseMIMEType = "application/json"
+	model.ResponseMIMEType = "text/plain"
 
 	return &client{
 		client: cl,
