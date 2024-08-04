@@ -62,3 +62,22 @@ make up
 
 - [マイグレーション・シード管理について](./atlas/)
 - [GraphQL の管理について](./app/infra/graph/)
+
+## Test
+
+### 環境変数
+
+`.env.test` で管理
+
+### 環境設定
+
+#### VSCode の Run Test に環境設定を読み込ませる
+
+settings.json に以下を追加する
+
+```json
+  "go.testEnvVars": {
+    "TZ": "UTC"
+  },
+  "go.testEnvFile": "${workspaceFolder}/.env.test"
+```
