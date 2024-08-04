@@ -7,6 +7,7 @@ import (
 
 	"github.com/RyoheiTomiyama/phraze-api/domain"
 	"github.com/RyoheiTomiyama/phraze-api/infra/db/fixture"
+	dbModel "github.com/RyoheiTomiyama/phraze-api/infra/db/model"
 	"github.com/RyoheiTomiyama/phraze-api/router/graph/model"
 	"github.com/RyoheiTomiyama/phraze-api/test/assertion"
 	"github.com/RyoheiTomiyama/phraze-api/util/auth"
@@ -38,7 +39,7 @@ func (s *resolverSuite) TestCreateCard() {
 	fx := fixture.New(s.dbx)
 	decks := fx.CreateDeck(s.T(), &fixture.DeckInput{UserID: userID})
 
-	s.genemiClient.On("GenAnswer", mock.Anything, "question").Return("answer", nil)
+	s.genemiClient.On("GenAnswer", mock.Anything, "question").Return("ai-answer", nil)
 
 	s.T().Run("Cardが作成できること", func(t *testing.T) {
 		input := model.CreateCardInput{
@@ -52,6 +53,16 @@ func (s *resolverSuite) TestCreateCard() {
 		assert.Equal(t, input.DeckID, result.Card.DeckID)
 		assert.Equal(t, input.Question, result.Card.Question)
 		assert.Equal(t, lo.FromPtr(input.Answer), result.Card.Answer)
+
+		t.Run("非同期でAIAnswerが保存されていること", func(t *testing.T) {
+			time.Sleep(100 * time.Millisecond)
+			var card dbModel.Card
+			query := "SELECT * FROM cards WHERE id=$1"
+			if err = s.dbx.Get(&card, query, result.Card.ID); err != nil {
+				t.Fatal(err)
+			}
+			assert.Equal(t, "ai-answer", card.AIAnswer)
+		})
 	})
 
 	s.T().Run("Validationエラー", func(t *testing.T) {
