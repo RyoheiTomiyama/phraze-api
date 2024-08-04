@@ -16,7 +16,9 @@ type Card struct {
 	// 英単語・フレーズ
 	Question string `json:"question"`
 	// 解答・意味のマークダウン文字列
-	Answer    string    `json:"answer"`
+	Answer string `json:"answer"`
+	// AIが生成した解答・意味のマークダウン文字列
+	AiAnswer  string    `json:"aiAnswer"`
 	CreatedAt time.Time `json:"createdAt"`
 	UpdatedAt time.Time `json:"updatedAt"`
 }

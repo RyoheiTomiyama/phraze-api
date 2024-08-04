@@ -12,6 +12,7 @@ import (
 type CardInput struct {
 	Question  string
 	Answer    string
+	AIAnswer  string
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }
@@ -24,6 +25,7 @@ func (f *fixture) CreateCard(t *testing.T, deckID int64, cards ...CardInput) []*
 			DeckID:    deckID,
 			Question:  lo.Ternary(d.Question == "", fmt.Sprintf("question-%d", i+offset), d.Question),
 			Answer:    lo.Ternary(d.Answer == "", fmt.Sprintf("answer-%d", i+offset), d.Answer),
+			AIAnswer:  d.AIAnswer,
 			CreatedAt: lo.Ternary(d.CreatedAt.IsZero(), time.Now(), d.CreatedAt),
 			UpdatedAt: lo.Ternary(d.CreatedAt.IsZero(), time.Now(), d.UpdatedAt),
 		})
@@ -32,8 +34,8 @@ func (f *fixture) CreateCard(t *testing.T, deckID int64, cards ...CardInput) []*
 	}
 
 	query := `
-		INSERT INTO cards (deck_id, question, answer, created_at, updated_at) 
-		VALUES (:deck_id, :question, :answer, :created_at, :updated_at)
+		INSERT INTO cards (deck_id, question, answer, ai_answer, created_at, updated_at) 
+		VALUES (:deck_id, :question, :answer, :ai_answer, :created_at, :updated_at)
 		RETURNING *
 	`
 

@@ -70,6 +70,7 @@ func FromDomain(ctx context.Context, d any, target interface{}) error {
 		t.DeckID = v.DeckID
 		t.Question = v.Question
 		t.Answer = v.Answer
+		t.AiAnswer = v.AIAnswer
 		t.CreatedAt = v.CreatedAt
 		t.UpdatedAt = v.UpdatedAt
 

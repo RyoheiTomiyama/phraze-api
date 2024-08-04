@@ -15,6 +15,10 @@ type Card {
   解答・意味のマークダウン文字列
   """
   answer: String!
+  """
+  AIが生成した解答・意味のマークダウン文字列
+  """
+  aiAnswer: String!
   createdAt: Timestamp!
   updatedAt: Timestamp!
 }

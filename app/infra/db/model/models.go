@@ -12,6 +12,7 @@ type Card struct {
 	DeckID    int64     `db:"deck_id"`
 	Question  string    `db:"question"`
 	Answer    string    `db:"answer"`
+	AIAnswer  string    `db:"ai_answer"`
 	CreatedAt time.Time `db:"created_at"`
 	UpdatedAt time.Time `db:"updated_at"`
 }
