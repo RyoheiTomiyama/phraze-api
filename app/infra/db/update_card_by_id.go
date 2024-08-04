@@ -29,6 +29,10 @@ func (c *client) UpdateCardByID(ctx context.Context, id int64, input *domain.Upd
 			sets = append(sets, "answer = :answer")
 			arg["answer"] = input.Field.Answer
 		}
+		if input.Field.AIAnswer != nil {
+			sets = append(sets, "ai_answer = :ai_answer")
+			arg["ai_answer"] = input.Field.AIAnswer
+		}
 	}
 
 	if len(sets) > 0 {

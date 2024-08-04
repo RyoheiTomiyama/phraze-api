@@ -35,6 +35,7 @@ func TestUpdateCardByID(t *testing.T) {
 							DeckID:   lo.ToPtr(decks[1].ID),
 							Question: lo.ToPtr("question-updated-full"),
 							Answer:   lo.ToPtr("answer-updated-full"),
+							AIAnswer: lo.ToPtr("ai-answer-updated-full"),
 						},
 					}
 				},
@@ -46,6 +47,7 @@ func TestUpdateCardByID(t *testing.T) {
 						expect.DeckID = decks[1].ID
 						expect.Question = "question-updated-full"
 						expect.Answer = "answer-updated-full"
+						expect.AIAnswer = "ai-answer-updated-full"
 						expect.UpdatedAt = result.UpdatedAt
 
 						assert.Equal(t, expect.ToDomain(), result)
