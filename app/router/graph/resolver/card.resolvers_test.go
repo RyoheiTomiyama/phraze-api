@@ -13,6 +13,7 @@ import (
 	"github.com/RyoheiTomiyama/phraze-api/util/errutil"
 	"github.com/samber/lo"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 )
 
 func assertCard(t *testing.T, expect *domain.Card, actual *model.Card) {
@@ -37,12 +38,15 @@ func (s *resolverSuite) TestCreateCard() {
 	fx := fixture.New(s.dbx)
 	decks := fx.CreateDeck(s.T(), &fixture.DeckInput{UserID: userID})
 
+	s.genemiClient.On("GenAnswer", mock.Anything, "question").Return("answer", nil)
+
 	s.T().Run("Cardが作成できること", func(t *testing.T) {
 		input := model.CreateCardInput{
 			DeckID:   decks[0].ID,
 			Question: "question",
 			Answer:   lo.ToPtr("answer"),
 		}
+
 		result, err := s.resolver.Mutation().CreateCard(ctx, input)
 		assert.NoError(t, err)
 		assert.Equal(t, input.DeckID, result.Card.DeckID)

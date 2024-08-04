@@ -16,9 +16,10 @@ import (
 
 type resolverSuite struct {
 	suite.Suite
-	resolver *resolver.Resolver
-	dbx      *sqlx.DB
-	dbClient db.IClient
+	resolver     *resolver.Resolver
+	dbx          *sqlx.DB
+	dbClient     db.IClient
+	genemiClient *genemi.MockedClient
 }
 
 func TestResolverSuite(t *testing.T) {
@@ -40,6 +41,7 @@ func (s *resolverSuite) SetupTest() {
 	s.resolver = resolver
 	s.dbx = dbx
 	s.dbClient = dbClient
+	s.genemiClient = genemiClient
 }
 
 func (s *resolverSuite) TearDownTest() {

@@ -19,7 +19,7 @@ func (r *mutationResolver) CreateCard(ctx context.Context, input model.CreateCar
 		return nil, errutil.Wrap(err)
 	}
 
-	card, err := r.cardUsecase.CreateCard(ctx, &domain.Card{
+	card, err := r.cardUsecase.CreateCardWithGenAnswer(ctx, &domain.Card{
 		DeckID:   input.DeckID,
 		Question: input.Question,
 		Answer: lo.TernaryF(
