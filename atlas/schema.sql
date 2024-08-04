@@ -22,6 +22,7 @@ CREATE TABLE
         "deck_id" bigint NOT NULL REFERENCES decks (id) ON DELETE RESTRICT,
         "question" TEXT NOT NULL,
         "answer" TEXT NOT NULL,
+        "ai_answer" TEXT NOT NULL DEFAULT '',
         created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
         PRIMARY KEY ("id")
