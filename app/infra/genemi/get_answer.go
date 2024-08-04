@@ -37,13 +37,13 @@ func setAnswerSessionHistory(session *genai.ChatSession) {
 		{
 			Role: "user",
 			Parts: []genai.Part{
-				genai.Text("わからない英語の単語や文章の翻訳と説明をお願いしたいです。\n\nmarkdown形式で渡すので、太字になっているところを重点的に説明してください。\nすべての項目で改行を挟むようにしてください。\n\n返答は以下のmarkdownフォーマットで回答してください。\n---\n# 日本語訳\n\n[ここに日本語訳を入力]\n\n# 英英辞典の説明\n\n[ここに英英辞典の説明]\n\n# 英英辞典の日本語訳\n\n[ここに英英辞書の日本語訳]\n\n"),
+				genai.Text("わからない英語の単語や文章の翻訳と説明をお願いしたいです。\n\nmarkdown形式で渡すので、太字になっているところを重点的に説明してください。\nすべての項目で改行を挟むようにしてください。\n\n返答は以下のmarkdownフォーマットで回答してください。\n# 日本語訳\n\n[ここに日本語訳を入力]\n\n# 英英辞典の説明\n\n[ここに英英辞典の説明]\n\n# 英英辞典の日本語訳\n\n[ここに英英辞書の日本語訳]\n\n"),
 			},
 		},
 		{
 			Role: "model",
 			Parts: []genai.Part{
-				genai.Text("わかりました。**太字**の単語や文章を重点的に説明し、日本語訳、英英辞典の説明、英英辞典の日本語訳をmarkdown形式で記述します。\n\n**例として、以下の文章を翻訳してください。**\n\nThis is a **pen**. \n---\n# 日本語訳\n\nこれはペンです。\n\n# 英英辞典の説明\n\nA **pen** is a writing instrument used to apply ink to paper, typically in the form of a nib or ballpoint.\n\n# 英英辞典の日本語訳\n\n**ペン**は、通常はニブまたはボールポイントの形をしたインクを紙に塗布するために使用される筆記用具です。 \n"),
+				genai.Text("わかりました。**太字**の単語や文章を重点的に説明し、日本語訳、英英辞典の説明、英英辞典の日本語訳をmarkdown形式で記述します。\n\n**例として、以下の文章を翻訳してください。**\n\nThis is a **pen**. \n# 日本語訳\n\nこれはペンです。\n\n# 英英辞典の説明\n\nA **pen** is a writing instrument used to apply ink to paper, typically in the form of a nib or ballpoint.\n\n# 英英辞典の日本語訳\n\n**ペン**は、通常はニブまたはボールポイントの形をしたインクを紙に塗布するために使用される筆記用具です。 \n"),
 			},
 		},
 		{
@@ -55,7 +55,13 @@ func setAnswerSessionHistory(session *genai.ChatSession) {
 		{
 			Role: "model",
 			Parts: []genai.Part{
-				genai.Text("了解しました。英英辞典の説明を「英単語： 英英辞典の説明」の形式で記述します。\n\n---\n# 日本語訳\n\nここは、団体ツアーの一部としてのみ入場できます。\n\n# 英英辞典の説明\n\n**as part of**:  included in or being a component of\n\n# 英英辞典の日本語訳\n\n**as part of**:  ～に含まれる、～の一部である \n"),
+				genai.Text("了解しました。英英辞典の説明を「英単語： 英英辞典の説明」の形式で記述します。\n# 日本語訳\n\nここは、団体ツアーの一部としてのみ入場できます。\n\n# 英英辞典の説明\n\n**as part of**:  included in or being a component of\n\n# 英英辞典の日本語訳\n\n**as part of**:  ～に含まれる、～の一部である \n"),
+			},
+		},
+		{
+			Role: "user",
+			Parts: []genai.Part{
+				genai.Text("この後入力する文章を指定した形式で出力してください。"),
 			},
 		},
 	}
