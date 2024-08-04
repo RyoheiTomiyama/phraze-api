@@ -38,6 +38,7 @@ func (d *Card) ToDomain() *domain.Card {
 		DeckID:    d.DeckID,
 		Question:  d.Question,
 		Answer:    d.Answer,
+		AIAnswer:  d.AIAnswer,
 		CreatedAt: d.CreatedAt,
 		UpdatedAt: d.UpdatedAt,
 	}

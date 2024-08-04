@@ -20,7 +20,7 @@ func (c *client) GenAnswer(ctx context.Context, q string) (string, error) {
 		return "", errutil.Wrap(err)
 	}
 
-	log.Debug("GenAnswer", "q", q, "resp", resp)
+	log.Debug("GenAnswer", "q", q, "resp", resp, "Parts", fmt.Sprintf("%+v", resp.Candidates[0].Content.Parts))
 
 	answer := ""
 	for _, part := range resp.Candidates[0].Content.Parts {

@@ -44,6 +44,9 @@ func main() {
 	}
 
 	genemiClient, err := genemi.New(genemi.ClientOption{APIKey: config.Genemi.API_KEY})
+	if err != nil {
+		panic(err)
+	}
 
 	firebaseAuthClient, err := firebaseAuth.New()
 	if err != nil {
