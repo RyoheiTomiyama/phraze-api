@@ -17,6 +17,7 @@ type IUsecase interface {
 	GetPendingCards(ctx context.Context, input domain.GetPendingCardsInput) (*GetPendingCardsOutput, error)
 	ReviewCard(ctx context.Context, id int64, grade int) error
 	UpdateCard(ctx context.Context, id int64, input domain.UpdateCardInput) (*domain.Card, error)
+	UpdateCardWithGendAnswer(ctx context.Context, id int64, input domain.UpdateCardInput) (*domain.Card, error)
 }
 
 type usecase struct {
