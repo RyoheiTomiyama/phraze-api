@@ -49,7 +49,7 @@ func setAnswerSessionHistory(session *genai.ChatSession) {
 		{
 			Role: "user",
 			Parts: []genai.Part{
-				genai.Text("この後入力する文章を指定した形式で出力してください。"),
+				genai.Text("この後入力する文章を指定した形式で出力してください。もし英語として認識できないテキストだった場合は指定した形式ではなく、自動翻訳に失敗しました。とだけ出力してください。"),
 			},
 		},
 	}
