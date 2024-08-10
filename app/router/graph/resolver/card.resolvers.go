@@ -45,57 +45,6 @@ func (r *mutationResolver) CreateCard(ctx context.Context, input model.CreateCar
 	}, nil
 }
 
-// UpdateCard is the resolver for the updateCard field.
-func (r *mutationResolver) UpdateCard(ctx context.Context, input model.UpdateCardInput) (*model.UpdateCardOutput, error) {
-	if err := input.Validate(ctx); err != nil {
-		return nil, errutil.Wrap(err)
-	}
-
-	card, err := r.cardUsecase.UpdateCard(ctx, input.ID, domain.UpdateCardInput{
-		Field: domain.UpdateCardField{
-			Question: input.Question,
-			Answer:   input.Answer,
-		},
-	})
-	if err != nil {
-		return nil, errutil.Wrap(err)
-	}
-
-	var m model.Card
-	if err = model.FromDomain(ctx, card, &m); err != nil {
-		return nil, errutil.Wrap(err)
-	}
-
-	return &model.UpdateCardOutput{
-		Card: &m,
-	}, nil
-}
-
-// UpdateCardWithGenAnswer is the resolver for the updateCardWithGenAnswer field.
-func (r *mutationResolver) UpdateCardWithGenAnswer(ctx context.Context, input model.UpdateCardWithGenAnswerInput) (*model.UpdateCardWithGenAnswerOutput, error) {
-	if err := input.Validate(ctx); err != nil {
-		return nil, errutil.Wrap(err)
-	}
-
-	card, err := r.cardUsecase.UpdateCardWithGendAnswer(ctx, input.ID, domain.UpdateCardInput{
-		Field: domain.UpdateCardField{
-			Question: &input.Question,
-		},
-	})
-	if err != nil {
-		return nil, errutil.Wrap(err)
-	}
-
-	var m model.Card
-	if err = model.FromDomain(ctx, card, &m); err != nil {
-		return nil, errutil.Wrap(err)
-	}
-
-	return &model.UpdateCardWithGenAnswerOutput{
-		Card: &m,
-	}, nil
-}
-
 // Cards is the resolver for the cards field.
 func (r *queryResolver) Cards(ctx context.Context, input *model.CardsInput) (*model.CardsOutput, error) {
 	if err := input.Validate(ctx); err != nil {

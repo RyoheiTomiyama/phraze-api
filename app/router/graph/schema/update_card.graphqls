@@ -1,0 +1,31 @@
+input UpdateCardInput {
+  id: ID!
+  question: String
+  answer: String
+}
+
+type UpdateCardOutput {
+  card: Card!
+}
+
+input UpdateCardWithGenAnswerInput {
+  id: ID!
+  question: String!
+}
+
+type UpdateCardWithGenAnswerOutput {
+  card: Card!
+}
+
+extend type Mutation {
+  """
+  Card更新
+  """
+  updateCard(input: UpdateCardInput!): UpdateCardOutput! @hasRole(role: USER)
+  """
+  解答を自動生成したものに更新する
+  """
+  updateCardWithGenAnswer(
+    input: UpdateCardWithGenAnswerInput!
+  ): UpdateCardWithGenAnswerOutput! @hasRole(role: USER)
+}
