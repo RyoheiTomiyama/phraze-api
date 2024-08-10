@@ -25,7 +25,7 @@ func TestGenAnswer(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	ans, err := c.GenAnswer(ctx, "poverty")
+	ans, err := c.GenAnswer(ctx, "answer")
 	assert.NoError(t, err)
 	t.Log(ans)
 }
