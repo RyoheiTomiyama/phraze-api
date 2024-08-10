@@ -73,7 +73,7 @@ func (r *mutationResolver) UpdateCard(ctx context.Context, input model.UpdateCar
 }
 
 // UpdateCardWithGenAnswer is the resolver for the updateCardWithGenAnswer field.
-func (r *mutationResolver) UpdateCardWithGenAnswer(ctx context.Context, input model.UpdateCardInput) (*model.UpdateCardOutput, error) {
+func (r *mutationResolver) UpdateCardWithGenAnswer(ctx context.Context, input model.UpdateCardWithGenAnswerInput) (*model.UpdateCardWithGenAnswerOutput, error) {
 	panic(fmt.Errorf("not implemented: UpdateCardWithGenAnswer - updateCardWithGenAnswer"))
 }
 

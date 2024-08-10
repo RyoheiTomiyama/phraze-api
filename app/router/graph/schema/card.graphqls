@@ -109,6 +109,7 @@ extend type Mutation {
   """
   解答を自動生成したものに更新する
   """
-  updateCardWithGenAnswer(input: UpdateCardInput!): UpdateCardOutput!
-    @hasRole(role: USER)
+  updateCardWithGenAnswer(
+    input: UpdateCardWithGenAnswerInput!
+  ): UpdateCardWithGenAnswerOutput! @hasRole(role: USER)
 }

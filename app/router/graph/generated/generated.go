@@ -102,7 +102,7 @@ type ComplexityRoot struct {
 		Health                  func(childComplexity int) int
 		ReviewCard              func(childComplexity int, input model.ReviewCardInput) int
 		UpdateCard              func(childComplexity int, input model.UpdateCardInput) int
-		UpdateCardWithGenAnswer func(childComplexity int, input model.UpdateCardInput) int
+		UpdateCardWithGenAnswer func(childComplexity int, input model.UpdateCardWithGenAnswerInput) int
 	}
 
 	PageInfo struct {
@@ -142,7 +142,7 @@ type MutationResolver interface {
 	Health(ctx context.Context) (*model.Health, error)
 	CreateCard(ctx context.Context, input model.CreateCardInput) (*model.CreateCardOutput, error)
 	UpdateCard(ctx context.Context, input model.UpdateCardInput) (*model.UpdateCardOutput, error)
-	UpdateCardWithGenAnswer(ctx context.Context, input model.UpdateCardInput) (*model.UpdateCardOutput, error)
+	UpdateCardWithGenAnswer(ctx context.Context, input model.UpdateCardWithGenAnswerInput) (*model.UpdateCardWithGenAnswerOutput, error)
 	CreateDeck(ctx context.Context, input model.CreateDeckInput) (*model.CreateDeckOutput, error)
 	ReviewCard(ctx context.Context, input model.ReviewCardInput) (*model.ReviewCardOutput, error)
 }
@@ -400,7 +400,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.UpdateCardWithGenAnswer(childComplexity, args["input"].(model.UpdateCardInput)), true
+		return e.complexity.Mutation.UpdateCardWithGenAnswer(childComplexity, args["input"].(model.UpdateCardWithGenAnswerInput)), true
 
 	case "PageInfo.totalCount":
 		if e.complexity.PageInfo.TotalCount == nil {
@@ -723,8 +723,9 @@ extend type Mutation {
   """
   解答を自動生成したものに更新する
   """
-  updateCardWithGenAnswer(input: UpdateCardInput!): UpdateCardOutput!
-    @hasRole(role: USER)
+  updateCardWithGenAnswer(
+    input: UpdateCardWithGenAnswerInput!
+  ): UpdateCardWithGenAnswerOutput! @hasRole(role: USER)
 }
 `, BuiltIn: false},
 	{Name: "../schema/deck.graphqls", Input: `type Deck {
@@ -890,10 +891,10 @@ func (ec *executionContext) field_Mutation_reviewCard_args(ctx context.Context, 
 func (ec *executionContext) field_Mutation_updateCardWithGenAnswer_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 model.UpdateCardInput
+	var arg0 model.UpdateCardWithGenAnswerInput
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNUpdateCardInput2githubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐUpdateCardInput(ctx, tmp)
+		arg0, err = ec.unmarshalNUpdateCardWithGenAnswerInput2githubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐUpdateCardWithGenAnswerInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -2339,7 +2340,7 @@ func (ec *executionContext) _Mutation_updateCardWithGenAnswer(ctx context.Contex
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().UpdateCardWithGenAnswer(rctx, fc.Args["input"].(model.UpdateCardInput))
+			return ec.resolvers.Mutation().UpdateCardWithGenAnswer(rctx, fc.Args["input"].(model.UpdateCardWithGenAnswerInput))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			role, err := ec.unmarshalNRole2githubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐRole(ctx, "USER")
@@ -2359,10 +2360,10 @@ func (ec *executionContext) _Mutation_updateCardWithGenAnswer(ctx context.Contex
 		if tmp == nil {
 			return nil, nil
 		}
-		if data, ok := tmp.(*model.UpdateCardOutput); ok {
+		if data, ok := tmp.(*model.UpdateCardWithGenAnswerOutput); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/RyoheiTomiyama/phraze-api/router/graph/model.UpdateCardOutput`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/RyoheiTomiyama/phraze-api/router/graph/model.UpdateCardWithGenAnswerOutput`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2374,9 +2375,9 @@ func (ec *executionContext) _Mutation_updateCardWithGenAnswer(ctx context.Contex
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.UpdateCardOutput)
+	res := resTmp.(*model.UpdateCardWithGenAnswerOutput)
 	fc.Result = res
-	return ec.marshalNUpdateCardOutput2ᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐUpdateCardOutput(ctx, field.Selections, res)
+	return ec.marshalNUpdateCardWithGenAnswerOutput2ᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐUpdateCardWithGenAnswerOutput(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_updateCardWithGenAnswer(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -2388,9 +2389,9 @@ func (ec *executionContext) fieldContext_Mutation_updateCardWithGenAnswer(ctx co
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "card":
-				return ec.fieldContext_UpdateCardOutput_card(ctx, field)
+				return ec.fieldContext_UpdateCardWithGenAnswerOutput_card(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type UpdateCardOutput", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type UpdateCardWithGenAnswerOutput", field.Name)
 		},
 	}
 	defer func() {
@@ -7086,6 +7087,25 @@ func (ec *executionContext) marshalNUpdateCardOutput2ᚖgithubᚗcomᚋRyoheiTom
 		return graphql.Null
 	}
 	return ec._UpdateCardOutput(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNUpdateCardWithGenAnswerInput2githubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐUpdateCardWithGenAnswerInput(ctx context.Context, v interface{}) (model.UpdateCardWithGenAnswerInput, error) {
+	res, err := ec.unmarshalInputUpdateCardWithGenAnswerInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNUpdateCardWithGenAnswerOutput2githubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐUpdateCardWithGenAnswerOutput(ctx context.Context, sel ast.SelectionSet, v model.UpdateCardWithGenAnswerOutput) graphql.Marshaler {
+	return ec._UpdateCardWithGenAnswerOutput(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNUpdateCardWithGenAnswerOutput2ᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐUpdateCardWithGenAnswerOutput(ctx context.Context, sel ast.SelectionSet, v *model.UpdateCardWithGenAnswerOutput) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._UpdateCardWithGenAnswerOutput(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalN__Directive2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐDirective(ctx context.Context, sel ast.SelectionSet, v introspection.Directive) graphql.Marshaler {
