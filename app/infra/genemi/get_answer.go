@@ -3,6 +3,7 @@ package genemi
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/RyoheiTomiyama/phraze-api/util/errutil"
 	"github.com/RyoheiTomiyama/phraze-api/util/logger"
@@ -25,6 +26,11 @@ func (c *client) GenAnswer(ctx context.Context, q string) (string, error) {
 	answer := ""
 	for _, part := range resp.Candidates[0].Content.Parts {
 		answer += fmt.Sprintf("%v\n", part)
+	}
+
+	if !strings.HasPrefix(answer, "**【日本語訳】**") {
+		err := fmt.Errorf("Geminiから異常な解答を検出しました。")
+		log.Error(err, "q", q, "answer", answer)
 	}
 
 	return answer, nil
