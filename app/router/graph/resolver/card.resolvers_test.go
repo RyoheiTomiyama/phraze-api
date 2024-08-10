@@ -25,6 +25,7 @@ func assertCard(t *testing.T, expect *domain.Card, actual *model.Card) {
 		DeckID:    expect.DeckID,
 		Question:  expect.Question,
 		Answer:    expect.Answer,
+		AiAnswer:  expect.AIAnswer,
 		CreatedAt: expect.CreatedAt,
 		UpdatedAt: expect.UpdatedAt,
 	}

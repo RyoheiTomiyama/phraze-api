@@ -43,8 +43,8 @@ func (u *usecase) UpdateCardWithGendAnswer(ctx context.Context, id int64, input 
 		return nil, errutil.Wrap(err)
 	}
 
-	*input.Field.Answer = ans
-	*input.Field.AIAnswer = ans
+	input.Field.Answer = &ans
+	input.Field.AIAnswer = &ans
 
 	card, err := u.dbClient.UpdateCardByID(ctx, id, &input)
 	if err != nil {
