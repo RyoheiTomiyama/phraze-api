@@ -120,6 +120,15 @@ type UpdateCardOutput struct {
 	Card *Card `json:"card"`
 }
 
+type UpdateCardWithGenAnswerInput struct {
+	ID       int64  `json:"id"`
+	Question string `json:"question"`
+}
+
+type UpdateCardWithGenAnswerOutput struct {
+	Card *Card `json:"card"`
+}
+
 type Role string
 
 const (
