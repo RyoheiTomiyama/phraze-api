@@ -6,7 +6,6 @@ package resolver
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/RyoheiTomiyama/phraze-api/domain"
 	"github.com/RyoheiTomiyama/phraze-api/router/graph/model"
@@ -74,7 +73,27 @@ func (r *mutationResolver) UpdateCard(ctx context.Context, input model.UpdateCar
 
 // UpdateCardWithGenAnswer is the resolver for the updateCardWithGenAnswer field.
 func (r *mutationResolver) UpdateCardWithGenAnswer(ctx context.Context, input model.UpdateCardWithGenAnswerInput) (*model.UpdateCardWithGenAnswerOutput, error) {
-	panic(fmt.Errorf("not implemented: UpdateCardWithGenAnswer - updateCardWithGenAnswer"))
+	if err := input.Validate(ctx); err != nil {
+		return nil, errutil.Wrap(err)
+	}
+
+	card, err := r.cardUsecase.UpdateCardWithGendAnswer(ctx, input.ID, domain.UpdateCardInput{
+		Field: domain.UpdateCardField{
+			Question: &input.Question,
+		},
+	})
+	if err != nil {
+		return nil, errutil.Wrap(err)
+	}
+
+	var m model.Card
+	if err = model.FromDomain(ctx, card, &m); err != nil {
+		return nil, errutil.Wrap(err)
+	}
+
+	return &model.UpdateCardWithGenAnswerOutput{
+		Card: &m,
+	}, nil
 }
 
 // Cards is the resolver for the cards field.

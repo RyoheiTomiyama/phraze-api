@@ -87,6 +87,26 @@ func (i *UpdateCardInput) Validate(ctx context.Context) error {
 
 	return errutil.New(errutil.CodeBadRequest, translateValidateError(errs[0]))
 }
+func (i *UpdateCardWithGenAnswerInput) Validate(ctx context.Context) error {
+	v := validate()
+
+	type input struct {
+		ID       int64  `json:"ID" validate:"required"`
+		Question string `json:"question" validate:"required,max=1000"`
+	}
+
+	err := v.StructCtx(ctx, input(*i))
+	if err == nil {
+		return nil
+	}
+
+	errs, ok := err.(validator.ValidationErrors)
+	if !ok {
+		return errutil.Wrap(err)
+	}
+
+	return errutil.New(errutil.CodeBadRequest, translateValidateError(errs[0]))
+}
 
 func (i *PendingCardsInput) Validate(ctx context.Context) error {
 	v := validate()
