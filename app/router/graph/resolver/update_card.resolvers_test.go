@@ -21,7 +21,7 @@ func (s *resolverSuite) TestUpdateCardWithGenAnswer() {
 	ctx = auth.New(&domain.User{ID: userID}).WithCtx(ctx)
 
 	fx := fixture.New(s.dbx)
-	decks := fx.CreateDeck(s.T(), &fixture.DeckInput{UserID: userID})
+	decks := fx.CreateDeck(s.T(), &fixture.DeckInput{UserID: lo.ToPtr(userID)})
 	cards := fx.CreateCard(s.T(), decks[0].ID, fixture.CardInput{Question: lo.ToPtr("before question"), Answer: lo.ToPtr("before answer")})
 
 	s.genemiClient.On("GenAnswer", mock.Anything, "updated question").Return("ai-answer", nil)

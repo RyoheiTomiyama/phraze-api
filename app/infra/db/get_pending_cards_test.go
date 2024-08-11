@@ -22,10 +22,10 @@ func TestGetPendingCards(t *testing.T) {
 	fx := fixture.New(db)
 	decks := fx.CreateDeck(
 		t,
-		&fixture.DeckInput{UserID: "own"},
-		&fixture.DeckInput{UserID: "own"},
-		&fixture.DeckInput{UserID: "own"},
-		&fixture.DeckInput{UserID: "own"},
+		&fixture.DeckInput{UserID: lo.ToPtr("own")},
+		&fixture.DeckInput{UserID: lo.ToPtr("own")},
+		&fixture.DeckInput{UserID: lo.ToPtr("own")},
+		&fixture.DeckInput{UserID: lo.ToPtr("own")},
 	)
 
 	cards := fx.CreateCard(t, decks[0].ID, make([]fixture.CardInput, 6)...)

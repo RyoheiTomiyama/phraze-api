@@ -8,6 +8,7 @@ import (
 
 	"github.com/RyoheiTomiyama/phraze-api/infra/db/fixture"
 	db_test "github.com/RyoheiTomiyama/phraze-api/test/db"
+	"github.com/samber/lo"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -23,7 +24,7 @@ func TestGetLatestCardSchedulesByDeckID(t *testing.T) {
 	fx := fixture.New(db)
 	var dis []*fixture.DeckInput
 	for range 5 {
-		dis = append(dis, &fixture.DeckInput{UserID: "own"})
+		dis = append(dis, &fixture.DeckInput{UserID: lo.ToPtr("own")})
 	}
 	decks := fx.CreateDeck(t, dis...)
 	cards1 := fx.CreateCard(t, decks[0].ID, make([]fixture.CardInput, 2)...)

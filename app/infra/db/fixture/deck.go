@@ -10,10 +10,10 @@ import (
 )
 
 type DeckInput struct {
-	UserID    string
-	Name      string
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	UserID    *string
+	Name      *string
+	CreatedAt *time.Time
+	UpdatedAt *time.Time
 }
 
 func (f *fixture) CreateDeck(t *testing.T, decks ...*DeckInput) []*model.Deck {
@@ -21,10 +21,10 @@ func (f *fixture) CreateDeck(t *testing.T, decks ...*DeckInput) []*model.Deck {
 	offset := len(f.Decks)
 	for i, d := range decks {
 		list = append(list, &model.Deck{
-			UserID:    lo.Ternary(d.UserID == "", "", d.UserID),
-			Name:      lo.Ternary(d.Name == "", fmt.Sprintf("deck-%d", i+offset), d.Name),
-			CreatedAt: lo.Ternary(d.CreatedAt.IsZero(), time.Now(), d.CreatedAt),
-			UpdatedAt: lo.Ternary(d.CreatedAt.IsZero(), time.Now(), d.UpdatedAt),
+			UserID:    lo.FromPtrOr(d.UserID, ""),
+			Name:      lo.FromPtrOr(d.Name, fmt.Sprintf("deck-%d", i+offset)),
+			CreatedAt: lo.FromPtrOr(d.CreatedAt, time.Now()),
+			UpdatedAt: lo.FromPtrOr(d.UpdatedAt, time.Now()),
 		})
 		// 作成日の作成順を担保するためスリープする
 		time.Sleep(time.Millisecond)

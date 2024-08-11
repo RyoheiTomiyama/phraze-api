@@ -10,6 +10,7 @@ import (
 	"github.com/RyoheiTomiyama/phraze-api/test/assertion"
 	"github.com/RyoheiTomiyama/phraze-api/util/auth"
 	"github.com/RyoheiTomiyama/phraze-api/util/errutil"
+	"github.com/samber/lo"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -20,7 +21,7 @@ func (s *resolverSuite) TestReviewCard() {
 
 	fx := fixture.New(s.dbx)
 	decks := fx.CreateDeck(s.T(),
-		&fixture.DeckInput{UserID: userID},
+		&fixture.DeckInput{UserID: lo.ToPtr(userID)},
 	)
 
 	s.T().Run("Schedule, Reviewが更新されること", func(t *testing.T) {

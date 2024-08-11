@@ -6,6 +6,7 @@ import (
 
 	"github.com/RyoheiTomiyama/phraze-api/infra/db/fixture"
 	db_test "github.com/RyoheiTomiyama/phraze-api/test/db"
+	"github.com/samber/lo"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -20,9 +21,9 @@ func TestGetDecks(t *testing.T) {
 	fx := fixture.New(db)
 	decks := fx.CreateDeck(
 		t,
-		&fixture.DeckInput{UserID: "own"},
-		&fixture.DeckInput{UserID: "own"},
-		&fixture.DeckInput{UserID: "another user"},
+		&fixture.DeckInput{UserID: lo.ToPtr("own")},
+		&fixture.DeckInput{UserID: lo.ToPtr("own")},
+		&fixture.DeckInput{UserID: lo.ToPtr("another user")},
 	)
 
 	deck := decks[0]

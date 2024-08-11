@@ -11,6 +11,7 @@ import (
 	"github.com/RyoheiTomiyama/phraze-api/test/assertion"
 	"github.com/RyoheiTomiyama/phraze-api/util/auth"
 	"github.com/RyoheiTomiyama/phraze-api/util/errutil"
+	"github.com/samber/lo"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -51,9 +52,9 @@ func (s *resolverSuite) TestDecks() {
 	fx := fixture.New(s.dbx)
 
 	decks := fx.CreateDeck(s.T(),
-		&fixture.DeckInput{UserID: userID},
-		&fixture.DeckInput{UserID: userID},
-		&fixture.DeckInput{UserID: "other_user"},
+		&fixture.DeckInput{UserID: lo.ToPtr(userID)},
+		&fixture.DeckInput{UserID: lo.ToPtr(userID)},
+		&fixture.DeckInput{UserID: lo.ToPtr("other_user")},
 	)
 
 	s.T().Run("Decksが取得できること", func(t *testing.T) {
@@ -90,7 +91,7 @@ func (s *resolverSuite) TestDeck() {
 	fx := fixture.New(s.dbx)
 
 	s.T().Run("Deckが取得できること", func(t *testing.T) {
-		decks := fx.CreateDeck(t, &fixture.DeckInput{UserID: userID})
+		decks := fx.CreateDeck(t, &fixture.DeckInput{UserID: lo.ToPtr(userID)})
 
 		deck, err := s.resolver.Query().Deck(ctx, decks[0].ID)
 		assert.NoError(t, err)
@@ -113,7 +114,7 @@ func (s *resolverSuite) TestDeckInfo() {
 	ctx = auth.New(&domain.User{ID: userID}).WithCtx(ctx)
 
 	fx := fixture.New(s.dbx)
-	decks := fx.CreateDeck(s.T(), &fixture.DeckInput{UserID: userID}, &fixture.DeckInput{UserID: userID})
+	decks := fx.CreateDeck(s.T(), &fixture.DeckInput{UserID: lo.ToPtr(userID)}, &fixture.DeckInput{UserID: lo.ToPtr(userID)})
 	cards1 := fx.CreateCard(s.T(), decks[0].ID, make([]fixture.CardInput, 2)...)
 	cards2 := fx.CreateCard(s.T(), decks[1].ID, make([]fixture.CardInput, 2)...)
 

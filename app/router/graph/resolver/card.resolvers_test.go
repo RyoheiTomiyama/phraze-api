@@ -38,7 +38,7 @@ func (s *resolverSuite) TestCreateCard() {
 	ctx = auth.New(&domain.User{ID: userID}).WithCtx(ctx)
 
 	fx := fixture.New(s.dbx)
-	decks := fx.CreateDeck(s.T(), &fixture.DeckInput{UserID: userID})
+	decks := fx.CreateDeck(s.T(), &fixture.DeckInput{UserID: lo.ToPtr(userID)})
 
 	s.genemiClient.On("GenAnswer", mock.Anything, "question").Return("ai-answer", nil)
 
@@ -107,7 +107,7 @@ func (s *resolverSuite) TestCreateCard() {
 	})
 
 	s.T().Run("他ユーザのDeckのCardを作成する場合", func(t *testing.T) {
-		decks := fx.CreateDeck(s.T(), &fixture.DeckInput{UserID: "other_user"})
+		decks := fx.CreateDeck(s.T(), &fixture.DeckInput{UserID: lo.ToPtr("other_user")})
 
 		input := model.CreateCardInput{
 			DeckID:   decks[0].ID,
@@ -127,8 +127,8 @@ func (s *resolverSuite) TestCards() {
 
 	fx := fixture.New(s.dbx)
 	decks := fx.CreateDeck(s.T(),
-		&fixture.DeckInput{UserID: userID},
-		&fixture.DeckInput{UserID: "other_user"},
+		&fixture.DeckInput{UserID: lo.ToPtr(userID)},
+		&fixture.DeckInput{UserID: lo.ToPtr("other_user")},
 	)
 	cards := fx.CreateCard(s.T(), decks[0].ID, make([]fixture.CardInput, 10)...)
 	fx.CreateCard(s.T(), decks[1].ID, make([]fixture.CardInput, 10)...)
@@ -197,8 +197,8 @@ func (s *resolverSuite) TestCard() {
 
 	fx := fixture.New(s.dbx)
 	decks := fx.CreateDeck(s.T(),
-		&fixture.DeckInput{UserID: userID},
-		&fixture.DeckInput{UserID: "other_user"},
+		&fixture.DeckInput{UserID: lo.ToPtr(userID)},
+		&fixture.DeckInput{UserID: lo.ToPtr("other_user")},
 	)
 	cards := fx.CreateCard(s.T(), decks[0].ID, make([]fixture.CardInput, 1)...)
 	cards2 := fx.CreateCard(s.T(), decks[1].ID, make([]fixture.CardInput, 1)...)
@@ -232,7 +232,7 @@ func (s *resolverSuite) TestPendingCards() {
 
 	fx := fixture.New(s.dbx)
 	decks := fx.CreateDeck(s.T(),
-		&fixture.DeckInput{UserID: userID},
+		&fixture.DeckInput{UserID: lo.ToPtr(userID)},
 	)
 	cards := fx.CreateCard(s.T(), decks[0].ID, make([]fixture.CardInput, 5)...)
 	fx.CreateCardSchedule(s.T(), []fixture.CardScheduleInput{
