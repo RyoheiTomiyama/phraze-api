@@ -15,8 +15,9 @@ func TestCreateCard(t *testing.T) {
 
 	db := db_test.GetDB(t)
 	defer func() {
-		err := db.Close()
-		t.Fatal(err)
+		if err := db.Close(); err != nil {
+			t.Fatal(err)
+		}
 	}()
 
 	client := NewTestClient(t, db)

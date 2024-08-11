@@ -25,8 +25,9 @@ func TestUpsertCardReview(t *testing.T) {
 
 	db := db_test.GetDB(t)
 	defer func() {
-		err := db.Close()
-		t.Fatal(err)
+		if err := db.Close(); err != nil {
+			t.Fatal(err)
+		}
 	}()
 
 	fx := fixture.New(db)
@@ -39,9 +40,6 @@ func TestUpsertCardReview(t *testing.T) {
 		result, err := client.UpsertCardReview(ctx, review)
 		assert.NoError(t, err)
 		assertUpsertedCardReview(t, review, result)
-		// assert.Equal(t, re)
-
-		review = result
 	})
 
 	t.Run("レビュー更新の場合", func(t *testing.T) {

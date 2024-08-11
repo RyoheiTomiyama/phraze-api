@@ -56,6 +56,8 @@ func (u *usecase) UpdateCardWithGendAnswer(ctx context.Context, id int64, input 
 
 // idのカードが更新可能なものかチェックする
 // ついでにCard,Deckを返す
+//
+//nolint:unparam
 func (u *usecase) getCardWithRoleCheck(ctx context.Context, id int64) (*domain.Card, *domain.Deck, error) {
 	user := auth.FromCtx(ctx)
 

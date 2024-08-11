@@ -2,6 +2,7 @@ package model
 
 import (
 	"context"
+	"errors"
 
 	"github.com/RyoheiTomiyama/phraze-api/util/errutil"
 	"github.com/go-playground/validator/v10"
@@ -19,9 +20,12 @@ func (i *ReviewCardInput) Validate(ctx context.Context) error {
 		return nil
 	}
 
-	errs, ok := err.(validator.ValidationErrors)
-	if !ok {
+	var errs validator.ValidationErrors
+	if ok := errors.As(err, &errs); !ok {
 		return errutil.Wrap(err)
+	}
+	if len(errs) == 0 {
+		return nil
 	}
 
 	return errutil.New(errutil.CodeBadRequest, translateValidateError(errs[0]))

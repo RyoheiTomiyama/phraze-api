@@ -16,8 +16,9 @@ func TestGetDeckInfosByDeckID(t *testing.T) {
 	ctx := context.Background()
 	db := db_test.GetDB(t)
 	defer func() {
-		err := db.Close()
-		t.Fatal(err)
+		if err := db.Close(); err != nil {
+			t.Fatal(err)
+		}
 	}()
 
 	fx := fixture.New(db)

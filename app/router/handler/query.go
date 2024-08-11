@@ -2,6 +2,7 @@ package handler
 
 import (
 	"context"
+	"errors"
 	"net/http"
 
 	"github.com/99designs/gqlgen/graphql"
@@ -30,8 +31,8 @@ func PostQuery(r *resolver.Resolver, d *generated.DirectiveRoot) http.HandlerFun
 			"clientMessage": errutil.InternalErrorMessage,
 		}
 
-		gqlErr, ok := err.(*gqlerror.Error)
-		if !ok {
+		var gqlErr *gqlerror.Error
+		if ok := errors.As(err, &gqlErr); !ok {
 			// err の実体が gqlerror.Error でない場合は FW がバグっている可能性
 			log.Error(err)
 			// TODO Sentry
