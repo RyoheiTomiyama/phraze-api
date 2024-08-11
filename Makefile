@@ -12,6 +12,10 @@ vulncheck:
 	docker compose run --rm api sh -c \
 	"go install golang.org/x/vuln/cmd/govulncheck@latest ; govulncheck ./..."
 
+# Lint
+lint:
+	docker run --rm -v $(shell pwd)/app:/app -w /app golangci/golangci-lint:v1.59.1-alpine golangci-lint run -v
+
 # DATABASE 
 migrate:
 	atlas schema apply\
