@@ -85,8 +85,9 @@ func TestUpsertCardSchedule(t *testing.T) {
 			// DBエラー起こすと、txdbのトランザクション内でエラーになるので別でコネクション作る
 			db := db_test.GetDB(t)
 			defer func() {
-				err := db.Close()
-				t.Fatal(err)
+				if err := db.Close(); err != nil {
+					t.Fatal(err)
+				}
 			}()
 
 			client := NewTestClient(t, db)
