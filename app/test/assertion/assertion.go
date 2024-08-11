@@ -1,6 +1,7 @@
 package assertion
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/RyoheiTomiyama/phraze-api/util/errutil"
@@ -12,8 +13,8 @@ func AssertError(t *testing.T, expectedMsg string, expectedCode errutil.ErrorCod
 
 	assert.Error(t, actualErr)
 
-	customErr, ok := actualErr.(errutil.IError)
-	if !ok {
+	var customErr errutil.IError
+	if ok := errors.As(actualErr, &customErr); !ok {
 		t.Fatalf("err is not *errutil.Error: %#v", actualErr)
 	}
 

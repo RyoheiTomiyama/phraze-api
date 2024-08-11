@@ -30,6 +30,7 @@ func main() {
 		panic(err)
 	}
 	ctx = config.WithCtx(ctx)
+	// TODO contextにconfig, loggerを詰めれてない！
 
 	// infra
 	dbClient, err := db.NewClient(db.DataSourceOption{

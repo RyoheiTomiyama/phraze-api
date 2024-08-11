@@ -23,7 +23,13 @@ type IRouter interface {
 	Handler() *chi.Mux
 }
 
-func New(config *env.Config, resolver *resolver.Resolver, directive *generated.DirectiveRoot, l logger.ILogger, authUsecase auth.IAuthUsecase) IRouter {
+func New(
+	config *env.Config,
+	resolver *resolver.Resolver,
+	directive *generated.DirectiveRoot,
+	l logger.ILogger,
+	authUsecase auth.IAuthUsecase,
+) IRouter {
 	return &router{config, resolver, directive, l, authUsecase}
 }
 
