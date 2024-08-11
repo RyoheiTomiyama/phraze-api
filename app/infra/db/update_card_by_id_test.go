@@ -13,7 +13,10 @@ import (
 
 func TestUpdateCardByID(t *testing.T) {
 	db := db_test.GetDB(t)
-	defer db.Close()
+	defer func() {
+		err := db.Close()
+		t.Fatal(err)
+	}()
 
 	fx := fixture.New(db)
 	decks := fx.CreateDeck(t, &fixture.DeckInput{UserID: "own"}, &fixture.DeckInput{UserID: "own"})

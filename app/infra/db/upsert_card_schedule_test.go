@@ -83,7 +83,11 @@ func TestUpsertCardSchedule(t *testing.T) {
 		for _, tc := range cases {
 			// DBエラー起こすと、txdbのトランザクション内でエラーになるので別でコネクション作る
 			db := db_test.GetDB(t)
-			defer db.Close()
+			defer func() {
+				err := db.Close()
+				t.Fatal(err)
+			}()
+
 			client := NewTestClient(t, db)
 
 			review := tc.arrange()
