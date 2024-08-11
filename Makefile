@@ -7,6 +7,11 @@ up:
 gqlgen:
 	docker compose run --rm api go run github.com/99designs/gqlgen generate
 
+# Vulncheck
+vulncheck:
+	docker compose run --rm api sh -c \
+	"go install golang.org/x/vuln/cmd/govulncheck@latest ; govulncheck ./..."
+
 # DATABASE 
 migrate:
 	atlas schema apply\
