@@ -14,7 +14,7 @@ vulncheck:
 
 # Lint
 lint:
-	docker run --rm -v $(shell pwd)/app:/app -w /app golangci/golangci-lint:v1.59.1-alpine golangci-lint run -v
+	docker run --rm -v $(shell pwd)/app:/app -w /app golangci/golangci-lint:v1.59.1-alpine golangci-lint run
 
 # DATABASE 
 migrate:
