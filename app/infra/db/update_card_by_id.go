@@ -38,7 +38,7 @@ func (c *client) UpdateCardByID(ctx context.Context, id int64, input *domain.Upd
 	if len(sets) > 0 {
 		query = query + " SET " + strings.Join(sets, ", ")
 	}
-	query = query + " WHERE id = :id RETURNING *"
+	query += " WHERE id = :id RETURNING *"
 
 	query, args, err := e.BindNamed(query, arg)
 	if err != nil {

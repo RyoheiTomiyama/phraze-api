@@ -31,7 +31,7 @@ func TestGetLatestCardSchedulesByDeckID(t *testing.T) {
 	cards4 := fx.CreateCard(t, decks[3].ID, make([]fixture.CardInput, 3)...)
 
 	schedules := fx.CreateCardSchedule(t, []fixture.CardScheduleInput{
-		//過去日のみ
+		// 過去日のみ
 		{CardID: cards1[0].ID, ScheduleAt: time.Now().Add(-3 * time.Hour)},
 		{CardID: cards1[1].ID, ScheduleAt: time.Now().Add(-10 * time.Hour)},
 		// 未来日のみ

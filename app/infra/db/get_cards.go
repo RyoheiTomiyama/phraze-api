@@ -23,7 +23,7 @@ func (c *client) GetCards(ctx context.Context, where *domain.CardsWhere, limit, 
 		query, arg = b.BuildNamedWhere(ctx, query, arg)
 	}
 
-	query = query + " ORDER BY %s LIMIT %d OFFSET %d"
+	query += " ORDER BY %s LIMIT %d OFFSET %d"
 	query = fmt.Sprintf(query, "updated_at DESC", limit, offset)
 
 	query, args, err := e.BindNamed(query, arg)

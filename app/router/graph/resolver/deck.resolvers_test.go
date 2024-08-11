@@ -118,7 +118,7 @@ func (s *resolverSuite) TestDeckInfo() {
 	cards2 := fx.CreateCard(s.T(), decks[1].ID, make([]fixture.CardInput, 2)...)
 
 	fx.CreateCardSchedule(s.T(), []fixture.CardScheduleInput{
-		//過去日のみ
+		// 過去日のみ
 		{CardID: cards1[0].ID, ScheduleAt: time.Now().Add(-3 * time.Hour)},
 		{CardID: cards1[1].ID, ScheduleAt: time.Now().Add(-10 * time.Hour)},
 	}...)

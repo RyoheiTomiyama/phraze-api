@@ -26,7 +26,7 @@ func (c *client) GetPendingCards(ctx context.Context, deckID int64, to time.Time
 		"schedule_at": to,
 	}
 
-	query = query + " ORDER BY %s LIMIT %d OFFSET %d"
+	query += " ORDER BY %s LIMIT %d OFFSET %d"
 	query = fmt.Sprintf(query, "card_schedules.schedule_at ASC NULLS FIRST, cards.id ASC", limit, offset)
 
 	query, args, err := e.BindNamed(query, arg)

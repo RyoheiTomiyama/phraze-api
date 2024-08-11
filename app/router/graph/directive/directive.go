@@ -19,6 +19,7 @@ func New() generated.DirectiveRoot {
 func HasRole(ctx context.Context, obj interface{}, next graphql.Resolver, role model.Role) (res interface{}, err error) {
 	user := auth.FromCtx(ctx)
 
+	//nolint:gocritic
 	switch role {
 	case model.RoleUser:
 		if user == nil {
