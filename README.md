@@ -81,3 +81,14 @@ settings.json に以下を追加する
   },
   "go.testEnvFile": "${workspaceFolder}/.env.test"
 ```
+
+#### VSCode Golangci integration
+
+VSCode で linter を有効にする設定
+
+settings.json に以下を追加する
+
+```json
+  "go.lintTool": "golangci-lint",
+  "go.lintFlags": ["--fast"]
+```
