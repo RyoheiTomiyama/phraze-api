@@ -10,11 +10,11 @@ import (
 )
 
 type CardInput struct {
-	Question  string
-	Answer    string
+	Question  *string
+	Answer    *string
 	AIAnswer  string
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	CreatedAt *time.Time
+	UpdatedAt *time.Time
 }
 
 func (f *fixture) CreateCard(t *testing.T, deckID int64, cards ...CardInput) []*model.Card {
@@ -23,11 +23,11 @@ func (f *fixture) CreateCard(t *testing.T, deckID int64, cards ...CardInput) []*
 	for i, d := range cards {
 		list = append(list, &model.Card{
 			DeckID:    deckID,
-			Question:  lo.Ternary(d.Question == "", fmt.Sprintf("question-%d", i+offset), d.Question),
-			Answer:    lo.Ternary(d.Answer == "", fmt.Sprintf("answer-%d", i+offset), d.Answer),
+			Question:  lo.FromPtrOr(d.Question, fmt.Sprintf("question-%d", i+offset)),
+			Answer:    lo.FromPtrOr(d.Answer, fmt.Sprintf("answer-%d", i+offset)),
 			AIAnswer:  d.AIAnswer,
-			CreatedAt: lo.Ternary(d.CreatedAt.IsZero(), time.Now(), d.CreatedAt),
-			UpdatedAt: lo.Ternary(d.CreatedAt.IsZero(), time.Now(), d.UpdatedAt),
+			CreatedAt: lo.FromPtrOr(d.CreatedAt, time.Now()),
+			UpdatedAt: lo.FromPtrOr(d.UpdatedAt, time.Now()),
 		})
 		// 作成日の作成順を担保するためスリープする
 		time.Sleep(time.Millisecond)

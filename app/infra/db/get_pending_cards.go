@@ -19,7 +19,10 @@ func (c *client) GetPendingCards(ctx context.Context, deckID int64, to time.Time
 		SELECT cards.* FROM cards
 		LEFT JOIN card_schedules ON card_schedules.card_id = cards.id
 		WHERE cards.deck_id=:deck_id 
+			-- スケジュールがないか、スケジュールが過去のカードに絞る
 			AND (card_schedules.schedule_at IS NULL OR card_schedules.schedule_at < :schedule_at)
+			-- 解答が存在するカードに絞る
+			AND (cards.answer <> '' OR cards.ai_answer <> '')
 	`
 	arg := map[string]interface{}{
 		"deck_id":     deckID,
