@@ -10,6 +10,7 @@ import (
 	"github.com/RyoheiTomiyama/phraze-api/test/assertion"
 	"github.com/RyoheiTomiyama/phraze-api/util/auth"
 	"github.com/RyoheiTomiyama/phraze-api/util/errutil"
+	"github.com/samber/lo"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
@@ -21,7 +22,7 @@ func (s *resolverSuite) TestUpdateCardWithGenAnswer() {
 
 	fx := fixture.New(s.dbx)
 	decks := fx.CreateDeck(s.T(), &fixture.DeckInput{UserID: userID})
-	cards := fx.CreateCard(s.T(), decks[0].ID, fixture.CardInput{Question: "before question", Answer: "before answer"})
+	cards := fx.CreateCard(s.T(), decks[0].ID, fixture.CardInput{Question: lo.ToPtr("before question"), Answer: lo.ToPtr("before answer")})
 
 	s.genemiClient.On("GenAnswer", mock.Anything, "updated question").Return("ai-answer", nil)
 
