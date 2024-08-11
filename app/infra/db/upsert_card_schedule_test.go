@@ -23,12 +23,17 @@ func assertUpsertedCardSchedule(t *testing.T, expect *domain.CardSchedule, actua
 }
 
 func TestUpsertCardSchedule(t *testing.T) {
-	os.Setenv("TZ", "UTC")
+	if err := os.Setenv("TZ", "UTC"); err != nil {
+		t.Fatal(err)
+	}
 
 	ctx := context.Background()
 
 	db := db_test.GetDB(t)
-	defer db.Close()
+	defer func() {
+		err := db.Close()
+		t.Fatal(err)
+	}()
 
 	fx := fixture.New(db)
 	decks := fx.CreateDeck(t, &fixture.DeckInput{UserID: "own"}, &fixture.DeckInput{UserID: "own"})

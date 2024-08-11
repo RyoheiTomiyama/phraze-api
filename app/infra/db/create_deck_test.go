@@ -13,7 +13,10 @@ func TestCreateDeck(t *testing.T) {
 	ctx := context.Background()
 
 	db := db_test.GetDB(t)
-	defer db.Close()
+	defer func() {
+		err := db.Close()
+		t.Fatal(err)
+	}()
 
 	client := NewTestClient(t, db)
 

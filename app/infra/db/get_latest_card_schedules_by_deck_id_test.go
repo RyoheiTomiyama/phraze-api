@@ -14,7 +14,10 @@ import (
 func TestGetLatestCardSchedulesByDeckID(t *testing.T) {
 	ctx := context.Background()
 	db := db_test.GetDB(t)
-	defer db.Close()
+	defer func() {
+		err := db.Close()
+		t.Fatal(err)
+	}()
 
 	fx := fixture.New(db)
 	var dis []*fixture.DeckInput

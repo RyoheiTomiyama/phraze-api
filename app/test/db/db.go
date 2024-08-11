@@ -69,7 +69,7 @@ func SetupDB() (*sqlx.DB, error) {
 	return nil, nil
 }
 
-func initializeDB() error {
+func initializeDB() (err error) {
 	config, err := env.New()
 	if err != nil {
 		return err
@@ -85,7 +85,9 @@ func initializeDB() error {
 	if err != nil {
 		return err
 	}
-	defer db.Close()
+	defer func() {
+		err = db.Close()
+	}()
 
 	var exist bool
 	if err := db.QueryRow(fmt.Sprintf(

@@ -12,7 +12,10 @@ import (
 
 func TestCountCards(t *testing.T) {
 	db := db_test.GetDB(t)
-	defer db.Close()
+	defer func() {
+		err := db.Close()
+		t.Fatal(err)
+	}()
 
 	fx := fixture.New(db)
 	decks := fx.CreateDeck(

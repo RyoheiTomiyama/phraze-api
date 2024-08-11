@@ -45,5 +45,7 @@ func (s *resolverSuite) SetupTest() {
 }
 
 func (s *resolverSuite) TearDownTest() {
-	s.dbx.Close()
+	if err := s.dbx.Close(); err != nil {
+		s.T().Fatal(err)
+	}
 }
