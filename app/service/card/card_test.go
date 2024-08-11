@@ -15,7 +15,10 @@ func TestCalcEvaluation(t *testing.T) {
 		for range 5 {
 			interval, factor = calcEvaluation(5, interval, factor)
 			t.Log("output", interval, factor)
-			t.Log("duration", (time.Duration(interval) * time.Minute).String(), "next", time.Now().Add(time.Duration(interval)*time.Minute).Format(time.RFC3339Nano))
+			t.Log(
+				"duration", (time.Duration(interval) * time.Minute).String(),
+				"next", time.Now().Add(time.Duration(interval)*time.Minute).Format(time.RFC3339Nano),
+			)
 		}
 	})
 	t.Run("grade 4", func(t *testing.T) {
@@ -27,7 +30,10 @@ func TestCalcEvaluation(t *testing.T) {
 		for range 5 {
 			interval, factor = calcEvaluation(4, interval, factor)
 			t.Log("output", interval, factor)
-			t.Log("duration", (time.Duration(interval) * time.Minute).String(), "next", time.Now().Add(time.Duration(interval)*time.Minute).Format(time.RFC3339Nano))
+			t.Log(
+				"duration", (time.Duration(interval) * time.Minute).String(),
+				"next", time.Now().Add(time.Duration(interval)*time.Minute).Format(time.RFC3339Nano),
+			)
 		}
 	})
 	t.Run("grade 3", func(t *testing.T) {
@@ -39,7 +45,10 @@ func TestCalcEvaluation(t *testing.T) {
 		for range 5 {
 			interval, factor = calcEvaluation(3, interval, factor)
 			t.Log("output", interval, factor)
-			t.Log("duration", (time.Duration(interval) * time.Minute).String(), "next", time.Now().Add(time.Duration(interval)*time.Minute).Format(time.RFC3339Nano))
+			t.Log(
+				"duration", (time.Duration(interval) * time.Minute).String(),
+				"next", time.Now().Add(time.Duration(interval)*time.Minute).Format(time.RFC3339Nano),
+			)
 		}
 	})
 }
