@@ -27,6 +27,8 @@ func (c *client) GetDeckInfosByDeckID(ctx context.Context, deckIDs []int64) (map
 			card_schedules cs ON c.id = cs.card_id
 		WHERE
 			c.deck_id IN (:deck_ids)
+			-- 解答が存在するカードに絞る
+			AND (c.answer <> '' OR c.ai_answer <> '')
 		GROUP BY
 			c.deck_id;
 	`

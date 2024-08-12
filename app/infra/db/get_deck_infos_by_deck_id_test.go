@@ -2,7 +2,6 @@ package db
 
 import (
 	"context"
-	"fmt"
 	"testing"
 	"time"
 
@@ -24,7 +23,7 @@ func TestGetDeckInfosByDeckID(t *testing.T) {
 
 	fx := fixture.New(db)
 	var dis []*fixture.DeckInput
-	for range 5 {
+	for range 6 {
 		dis = append(dis, &fixture.DeckInput{UserID: lo.ToPtr("own")})
 	}
 	decks := fx.CreateDeck(t, dis...)
@@ -32,6 +31,10 @@ func TestGetDeckInfosByDeckID(t *testing.T) {
 	cards2 := fx.CreateCard(t, decks[1].ID, make([]fixture.CardInput, 2)...)
 	cards3 := fx.CreateCard(t, decks[2].ID, make([]fixture.CardInput, 2)...)
 	cards4 := fx.CreateCard(t, decks[3].ID, make([]fixture.CardInput, 3)...)
+	cards5 := fx.CreateCard(t, decks[4].ID, []fixture.CardInput{
+		{Answer: lo.ToPtr(""), AIAnswer: lo.ToPtr("")},
+		{},
+	}...)
 
 	schedules := fx.CreateCardSchedule(t, []fixture.CardScheduleInput{
 		// 過去日のみ
@@ -46,15 +49,17 @@ func TestGetDeckInfosByDeckID(t *testing.T) {
 		// 過去日＋未来日＋スケジュールなし
 		{CardID: cards4[0].ID, ScheduleAt: time.Now().Add(-3 * time.Hour)},
 		{CardID: cards4[1].ID, ScheduleAt: time.Now().Add(10 * time.Hour)},
+		// 未来日（解答なし）
+		{CardID: cards5[0].ID, ScheduleAt: time.Now().Add(10 * time.Hour)},
+		{CardID: cards5[1].ID, ScheduleAt: time.Now().Add(11 * time.Hour)},
 	}...)
 
 	t.Run("正常系", func(t *testing.T) {
 		client := NewTestClient(t, db)
 		result, err := client.GetDeckInfosByDeckID(ctx,
-			[]int64{decks[0].ID, decks[1].ID, decks[2].ID, decks[3].ID, decks[4].ID},
+			[]int64{decks[0].ID, decks[1].ID, decks[2].ID, decks[3].ID, decks[4].ID, decks[5].ID},
 		)
-		fmt.Println(err)
-		// t.Log(result, err)
+		assert.NoError(t, err)
 
 		assert.Equal(t, &domain.DeckInfo{
 			TotalCardCount: 2, PendingCardCount: 2, LearnedCardCount: 0, ScheduleAt: nil,
@@ -69,7 +74,10 @@ func TestGetDeckInfosByDeckID(t *testing.T) {
 			TotalCardCount: 3, PendingCardCount: 2, LearnedCardCount: 1, ScheduleAt: nil,
 		}, result[decks[3].ID])
 		assert.Equal(t, &domain.DeckInfo{
-			TotalCardCount: 0, PendingCardCount: 0, LearnedCardCount: 0, ScheduleAt: nil,
+			TotalCardCount: 1, PendingCardCount: 0, LearnedCardCount: 1, ScheduleAt: &schedules[9].ScheduleAt,
 		}, result[decks[4].ID])
+		assert.Equal(t, &domain.DeckInfo{
+			TotalCardCount: 0, PendingCardCount: 0, LearnedCardCount: 0, ScheduleAt: nil,
+		}, result[decks[5].ID])
 	})
 }
