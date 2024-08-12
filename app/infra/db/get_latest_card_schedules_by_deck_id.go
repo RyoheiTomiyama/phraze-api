@@ -25,6 +25,8 @@ func (c *client) GetLatestCardSchedulesByDeckID(ctx context.Context, deckIDs []i
 				cards c ON cs.card_id = c.id
 			WHERE 
 				c.deck_id IN (:deck_ids) AND cs.schedule_at > NOW()
+				-- 解答が存在するカードに絞る
+				AND (c.answer <> '' OR c.ai_answer <> '')
 		)
 		SELECT 
 			id, card_id, schedule_at, interval, efactor, deck_id
