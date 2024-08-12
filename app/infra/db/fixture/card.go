@@ -12,7 +12,7 @@ import (
 type CardInput struct {
 	Question  *string
 	Answer    *string
-	AIAnswer  string
+	AIAnswer  *string
 	CreatedAt *time.Time
 	UpdatedAt *time.Time
 }
@@ -25,7 +25,7 @@ func (f *fixture) CreateCard(t *testing.T, deckID int64, cards ...CardInput) []*
 			DeckID:    deckID,
 			Question:  lo.FromPtrOr(d.Question, fmt.Sprintf("question-%d", i+offset)),
 			Answer:    lo.FromPtrOr(d.Answer, fmt.Sprintf("answer-%d", i+offset)),
-			AIAnswer:  d.AIAnswer,
+			AIAnswer:  lo.FromPtrOr(d.AIAnswer, fmt.Sprintf("**【日本語訳】** answer-%d", i+offset)),
 			CreatedAt: lo.FromPtrOr(d.CreatedAt, time.Now()),
 			UpdatedAt: lo.FromPtrOr(d.UpdatedAt, time.Now()),
 		})

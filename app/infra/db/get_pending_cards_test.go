@@ -33,9 +33,8 @@ func TestGetPendingCards(t *testing.T) {
 	cards2 := fx.CreateCard(t, decks[1].ID, make([]fixture.CardInput, 1)...)
 	// 解答なしを持つデッキカード
 	cards3 := fx.CreateCard(t, decks[2].ID,
-		fixture.CardInput{Answer: lo.ToPtr("")},
-		fixture.CardInput{Answer: lo.ToPtr(""), AIAnswer: ""},
-		fixture.CardInput{Answer: lo.ToPtr(""), AIAnswer: "ai-answer"},
+		fixture.CardInput{Answer: lo.ToPtr(""), AIAnswer: lo.ToPtr("")},
+		fixture.CardInput{Answer: lo.ToPtr(""), AIAnswer: lo.ToPtr("ai-answer")},
 		fixture.CardInput{Answer: lo.ToPtr("answer")},
 	)
 
@@ -75,10 +74,6 @@ func TestGetPendingCards(t *testing.T) {
 		{
 			CardID:     cards3[2].ID,
 			ScheduleAt: time.Now().Add(-3 * time.Hour),
-		},
-		{
-			CardID:     cards3[3].ID,
-			ScheduleAt: time.Now().Add(-4 * time.Hour),
 		},
 	}...)
 
@@ -121,8 +116,8 @@ func TestGetPendingCards(t *testing.T) {
 
 		t.Run("解答のあるカードのみ取得できること", func(t *testing.T) {
 			assert.Len(t, result, 2)
-			assert.Equal(t, cards3[3].ToDomain(), result[0])
-			assert.Equal(t, cards3[2].ToDomain(), result[1])
+			assert.Equal(t, cards3[2].ToDomain(), result[0])
+			assert.Equal(t, cards3[1].ToDomain(), result[1])
 		})
 	})
 
