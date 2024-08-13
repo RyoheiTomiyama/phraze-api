@@ -41,6 +41,7 @@ func (r *router) Handler() *chi.Mux {
 		middleware.CorsHandler(r.config),
 		middleware.ContextInjector(r.config, r.logger),
 		middleware.Authrization(r.authUsecase),
+		middleware.Monitoring(r.config),
 	)
 	// chiRouter.Get("/", func(w http.ResponseWriter, r *http.Request) {
 	// 	w.Write([]byte("welcome phraze"))

@@ -13,6 +13,7 @@ type Config struct {
 	APP    app
 	DB     db
 	Genemi genemi
+	Sentry sentry
 }
 
 type db struct {
@@ -25,6 +26,10 @@ type db struct {
 
 type genemi struct {
 	API_KEY string `env:"GOOGLE_GEMINI_API_SECRET_KEY"`
+}
+
+type sentry struct {
+	DSN string `env:"SENTRY_DSN"`
 }
 
 type app struct {

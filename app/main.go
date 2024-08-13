@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"net/http"
 	"time"
 
@@ -11,6 +10,7 @@ import (
 	"github.com/RyoheiTomiyama/phraze-api/infra/db"
 	firebaseAuth "github.com/RyoheiTomiyama/phraze-api/infra/firebase/auth"
 	"github.com/RyoheiTomiyama/phraze-api/infra/genemi"
+	"github.com/RyoheiTomiyama/phraze-api/infra/monitoring"
 	"github.com/RyoheiTomiyama/phraze-api/router"
 	"github.com/RyoheiTomiyama/phraze-api/router/graph/directive"
 	"github.com/RyoheiTomiyama/phraze-api/router/graph/resolver"
@@ -20,17 +20,12 @@ import (
 )
 
 func main() {
-	ctx := context.Background()
-
 	l := logger.New(logger.Options{Level: logger.LevelDebug, Debug: true})
-	ctx = l.WithCtx(ctx)
 
 	config, err := env.New()
 	if err != nil {
 		panic(err)
 	}
-	ctx = config.WithCtx(ctx)
-	// TODO contextにconfig, loggerを詰めれてない！
 
 	// infra
 	dbClient, err := db.NewClient(db.DataSourceOption{
@@ -53,6 +48,9 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+
+	monitoringClient := monitoring.New()
+	l = l.WithMonitoring(monitoringClient)
 
 	// service
 	cardService := card_service.NewService()

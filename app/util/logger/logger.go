@@ -7,6 +7,7 @@ import (
 	"os"
 	"runtime"
 
+	"github.com/RyoheiTomiyama/phraze-api/infra/monitoring"
 	"github.com/RyoheiTomiyama/phraze-api/util/errutil"
 	"github.com/golang-cz/devslog"
 	"github.com/samber/lo"
@@ -22,17 +23,19 @@ const (
 )
 
 type logger struct {
-	logger    *slog.Logger
-	debugMode bool
-	// Notify NotifyFunc
+	logger     *slog.Logger
+	debugMode  bool
+	monitoring monitoring.IClient
 }
 
 type ILogger interface {
 	WithCtx(ctx context.Context) context.Context
+	WithMonitoring(monitoring monitoring.IClient) ILogger
 	Debug(msg string, arg ...any)
 	Info(msg string, arg ...any)
 	Warning(msg string, arg ...any)
 	Error(err error, arg ...any)
+	ErrorWithNotify(ctx context.Context, err error, arg ...any)
 }
 
 type Options struct {
@@ -63,6 +66,11 @@ type loggerCtxKey struct{}
 // 引数で与えられたロガーを context に詰め、新たな context を返す
 func (l *logger) WithCtx(ctx context.Context) context.Context {
 	return context.WithValue(ctx, loggerCtxKey{}, l)
+}
+
+func (l *logger) WithMonitoring(monitoring monitoring.IClient) ILogger {
+	l.monitoring = monitoring
+	return l
 }
 
 // context からロガーを取り出す。取り出せない場合はデフォルトのロガーを返す
@@ -100,4 +108,13 @@ func (l *logger) Error(err error, arg ...any) {
 		}
 	}
 	l.logger.Error(err.Error(), arg...)
+}
+
+func (l *logger) ErrorWithNotify(ctx context.Context, err error, arg ...any) {
+	l.Error(err, arg...)
+	l.reportError(ctx, err)
+}
+
+func (l *logger) reportError(ctx context.Context, err error) {
+	l.monitoring.ReportError(ctx, err)
 }
