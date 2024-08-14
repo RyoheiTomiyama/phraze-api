@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"github.com/samber/lo"
-	"golang.org/x/xerrors"
 )
 
 // サーバエラーが発生した場合にクライアントに返すエラーメッセージ
@@ -18,8 +17,6 @@ const MaxStackDepth = 16
 type IError interface {
 	Error() string
 	Message() string
-	// Format(s fmt.State, r rune)
-	// FormatError(p xerrors.Printer) error
 	IsClient() bool
 	Code() int
 	StackTrace() []uintptr
@@ -33,7 +30,6 @@ func New(code ErrorCode, format string, args ...interface{}) IError {
 		message:  e.Error(),
 		code:     code,
 		stack:    caller(0),
-		frame:    xerrors.Caller(1),
 	}
 }
 
@@ -45,7 +41,6 @@ func Wrap(err error, msg ...string) *customError {
 			message:  lo.Ternary(len(msg) > 0, strings.Join(msg, " "), ce.message),
 			code:     ce.code,
 			stack:    ce.stack,
-			frame:    xerrors.Caller(1),
 		}
 	}
 
@@ -53,8 +48,7 @@ func Wrap(err error, msg ...string) *customError {
 		original: err,
 		message:  strings.Join(msg, " "),
 		code:     CodeInternalError,
-		stack:    caller(-1),
-		frame:    xerrors.Caller(1),
+		stack:    caller(0),
 	}
 }
 
@@ -65,7 +59,8 @@ func As(e error, target interface{}) bool {
 func ErrorWithStackTrace(err error) string {
 	var ce *customError
 	if errors.As(err, &ce) {
-		frames := extractFrames(ce.stack)
+		// log用にStackTraceを整形する
+		frames := extractFrames(ce.stack, 4)
 		traceString := ""
 		for _, f := range frames {
 			file := f.File
@@ -85,15 +80,17 @@ func ErrorWithStackTrace(err error) string {
 	return fmt.Sprintf("%+v", err)
 }
 
+// stacktraceを取り出す、この関数の位置から積まれてしまうので、skipでうまいこと調整する
 func caller(skip int) []uintptr {
 	stack := make([]uintptr, MaxStackDepth)
 	length := runtime.Callers(3+skip, stack)
 	return stack[:length]
 }
 
-func extractFrames(pcs []uintptr) []runtime.Frame {
+// log吐き出し用にFrameに変換する
+func extractFrames(pcs []uintptr, depth int) []runtime.Frame {
 	var frames = make([]runtime.Frame, 0, len(pcs))
-	callersFrames := runtime.CallersFrames(pcs)
+	callersFrames := runtime.CallersFrames(pcs[:min(len(pcs), depth)])
 
 	for {
 		callerFrame, more := callersFrames.Next()
