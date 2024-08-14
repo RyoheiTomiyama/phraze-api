@@ -10,6 +10,7 @@ type customError struct {
 	code     ErrorCode
 	message  string
 	original error
+	stack    []uintptr
 	frame    xerrors.Frame
 }
 
@@ -46,4 +47,9 @@ func (c *customError) IsClient() bool {
 
 func (c *customError) Code() int {
 	return int(c.code)
+}
+
+// SentryにStackTraceを表示するために、このメソッドが必要
+func (c *customError) StackTrace() []uintptr {
+	return c.stack
 }
