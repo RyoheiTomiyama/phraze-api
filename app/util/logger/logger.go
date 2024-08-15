@@ -2,13 +2,14 @@ package logger
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log/slog"
 	"os"
 	"runtime"
+	"strings"
 
 	"github.com/RyoheiTomiyama/phraze-api/infra/monitoring"
-	"github.com/RyoheiTomiyama/phraze-api/util/errutil"
 	"github.com/golang-cz/devslog"
 	"github.com/samber/lo"
 )
@@ -102,12 +103,40 @@ func (l *logger) Error(err error, arg ...any) {
 			arg = append(arg, "call", fmt.Sprintf("%s:%d", name, line))
 		}
 
-		st := errutil.ErrorWithStackTrace(err)
+		st := l.createStackTrace(err)
 		if len(st) > 0 {
 			arg = append(arg, "stack_trace", st)
 		}
 	}
 	l.logger.Error(err.Error(), arg...)
+}
+
+func (l *logger) createStackTrace(err error) string {
+	type stackError interface {
+		StackTrace() []uintptr
+	}
+
+	var se stackError
+	if errors.As(err, &se) {
+		// log用にStackTraceを整形する
+		frames := extractFrames(se.StackTrace(), 4)
+		traceString := ""
+		for _, f := range frames {
+			file := f.File
+			if strings.HasPrefix(file, "/go/src/app/") {
+				relativeIndex := strings.Index(file, "/go/src/app/")
+				file = file[relativeIndex+8:]
+			}
+			function := f.Function
+			if i := strings.LastIndex(function, "/"); i > 0 {
+				function = function[i+1:]
+			}
+			traceString += fmt.Sprintf("- %s\n  %s:%d\n", function, file, f.Line)
+		}
+		return traceString
+	}
+
+	return ""
 }
 
 func (l *logger) ErrorWithNotify(ctx context.Context, err error, arg ...any) {
@@ -117,4 +146,21 @@ func (l *logger) ErrorWithNotify(ctx context.Context, err error, arg ...any) {
 
 func (l *logger) reportError(ctx context.Context, err error) {
 	l.monitoring.ReportError(ctx, err)
+}
+
+// log吐き出し用にFrameに変換する
+func extractFrames(pcs []uintptr, depth int) []runtime.Frame {
+	var frames = make([]runtime.Frame, 0, len(pcs))
+	callersFrames := runtime.CallersFrames(pcs[:min(len(pcs), depth)])
+
+	for {
+		callerFrame, more := callersFrames.Next()
+		frames = append(frames, callerFrame)
+
+		if !more {
+			break
+		}
+	}
+
+	return frames
 }

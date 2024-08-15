@@ -56,50 +56,9 @@ func As(e error, target interface{}) bool {
 	return errors.As(e, target)
 }
 
-func ErrorWithStackTrace(err error) string {
-	var ce *customError
-	if errors.As(err, &ce) {
-		// log用にStackTraceを整形する
-		frames := extractFrames(ce.stack, 4)
-		traceString := ""
-		for _, f := range frames {
-			file := f.File
-			if strings.HasPrefix(file, "/go/src/app/") {
-				relativeIndex := strings.Index(file, "/go/src/app/")
-				file = file[relativeIndex+8:]
-			}
-			function := f.Function
-			if i := strings.LastIndex(function, "/"); i > 0 {
-				function = function[i+1:]
-			}
-			traceString += fmt.Sprintf("- %s\n  %s:%d\n", function, file, f.Line)
-		}
-		return traceString
-	}
-
-	return fmt.Sprintf("%+v", err)
-}
-
 // stacktraceを取り出す、この関数の位置から積まれてしまうので、skipでうまいこと調整する
 func caller(skip int) []uintptr {
 	stack := make([]uintptr, MaxStackDepth)
 	length := runtime.Callers(3+skip, stack)
 	return stack[:length]
-}
-
-// log吐き出し用にFrameに変換する
-func extractFrames(pcs []uintptr, depth int) []runtime.Frame {
-	var frames = make([]runtime.Frame, 0, len(pcs))
-	callersFrames := runtime.CallersFrames(pcs[:min(len(pcs), depth)])
-
-	for {
-		callerFrame, more := callersFrames.Next()
-		frames = append(frames, callerFrame)
-
-		if !more {
-			break
-		}
-	}
-
-	return frames
 }
