@@ -32,10 +32,13 @@ type logger struct {
 type ILogger interface {
 	WithCtx(ctx context.Context) context.Context
 	WithMonitoring(monitoring monitoring.IClient) ILogger
-	Debug(msg string, arg ...any)
-	Info(msg string, arg ...any)
-	Warning(msg string, arg ...any)
-	Error(err error, arg ...any)
+
+	Debug(ctx context.Context, msg string, arg ...any)
+	Info(ctx context.Context, msg string, arg ...any)
+	Warning(ctx context.Context, msg string, arg ...any)
+	Error(ctx context.Context, err error, arg ...any)
+
+	// レスポンスは正常終了させるけど、エラー通知したいときに使う
 	ErrorWithNotify(ctx context.Context, err error, arg ...any)
 }
 
@@ -84,19 +87,19 @@ func FromCtx(ctx context.Context) ILogger {
 	return l
 }
 
-func (l *logger) Debug(msg string, arg ...any) {
-	l.logger.Debug(msg, arg...)
+func (l *logger) Debug(ctx context.Context, msg string, arg ...any) {
+	l.logger.DebugContext(ctx, msg, arg...)
 }
 
-func (l *logger) Info(msg string, arg ...any) {
-	l.logger.Info(msg, arg...)
+func (l *logger) Info(ctx context.Context, msg string, arg ...any) {
+	l.logger.InfoContext(ctx, msg, arg...)
 }
 
-func (l *logger) Warning(msg string, arg ...any) {
-	l.logger.Warn(msg, arg...)
+func (l *logger) Warning(ctx context.Context, msg string, arg ...any) {
+	l.logger.WarnContext(ctx, msg, arg...)
 }
 
-func (l *logger) error(err error, arg ...any) {
+func (l *logger) error(ctx context.Context, err error, arg ...any) {
 	if l.debugMode {
 		_, name, line, ok := runtime.Caller(2)
 		if ok {
@@ -108,10 +111,10 @@ func (l *logger) error(err error, arg ...any) {
 			arg = append(arg, "stack_trace", st)
 		}
 	}
-	l.logger.Error(err.Error(), arg...)
+	l.logger.ErrorContext(ctx, err.Error(), arg...)
 }
-func (l *logger) Error(err error, arg ...any) {
-	l.error(err, arg...)
+func (l *logger) Error(ctx context.Context, err error, arg ...any) {
+	l.error(ctx, err, arg...)
 }
 
 func (l *logger) createStackTrace(err error) string {
@@ -143,7 +146,7 @@ func (l *logger) createStackTrace(err error) string {
 }
 
 func (l *logger) ErrorWithNotify(ctx context.Context, err error, arg ...any) {
-	l.error(err, arg...)
+	l.error(ctx, err, arg...)
 	l.reportError(ctx, err)
 }
 

@@ -36,13 +36,13 @@ func Authrization(authUsecase auth.IAuthUsecase) func(http.Handler) http.Handler
 			user, err := authUsecase.ParseToken(ctx, splitToken)
 			if err != nil {
 				l := logger.FromCtx(ctx)
-				l.Error(err, "token", token)
+				l.Error(ctx, err, "token", token)
 				http.Error(w, err.Error(), http.StatusForbidden)
 
 				return
 			}
 
-			log.Debug("Authorization", "user", user)
+			log.Debug(ctx, "Authorization", "user", user)
 
 			ctx = authutil.New(user).WithCtx(ctx)
 

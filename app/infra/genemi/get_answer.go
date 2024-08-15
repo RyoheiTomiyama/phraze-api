@@ -21,7 +21,7 @@ func (c *client) GenAnswer(ctx context.Context, q string) (string, error) {
 		return "", errutil.Wrap(err)
 	}
 
-	log.Debug("GenAnswer", "q", q, "resp", resp, "Parts", fmt.Sprintf("%+v", resp.Candidates[0].Content.Parts))
+	log.Debug(ctx, "GenAnswer", "q", q, "resp", resp, "Parts", fmt.Sprintf("%+v", resp.Candidates[0].Content.Parts))
 
 	answer := ""
 	for _, part := range resp.Candidates[0].Content.Parts {
@@ -30,7 +30,7 @@ func (c *client) GenAnswer(ctx context.Context, q string) (string, error) {
 
 	if !strings.HasPrefix(answer, "**【日本語訳】**") {
 		err := fmt.Errorf("Geminiから異常な解答を検出しました。")
-		log.Error(err, "q", q, "answer", answer)
+		log.ErrorWithNotify(ctx, err, "q", q, "answer", answer)
 	}
 
 	return answer, nil
