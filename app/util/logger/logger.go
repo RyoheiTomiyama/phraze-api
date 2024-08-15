@@ -96,9 +96,9 @@ func (l *logger) Warning(msg string, arg ...any) {
 	l.logger.Warn(msg, arg...)
 }
 
-func (l *logger) Error(err error, arg ...any) {
+func (l *logger) error(err error, arg ...any) {
 	if l.debugMode {
-		_, name, line, ok := runtime.Caller(1)
+		_, name, line, ok := runtime.Caller(2)
 		if ok {
 			arg = append(arg, "call", fmt.Sprintf("%s:%d", name, line))
 		}
@@ -109,6 +109,9 @@ func (l *logger) Error(err error, arg ...any) {
 		}
 	}
 	l.logger.Error(err.Error(), arg...)
+}
+func (l *logger) Error(err error, arg ...any) {
+	l.error(err, arg...)
 }
 
 func (l *logger) createStackTrace(err error) string {
@@ -140,7 +143,7 @@ func (l *logger) createStackTrace(err error) string {
 }
 
 func (l *logger) ErrorWithNotify(ctx context.Context, err error, arg ...any) {
-	l.Error(err, arg...)
+	l.error(err, arg...)
 	l.reportError(ctx, err)
 }
 
