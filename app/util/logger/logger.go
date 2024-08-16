@@ -9,7 +9,7 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/RyoheiTomiyama/phraze-api/infra/monitoring"
+	"github.com/RyoheiTomiyama/phraze-api/domain/infra/monitoring"
 	"github.com/golang-cz/devslog"
 	"github.com/samber/lo"
 )

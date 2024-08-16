@@ -3,6 +3,7 @@ package monitoring
 import (
 	"context"
 
+	"github.com/RyoheiTomiyama/phraze-api/domain/infra/monitoring"
 	"github.com/RyoheiTomiyama/phraze-api/util/errutil"
 	"github.com/getsentry/sentry-go"
 )
@@ -10,11 +11,7 @@ import (
 type client struct {
 }
 
-type IClient interface {
-	ReportError(ctx context.Context, err error)
-}
-
-func New() IClient {
+func New() monitoring.IClient {
 	return &client{}
 }
 
@@ -24,11 +21,7 @@ func (c *client) ReportError(ctx context.Context, err error) {
 	}
 }
 
-type MonitoringOptions struct {
-	Dsn string
-}
-
-func Setup(opt *MonitoringOptions) error {
+func (c *client) Setup(opt *monitoring.Options) error {
 	if err := sentry.Init(sentry.ClientOptions{
 		Dsn: opt.Dsn,
 		// Set TracesSampleRate to 1.0 to capture 100%
