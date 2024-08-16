@@ -89,14 +89,26 @@ func FromCtx(ctx context.Context) ILogger {
 
 func (l *logger) Debug(ctx context.Context, msg string, arg ...any) {
 	l.logger.DebugContext(ctx, msg, arg...)
+
+	if l.monitoring != nil {
+		l.monitoring.RecordEvent(ctx, monitoring.LevelDebug, msg, arg...)
+	}
 }
 
 func (l *logger) Info(ctx context.Context, msg string, arg ...any) {
 	l.logger.InfoContext(ctx, msg, arg...)
+
+	if l.monitoring != nil {
+		l.monitoring.RecordEvent(ctx, monitoring.LevelInfo, msg, arg...)
+	}
 }
 
 func (l *logger) Warning(ctx context.Context, msg string, arg ...any) {
 	l.logger.WarnContext(ctx, msg, arg...)
+
+	if l.monitoring != nil {
+		l.monitoring.RecordEvent(ctx, monitoring.LevelWarning, msg, arg...)
+	}
 }
 
 func (l *logger) error(ctx context.Context, err error, arg ...any) {
@@ -115,6 +127,10 @@ func (l *logger) error(ctx context.Context, err error, arg ...any) {
 }
 func (l *logger) Error(ctx context.Context, err error, arg ...any) {
 	l.error(ctx, err, arg...)
+
+	if l.monitoring != nil {
+		l.monitoring.RecordEvent(ctx, monitoring.LevelError, err.Error(), arg...)
+	}
 }
 
 func (l *logger) createStackTrace(err error) string {
@@ -147,7 +163,10 @@ func (l *logger) createStackTrace(err error) string {
 
 func (l *logger) ErrorWithNotify(ctx context.Context, err error, arg ...any) {
 	l.error(ctx, err, arg...)
-	l.reportError(ctx, err)
+
+	if l.monitoring != nil {
+		l.reportError(ctx, err)
+	}
 }
 
 func (l *logger) reportError(ctx context.Context, err error) {

@@ -49,6 +49,7 @@ func main() {
 		panic(err)
 	}
 
+	monitoringHttp := monitoring.NewHttp()
 	monitoringClient := monitoring.New()
 	l = l.WithMonitoring(monitoringClient)
 
@@ -63,7 +64,7 @@ func main() {
 	resolver := resolver.New(cardUsecase, deckUsecase)
 	directive := directive.New()
 
-	r := router.New(config, resolver, &directive, l, authUsecase)
+	r := router.New(config, resolver, &directive, l, monitoringHttp, authUsecase)
 
 	server := &http.Server{
 		Addr:              ":3000",
