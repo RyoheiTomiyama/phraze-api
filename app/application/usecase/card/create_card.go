@@ -43,8 +43,7 @@ func (u *usecase) CreateCardWithGenAnswer(ctx context.Context, card *domain.Card
 		}
 		answer, err := u.genemiClient.GenAnswer(ctx, card.Question)
 		if err != nil {
-			// TODO notify error
-			log.Error(err, "card", card)
+			log.ErrorWithNotify(ctx, err, "card", card)
 		}
 
 		if _, err = u.dbClient.UpdateCardByID(ctx, card.ID, &domain.UpdateCardInput{
@@ -52,8 +51,7 @@ func (u *usecase) CreateCardWithGenAnswer(ctx context.Context, card *domain.Card
 				AIAnswer: &answer,
 			},
 		}); err != nil {
-			// TODO notify error
-			log.Error(err)
+			log.ErrorWithNotify(ctx, err)
 		}
 	}()
 

@@ -2,13 +2,14 @@ package logger
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log/slog"
 	"os"
 	"runtime"
+	"strings"
 
-	"github.com/RyoheiTomiyama/phraze-api/infra/monitoring"
-	"github.com/RyoheiTomiyama/phraze-api/util/errutil"
+	"github.com/RyoheiTomiyama/phraze-api/domain/infra/monitoring"
 	"github.com/golang-cz/devslog"
 	"github.com/samber/lo"
 )
@@ -31,10 +32,13 @@ type logger struct {
 type ILogger interface {
 	WithCtx(ctx context.Context) context.Context
 	WithMonitoring(monitoring monitoring.IClient) ILogger
-	Debug(msg string, arg ...any)
-	Info(msg string, arg ...any)
-	Warning(msg string, arg ...any)
-	Error(err error, arg ...any)
+
+	Debug(ctx context.Context, msg string, arg ...any)
+	Info(ctx context.Context, msg string, arg ...any)
+	Warning(ctx context.Context, msg string, arg ...any)
+	Error(ctx context.Context, err error, arg ...any)
+
+	// レスポンスは正常終了させるけど、エラー通知したいときに使う
 	ErrorWithNotify(ctx context.Context, err error, arg ...any)
 }
 
@@ -83,38 +87,105 @@ func FromCtx(ctx context.Context) ILogger {
 	return l
 }
 
-func (l *logger) Debug(msg string, arg ...any) {
-	l.logger.Debug(msg, arg...)
+func (l *logger) Debug(ctx context.Context, msg string, arg ...any) {
+	l.logger.DebugContext(ctx, msg, arg...)
+
+	if l.monitoring != nil {
+		l.monitoring.RecordEvent(ctx, monitoring.LevelDebug, msg, arg...)
+	}
 }
 
-func (l *logger) Info(msg string, arg ...any) {
-	l.logger.Info(msg, arg...)
+func (l *logger) Info(ctx context.Context, msg string, arg ...any) {
+	l.logger.InfoContext(ctx, msg, arg...)
+
+	if l.monitoring != nil {
+		l.monitoring.RecordEvent(ctx, monitoring.LevelInfo, msg, arg...)
+	}
 }
 
-func (l *logger) Warning(msg string, arg ...any) {
-	l.logger.Warn(msg, arg...)
+func (l *logger) Warning(ctx context.Context, msg string, arg ...any) {
+	l.logger.WarnContext(ctx, msg, arg...)
+
+	if l.monitoring != nil {
+		l.monitoring.RecordEvent(ctx, monitoring.LevelWarning, msg, arg...)
+	}
 }
 
-func (l *logger) Error(err error, arg ...any) {
+func (l *logger) error(ctx context.Context, err error, arg ...any) {
 	if l.debugMode {
-		_, name, line, ok := runtime.Caller(1)
+		_, name, line, ok := runtime.Caller(2)
 		if ok {
 			arg = append(arg, "call", fmt.Sprintf("%s:%d", name, line))
 		}
 
-		st := errutil.ErrorWithStackTrace(err)
+		st := l.createStackTrace(err)
 		if len(st) > 0 {
 			arg = append(arg, "stack_trace", st)
 		}
 	}
-	l.logger.Error(err.Error(), arg...)
+	l.logger.ErrorContext(ctx, err.Error(), arg...)
+}
+func (l *logger) Error(ctx context.Context, err error, arg ...any) {
+	l.error(ctx, err, arg...)
+
+	if l.monitoring != nil {
+		l.monitoring.RecordEvent(ctx, monitoring.LevelError, err.Error(), arg...)
+	}
+}
+
+func (l *logger) createStackTrace(err error) string {
+	type stackError interface {
+		StackTrace() []uintptr
+	}
+
+	var se stackError
+	if errors.As(err, &se) {
+		// log用にStackTraceを整形する
+		frames := extractFrames(se.StackTrace(), 4)
+		traceString := ""
+		for _, f := range frames {
+			file := f.File
+			if strings.HasPrefix(file, "/go/src/app/") {
+				relativeIndex := strings.Index(file, "/go/src/app/")
+				file = file[relativeIndex+8:]
+			}
+			function := f.Function
+			if i := strings.LastIndex(function, "/"); i > 0 {
+				function = function[i+1:]
+			}
+			traceString += fmt.Sprintf("- %s\n  %s:%d\n", function, file, f.Line)
+		}
+		return traceString
+	}
+
+	return ""
 }
 
 func (l *logger) ErrorWithNotify(ctx context.Context, err error, arg ...any) {
-	l.Error(err, arg...)
-	l.reportError(ctx, err)
+	l.error(ctx, err, arg...)
+
+	if l.monitoring != nil {
+		l.reportError(ctx, err)
+	}
 }
 
 func (l *logger) reportError(ctx context.Context, err error) {
 	l.monitoring.ReportError(ctx, err)
+}
+
+// log吐き出し用にFrameに変換する
+func extractFrames(pcs []uintptr, depth int) []runtime.Frame {
+	var frames = make([]runtime.Frame, 0, len(pcs))
+	callersFrames := runtime.CallersFrames(pcs[:min(len(pcs), depth)])
+
+	for {
+		callerFrame, more := callersFrames.Next()
+		frames = append(frames, callerFrame)
+
+		if !more {
+			break
+		}
+	}
+
+	return frames
 }

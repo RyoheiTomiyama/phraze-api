@@ -2,19 +2,16 @@ package monitoring
 
 import (
 	"context"
+	"fmt"
 
-	"github.com/RyoheiTomiyama/phraze-api/util/errutil"
+	"github.com/RyoheiTomiyama/phraze-api/domain/infra/monitoring"
 	"github.com/getsentry/sentry-go"
 )
 
 type client struct {
 }
 
-type IClient interface {
-	ReportError(ctx context.Context, err error)
-}
-
-func New() IClient {
+func New() monitoring.IClient {
 	return &client{}
 }
 
@@ -24,20 +21,34 @@ func (c *client) ReportError(ctx context.Context, err error) {
 	}
 }
 
-type MonitoringOptions struct {
-	Dsn string
+func (c *client) RecordEvent(ctx context.Context, l monitoring.Level, m string, arg ...any) {
+	if hub := sentry.GetHubFromContext(ctx); hub != nil {
+		data := map[string]interface{}{}
+		for i := 0; i < len(arg); i += 2 {
+			key := fmt.Sprintf("%v", arg[i])
+			value := fmt.Sprintf("%v", arg[i+1])
+			data[key] = value
+		}
+
+		hub.AddBreadcrumb(&sentry.Breadcrumb{
+			Type:     string(l),
+			Category: string(l),
+			Message:  m,
+			Level:    toSentryLevel(l),
+			Data:     data,
+		}, nil)
+	}
 }
 
-func Setup(opt *MonitoringOptions) error {
-	if err := sentry.Init(sentry.ClientOptions{
-		Dsn: opt.Dsn,
-		// Set TracesSampleRate to 1.0 to capture 100%
-		// of transactions for performance monitoring.
-		// We recommend adjusting this value in production,
-		TracesSampleRate: 0.1,
-	}); err != nil {
-		return errutil.Wrap(err)
+func toSentryLevel(l monitoring.Level) sentry.Level {
+	switch l {
+	case monitoring.LevelInfo:
+		return sentry.LevelInfo
+	case monitoring.LevelWarning:
+		return sentry.LevelWarning
+	case monitoring.LevelError:
+		return sentry.LevelError
+	default:
+		return sentry.LevelDebug
 	}
-
-	return nil
 }

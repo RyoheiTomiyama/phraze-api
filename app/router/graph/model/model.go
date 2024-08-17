@@ -23,7 +23,7 @@ func FromDomain(ctx context.Context, d any, target interface{}) error {
 		t, ok := target.(*Deck)
 		if !ok {
 			err := errutil.New(errutil.CodeInternalError, "targetとdomainの型が違います")
-			log.Error(err, "domain", d, "target", target)
+			log.Error(ctx, err, "domain", d, "target", target)
 
 			return err
 		}
@@ -43,7 +43,7 @@ func FromDomain(ctx context.Context, d any, target interface{}) error {
 		t, ok := target.(*DeckInfo)
 		if !ok {
 			err := errutil.New(errutil.CodeInternalError, "targetとdomainの型が違います")
-			log.Error(err, "domain", d, "target", target)
+			log.Error(ctx, err, "domain", d, "target", target)
 
 			return err
 		}
@@ -61,7 +61,7 @@ func FromDomain(ctx context.Context, d any, target interface{}) error {
 		t, ok := target.(*Card)
 		if !ok {
 			err := errutil.New(errutil.CodeInternalError, "targetとdomainの型が違います")
-			log.Error(err, "domain", d, "target", target)
+			log.Error(ctx, err, "domain", d, "target", target)
 
 			return err
 		}
@@ -77,7 +77,7 @@ func FromDomain(ctx context.Context, d any, target interface{}) error {
 		return nil
 	default:
 		err := errutil.New(errutil.CodeInternalError, "domain→model変換に失敗しました。")
-		log.Error(err, "domain", d)
+		log.Error(ctx, err, "domain", d)
 
 		return err
 	}

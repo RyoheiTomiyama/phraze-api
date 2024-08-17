@@ -15,7 +15,7 @@ func Recoverer(next http.Handler) http.Handler {
 				log := logger.FromCtx(ctx)
 
 				err := errutil.New(errutil.CodeInternalError, "panic!!: %+v", v)
-				log.Error(err)
+				log.Error(ctx, err)
 
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 			}

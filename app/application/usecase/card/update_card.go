@@ -34,7 +34,7 @@ func (u *usecase) UpdateCardWithGendAnswer(ctx context.Context, id int64, input 
 
 	if input.Field.Question == nil || *input.Field.Question == "" {
 		err = fmt.Errorf("Questionが見つからずAI生成ができない")
-		log.Error(err, "id", id, "input", input)
+		log.Error(ctx, err, "id", id, "input", input)
 		return nil, errutil.New(errutil.CodeBadRequest, err.Error())
 	}
 

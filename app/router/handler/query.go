@@ -34,8 +34,7 @@ func PostQuery(r *resolver.Resolver, d *generated.DirectiveRoot) http.HandlerFun
 		var gqlErr *gqlerror.Error
 		if ok := errors.As(err, &gqlErr); !ok {
 			// err の実体が gqlerror.Error でない場合は FW がバグっている可能性
-			log.Error(err)
-			// TODO Sentry
+			log.ErrorWithNotify(ctx, err)
 
 			return &internalErr
 		}
@@ -47,13 +46,13 @@ func PostQuery(r *resolver.Resolver, d *generated.DirectiveRoot) http.HandlerFun
 			if ok {
 				// クエリのパースエラー・フィールドのバリデーションエラーはそのまま返す
 				if codeStr == errcode.ValidationFailed || codeStr == errcode.ParseFailed {
-					log.Error(err)
+					log.Error(ctx, err)
 
 					return gqlErr
 				}
 			} else {
 				// parse失敗した場合はバグってる可能性
-				log.Error(err)
+				log.ErrorWithNotify(ctx, err)
 			}
 
 			return &internalErr
@@ -62,14 +61,15 @@ func PostQuery(r *resolver.Resolver, d *generated.DirectiveRoot) http.HandlerFun
 		var customErr errutil.IError
 		if !errutil.As(orgErr, &customErr) {
 			// カスタムエラーにし忘れがある？
-			log.Error(orgErr, "memo", "カスタムエラーでないものが返されています")
-			// TODO Sentry
+			log.ErrorWithNotify(ctx, orgErr, "memo", "カスタムエラーでないものが返されています")
 
 			return &internalErr
 		}
 
-		log.Error(customErr)
 		if customErr.IsClient() {
+			// クライアントエラーは通知不要
+			log.Error(ctx, customErr)
+
 			return &gqlerror.Error{
 				Message: customErr.Error(),
 				Extensions: map[string]interface{}{
@@ -79,7 +79,8 @@ func PostQuery(r *resolver.Resolver, d *generated.DirectiveRoot) http.HandlerFun
 			}
 		}
 
-		// TODO Sentry
+		log.ErrorWithNotify(ctx, customErr)
+
 		return &internalErr
 	})
 
