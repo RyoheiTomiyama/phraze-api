@@ -24,14 +24,12 @@ app/
         └── logger.go
 
 
-# マイグレーション管理
+# マイグレーション・シード管理
 atlas/
-└── schema.sql
-
-# シード管理
-seeds/
-└── dev/
-    └── 20240628144146_users.sql
+├── schema.sql
+└── seeds/
+    └── dev/
+        └── 20240628144146_users.sql
 ```
 
 なんちゃってクリーンアーキテクチャを意識
