@@ -66,3 +66,27 @@ CREATE TABLE
     );
 
 CREATE INDEX idx_card_schedules_schedule_at ON "card_schedules" ("schedule_at");
+
+-- Plan
+CREATE TABLE
+    "public"."plans" (
+        "key" VARCHAR(100) NOT NULL UNIQUE,
+        "name" VARCHAR(100) NOT NULL,
+        "max_cards" INT, -- 合計最大カード保持数
+        PRIMARY KEY ("key")
+    );
+
+INSERT INTO
+    "public"."plans" ("key", "name", "max_cards")
+VALUES
+    ('free', 'Free', 300),
+    ('pro', 'Pro', 1000),
+    ('premium', 'Premium', null);
+
+-- User
+CREATE TABLE
+    "public"."users" (
+        "id" VARCHAR(50) NOT NULL UNIQUE,
+        "plan_key" VARCHAR(100) NOT NULL DEFAULT 'free' REFERENCES plans (key) ON DELETE RESTRICT,
+        PRIMARY KEY ("id")
+    );
