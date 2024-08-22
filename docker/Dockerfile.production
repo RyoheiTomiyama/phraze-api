@@ -1,0 +1,24 @@
+# BUILD
+FROM golang:1.22-alpine AS build
+
+WORKDIR /go/src/app
+
+COPY ./app/go.* ./
+RUN go mod download && go mod verify
+
+COPY ./app .
+
+# -ldflags="-s -w"
+# デバッグ情報（シンボルテーブル等）を含めないオプション
+# ファイルサイズが小さくなる
+# -trimpath
+# ビルド環境のローカルパス情報を取り除くオプション
+# （ユーザー名などが含まれた）ローカルPC上のパス情報の漏洩を防ぐ
+RUN go build -o /bin/phraze-api -ldflags="-s -w" -trimpath
+
+# RUN
+FROM scratch
+
+COPY --from=build /bin/phraze-api /bin/phraze-api
+
+CMD ["/bin/phraze-api"]
