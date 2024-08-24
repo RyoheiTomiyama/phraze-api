@@ -90,3 +90,19 @@ settings.json に以下を追加する
   "go.lintTool": "golangci-lint",
   "go.lintFlags": ["--fast"]
 ```
+
+## Production
+
+### 本番環境用の Docker image をビルドする
+
+API
+
+```sh
+docker build -f docker/Dockerfile.production -t phraze-app-prd .
+```
+
+Migration
+
+```sh
+docker build -f docker/Dockerfile.migration -t phraze-migration-prd .
+```
