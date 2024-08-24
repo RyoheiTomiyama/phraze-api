@@ -30,9 +30,9 @@ migrate-diff:
 		--dev-url "docker://postgres"
 
 seed:
-	atlas migrate hash --dir "file://seeds/dev"
+	atlas migrate hash --dir "file://atlas/seeds/dev"
 	atlas migrate apply\
 		--url "postgres://postgres:password@0.0.0.0:5432/phraze?sslmode=disable"\
-		--dir "file://seeds/dev"\
+		--dir "file://atlas/seeds/dev"\
 		--allow-dirty
 	

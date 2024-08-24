@@ -50,14 +50,14 @@ make migrate
 
 初期データを入れれるように seed の仕組みも構築した。
 
-`seeds/dev`に seed データを置いている。
+`./seeds/dev`に seed データを置いている。
 
 ### 作成
 
-新たに seed ファイルを作成した場合は以下のようなコマンドを実行する
+新たに seed ファイルを作成したい場合は以下のようなコマンドを実行する
 
 ```bash
-atlas migrate new SEED_NAME --dir "file://seeds/dev"
+atlas migrate new SEED_NAME --dir "file://atlas/seeds/dev"
 ```
 
 すると、`20240628144146_SEED_NAME.sql`というファイルが生成されるので、その中に Seed 用の INSERT 文を記述する。

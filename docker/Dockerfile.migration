@@ -1,0 +1,7 @@
+FROM arigaio/atlas:latest-distroless
+
+WORKDIR /migration
+COPY ./atlas .
+
+ENTRYPOINT [ "/atlas" ]
+CMD [ "--help" ]
