@@ -57,7 +57,7 @@ make migrate
 新たに seed ファイルを作成したい場合は以下のようなコマンドを実行する
 
 ```bash
-atlas migrate new SEED_NAME --dir "file://atlas/seeds/dev"
+atlas migrate new --dir "file://atlas/seeds/dev" SEED_NAME
 ```
 
 すると、`20240628144146_SEED_NAME.sql`というファイルが生成されるので、その中に Seed 用の INSERT 文を記述する。
