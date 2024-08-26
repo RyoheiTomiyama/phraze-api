@@ -51,8 +51,7 @@ values
     (1, 3),
     -- planPro
     (2, 1),
-    (2, 2),
-    (2, 3) on conflict (role_id, permission_id) do
+    (2, 2) on conflict (role_id, permission_id) do
 update
 set
     "role_id" = excluded."role_id",
