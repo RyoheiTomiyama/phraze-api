@@ -9,6 +9,18 @@ set
     "key" = excluded."key",
     "name" = excluded."name";
 
+-- シーケンス番号更新
+SELECT
+    setval (
+        'permissions_id_seq',
+        (
+            SELECT
+                MAX(id)
+            FROM
+                "permissions"
+        )
+    );
+
 insert into
     "public"."roles" ("id", "key", "name")
 values
@@ -19,6 +31,18 @@ set
     "key" = excluded."key",
     "name" = excluded."name";
 
+-- シーケンス番号更新
+SELECT
+    setval (
+        'roles_id_seq',
+        (
+            SELECT
+                MAX(id)
+            FROM
+                "roles"
+        )
+    );
+
 insert into
     "public"."roles_permissions" ("role_id", "permission_id")
 values
@@ -27,7 +51,8 @@ values
     (1, 3),
     -- planPro
     (2, 1),
-    (2, 2) on conflict (role_id, permission_id) do
+    (2, 2),
+    (2, 3) on conflict (role_id, permission_id) do
 update
 set
     "role_id" = excluded."role_id",
