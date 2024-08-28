@@ -1,7 +1,9 @@
-FROM arigaio/atlas:latest-distroless
+FROM alpine:latest
+
+RUN apk add curl postgresql-client
+RUN curl -sSf https://atlasgo.sh | sh -s -- -y
 
 WORKDIR /migration
 COPY ./atlas .
 
-ENTRYPOINT [ "/atlas" ]
-CMD [ "--help" ]
+CMD [ "/bin/sh"]
