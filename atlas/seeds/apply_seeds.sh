@@ -15,7 +15,7 @@ fi
 POSTGRES_HOST=${POSTGRES_HOST:-localhost}
 
 # ENVに対応するディレクトリのパスを設定
-SEED_DIR="atlas/seeds/$ENV"
+SEED_DIR="$(dirname "$0")/$ENV"
 
 # seeds ディレクトリにあるすべての .sql ファイルを対象にする
 SEED_FILES=$(ls $SEED_DIR/*.sql)
@@ -23,5 +23,5 @@ SEED_FILES=$(ls $SEED_DIR/*.sql)
 # 各 SQL ファイルをデータベースに適用する
 for file in $SEED_FILES; do
   echo "Applying $file..."
-  psql -h $POSTGRES_HOST -U $POSTGRES_USER -d $POSTGRES_DB -f $file --single-transaction
+  psql -h $POSTGRES_HOST -U $POSTGRES_USER -d $POSTGRES_DB -w -f $file --single-transaction
 done
