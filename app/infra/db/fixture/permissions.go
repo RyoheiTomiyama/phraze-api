@@ -13,10 +13,14 @@ type PermissionInput struct {
 	Name *string
 }
 
-func (f *fixture) CreatePermission(t *testing.T, inputs ...*PermissionInput) []*model.Permission {
+func (f *fixture) CreatePermission(t *testing.T, inputs ...PermissionInput) []*model.Permission {
+	t.Helper()
+
 	var list []*model.Permission
 	offset := len(f.Permissions)
 	for i, input := range inputs {
+		t.Log("input")
+		t.Log(input)
 		list = append(list, &model.Permission{
 			Key:  lo.FromPtrOr(input.Key, fmt.Sprintf("key-%d", i+offset)),
 			Name: lo.FromPtrOr(input.Name, fmt.Sprintf("name-%d", i+offset)),
