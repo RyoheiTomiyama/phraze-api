@@ -11,6 +11,7 @@ type fixture struct {
 	CardReviews   []*model.CardReview
 	CardSchedules []*model.CardSchedule
 	Decks         []*model.Deck
+	Permissions   []*model.Permission
 }
 
 func New(db *sqlx.DB) *fixture {
