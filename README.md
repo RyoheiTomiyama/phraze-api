@@ -28,7 +28,7 @@ app/
 atlas/
 ├── schema.sql
 └── seeds/
-    └── dev/
+    └── development/
         └── 20240628144146_users.sql
 ```
 

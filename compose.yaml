@@ -30,11 +30,11 @@ services:
       - type: volume
         source: go-modules
         target: /go/pkg/mod
-  
+
   db:
     image: postgres:16
     shm_size: 128mb
-    ports: 
+    ports:
       - ${POSTGRES_PORT:-5432}:5432
     environment:
       TZ: UTC
@@ -43,6 +43,7 @@ services:
       POSTGRES_DB: ${POSTGRES_DB:-phraze}
     volumes:
       - db-store:/var/lib/postgresql/data
+      - ./atlas:/atlas:ro
     healthcheck:
       test: pg_isready -U postgres -d phraze
       interval: 10s
