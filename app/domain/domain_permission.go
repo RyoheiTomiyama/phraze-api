@@ -7,3 +7,7 @@ const (
 	PermissionUnlimitedAIAnswerGeneration PermissionKey = "unlimitedAIAnswerGeneration"
 	PermissionLimitedAIAnswer100rpd       PermissionKey = "limitedAIAnswer100rpd"
 )
+
+func (pk PermissionKey) String() string {
+	return string(pk)
+}

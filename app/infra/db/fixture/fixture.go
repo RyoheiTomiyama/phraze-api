@@ -13,6 +13,8 @@ type fixture struct {
 	Decks         []*model.Deck
 	Permissions   []*model.Permission
 	Roles         []*model.Role
+	Users         []*model.User
+	UsersRoles    []*model.UsersRole
 }
 
 func New(db *sqlx.DB) *fixture {
