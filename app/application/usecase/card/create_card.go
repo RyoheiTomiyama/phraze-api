@@ -13,6 +13,23 @@ import (
 func (u *usecase) CreateCard(ctx context.Context, card *domain.Card) (*domain.Card, error) {
 	user := auth.FromCtx(ctx)
 
+	permissions, err := u.dbClient.GetPermissionsByUserID(ctx, user.ID)
+	if err != nil {
+		return nil, errutil.Wrap(err)
+	}
+	// 無制限の権限ない場合は、合計1000個までしかカードを作成できない
+	if !domain.Permissions(permissions).HasKey(ctx, domain.PermissionUnlimitedCardCreation) {
+		c, err := u.dbClient.CountCards(ctx, &domain.CardsWhere{
+			UserID: &user.ID,
+		})
+		if err != nil {
+			return nil, errutil.Wrap(err)
+		}
+		if c > 999 {
+			return nil, errutil.New(errutil.CodeForbidden, "カードは合計1000件まで作成可能です")
+		}
+	}
+
 	deck, err := u.dbClient.GetDeck(ctx, card.DeckID)
 	if err != nil {
 		return nil, errutil.Wrap(err)

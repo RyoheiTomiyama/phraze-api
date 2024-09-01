@@ -1,5 +1,7 @@
 package domain
 
+import "context"
+
 type PermissionKey string
 
 const (
@@ -16,4 +18,16 @@ type Permission struct {
 	ID   int64
 	Key  string
 	Name string
+}
+
+type Permissions []*Permission
+
+func (pp Permissions) HasKey(ctx context.Context, k PermissionKey) bool {
+	for _, p := range pp {
+		if p.Key == k.String() {
+			return true
+		}
+	}
+
+	return false
 }
