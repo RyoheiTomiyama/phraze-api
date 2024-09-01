@@ -53,7 +53,7 @@ func (r *queryResolver) Cards(ctx context.Context, input *model.CardsInput) (*mo
 
 	output, err := r.cardUsecase.GetCards(ctx, domain.GetCardsInput{
 		Where: &domain.CardsWhere{
-			DeckID: input.Where.DeckID,
+			DeckID: lo.ToPtr(input.Where.DeckID),
 		},
 		Limit:  input.Limit,
 		Offset: input.Offset,
@@ -106,7 +106,7 @@ func (r *queryResolver) PendingCards(ctx context.Context, input *model.PendingCa
 
 	output, err := r.cardUsecase.GetPendingCards(ctx, domain.GetPendingCardsInput{
 		Where: &domain.CardsWhere{
-			DeckID: input.Where.DeckID,
+			DeckID: lo.ToPtr(input.Where.DeckID),
 		},
 		Limit:  input.Limit,
 		Offset: input.Offset,

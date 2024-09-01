@@ -6,6 +6,7 @@ import (
 	"github.com/RyoheiTomiyama/phraze-api/domain"
 	"github.com/RyoheiTomiyama/phraze-api/util/auth"
 	"github.com/RyoheiTomiyama/phraze-api/util/errutil"
+	"github.com/RyoheiTomiyama/phraze-api/util/logger"
 	"github.com/samber/lo"
 )
 
@@ -20,8 +21,16 @@ type GetCardsOutput struct {
 
 func (u *usecase) GetCards(ctx context.Context, input domain.GetCardsInput) (*GetCardsOutput, error) {
 	user := auth.FromCtx(ctx)
+	log := logger.FromCtx(ctx)
 
-	deck, err := u.dbClient.GetDeck(ctx, input.Where.DeckID)
+	if input.Where.DeckID == nil {
+		err := errutil.New(errutil.CodeBadRequest, "DeckIDを指定してください")
+		log.ErrorWithNotify(ctx, err, "input", input)
+
+		return nil, err
+	}
+
+	deck, err := u.dbClient.GetDeck(ctx, lo.FromPtr(input.Where.DeckID))
 	if err != nil {
 		return nil, errutil.Wrap(err)
 	}
