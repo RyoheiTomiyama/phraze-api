@@ -86,6 +86,13 @@ type Permission struct {
 	Name string `db:"name"`
 }
 
+func (m *Permission) ToDomain() *domain.Permission {
+	return &domain.Permission{
+		Key:  m.Key,
+		Name: m.Name,
+	}
+}
+
 type Role struct {
 	ID   int64  `db:"id"`
 	Key  string `db:"key"`

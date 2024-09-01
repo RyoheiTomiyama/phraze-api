@@ -11,3 +11,8 @@ const (
 func (pk PermissionKey) String() string {
 	return string(pk)
 }
+
+type Permission struct {
+	Key  string
+	Name string
+}
