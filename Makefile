@@ -37,4 +37,7 @@ seed:
 # 		--url "postgres://postgres:password@0.0.0.0:5432/phraze?sslmode=disable"\
 # 		--dir "file://atlas/seeds/dev"\
 # 		--allow-dirty
-	
+
+
+test:
+	TZ=UTC go test -v ./app/...
