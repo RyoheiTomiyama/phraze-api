@@ -13,6 +13,7 @@ func (pk PermissionKey) String() string {
 }
 
 type Permission struct {
+	ID   int64
 	Key  string
 	Name string
 }

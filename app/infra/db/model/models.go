@@ -88,6 +88,7 @@ type Permission struct {
 
 func (m *Permission) ToDomain() *domain.Permission {
 	return &domain.Permission{
+		ID:   m.ID,
 		Key:  m.Key,
 		Name: m.Name,
 	}

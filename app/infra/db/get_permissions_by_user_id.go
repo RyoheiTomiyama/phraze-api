@@ -21,7 +21,7 @@ func (c *client) GetPermissionsByUserID(ctx context.Context, userID string) ([]*
 			JOIN roles_permissions ON roles_permissions.role_id = roles.id
 			JOIN permissions ON permissions.id = roles_permissions.permission_id
 		WHERE users_roles.user_id = :user_id
-		GROUP BY permissions.key
+		GROUP BY permissions.id
 	`
 	arg := map[string]interface{}{
 		"user_id": userID,
