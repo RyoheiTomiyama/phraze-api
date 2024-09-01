@@ -11,7 +11,7 @@ import (
 func (c *client) CountCards(ctx context.Context, where *domain.CardsWhere) (int, error) {
 	e := c.execerFrom(ctx)
 
-	query := `SELECT COUNT(DISTINCT id) FROM cards`
+	query := `SELECT COUNT(DISTINCT cards.id) FROM cards LEFT JOIN decks ON decks.id = cards.deck_id`
 	arg := map[string]interface{}{}
 
 	if where != nil {

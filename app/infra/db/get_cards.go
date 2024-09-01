@@ -15,7 +15,7 @@ import (
 func (c *client) GetCards(ctx context.Context, where *domain.CardsWhere, limit, offset int) ([]*domain.Card, error) {
 	e := c.execerFrom(ctx)
 
-	query := `SELECT * FROM cards`
+	query := `SELECT cards.* FROM cards LEFT JOIN decks ON decks.id = cards.deck_id`
 	arg := map[string]interface{}{}
 
 	if where != nil {
@@ -24,7 +24,7 @@ func (c *client) GetCards(ctx context.Context, where *domain.CardsWhere, limit, 
 	}
 
 	query += " ORDER BY %s LIMIT %d OFFSET %d"
-	query = fmt.Sprintf(query, "updated_at DESC", limit, offset)
+	query = fmt.Sprintf(query, "cards.updated_at DESC", limit, offset)
 
 	query, args, err := e.BindNamed(query, arg)
 	if err != nil {

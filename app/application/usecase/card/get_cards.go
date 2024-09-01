@@ -6,6 +6,7 @@ import (
 	"github.com/RyoheiTomiyama/phraze-api/domain"
 	"github.com/RyoheiTomiyama/phraze-api/util/auth"
 	"github.com/RyoheiTomiyama/phraze-api/util/errutil"
+	"github.com/samber/lo"
 )
 
 type CardsWhere struct {
@@ -27,6 +28,8 @@ func (u *usecase) GetCards(ctx context.Context, input domain.GetCardsInput) (*Ge
 	if deck == nil || deck.UserID != user.ID {
 		return nil, errutil.New(errutil.CodeForbidden, "指定されたDeckのCardは取得できません")
 	}
+
+	input.Where.UserID = lo.ToPtr(user.ID)
 
 	cards, err := u.dbClient.GetCards(ctx, input.Where, *input.Limit, *input.Offset)
 	if err != nil {
