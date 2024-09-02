@@ -52,7 +52,7 @@ func TestCountCards(t *testing.T) {
 				name: "DeckIDで絞り込んだ場合",
 				arrange: func() (where *domain.CardsWhere) {
 					return &domain.CardsWhere{
-						DeckID: decks[0].ID,
+						DeckID: lo.ToPtr(decks[0].ID),
 					}
 				},
 				assert: func(result int) {
@@ -65,7 +65,7 @@ func TestCountCards(t *testing.T) {
 				name: "絞り込み結果が0件の場合",
 				arrange: func() (where *domain.CardsWhere) {
 					return &domain.CardsWhere{
-						DeckID: -1,
+						DeckID: lo.ToPtr[int64](-1),
 					}
 				},
 				assert: func(result int) {

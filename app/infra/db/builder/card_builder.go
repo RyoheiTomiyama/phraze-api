@@ -14,8 +14,14 @@ func (builder *CardsWhere) BuildNamedWhere(ctx context.Context,
 ) (string, map[string]interface{}) {
 	var wheres []string
 	if builder != nil {
-		wheres = append(wheres, "deck_id=:deck_id")
-		arg["deck_id"] = builder.DeckID
+		if builder.DeckID != nil {
+			wheres = append(wheres, "deck_id=:deck_id")
+			arg["deck_id"] = builder.DeckID
+		}
+		if builder.UserID != nil {
+			wheres = append(wheres, "decks.user_id=:user_id")
+			arg["user_id"] = builder.UserID
+		}
 	}
 
 	if len(wheres) > 0 {

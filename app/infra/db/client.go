@@ -40,6 +40,10 @@ type IClient interface {
 
 	GetDeckInfosByDeckID(ctx context.Context, deckIDs []int64) (map[int64]*domain.DeckInfo, error)
 
+	/* permissions */
+	GetPermissionsByUserID(ctx context.Context, userID string) ([]*domain.Permission, error)
+	HasPermissionByUserID(ctx context.Context, userID string, key domain.PermissionKey) (bool, error)
+
 	Tx(ctx context.Context, fn func(ctx context.Context) error) error
 }
 

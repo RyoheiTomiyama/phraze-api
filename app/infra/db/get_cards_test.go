@@ -54,7 +54,22 @@ func TestGetCards(t *testing.T) {
 				name: "DeckIDで絞り込んだ場合",
 				arrange: func() (where *domain.CardsWhere, limit int, offset int) {
 					return &domain.CardsWhere{
-						DeckID: decks[0].ID,
+						DeckID: lo.ToPtr(decks[0].ID),
+					}, 2, 0
+				},
+				assert: func(result []*domain.Card) {
+					t.Run("更新日降順で取得できること", func(t *testing.T) {
+						assert.Len(t, result, 2)
+						assert.Equal(t, cards[len(cards)-1].ToDomain(), result[0])
+						assert.Equal(t, cards[len(cards)-2].ToDomain(), result[1])
+					})
+				},
+			},
+			{
+				name: "UserIDで絞り込んだ場合",
+				arrange: func() (where *domain.CardsWhere, limit int, offset int) {
+					return &domain.CardsWhere{
+						UserID: lo.ToPtr("own"),
 					}, 2, 0
 				},
 				assert: func(result []*domain.Card) {

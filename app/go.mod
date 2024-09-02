@@ -78,6 +78,7 @@ require (
 	github.com/agnivade/levenshtein v1.1.1 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.4 // indirect
 	github.com/getsentry/sentry-go v0.28.1
+	github.com/go-faker/faker/v4 v4.5.0
 	github.com/golang-cz/devslog v0.0.8
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/gorilla/websocket v1.5.0 // indirect

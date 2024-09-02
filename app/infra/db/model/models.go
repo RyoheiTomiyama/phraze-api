@@ -1,7 +1,6 @@
 package model
 
 import (
-	"database/sql"
 	"time"
 
 	"github.com/RyoheiTomiyama/phraze-api/domain"
@@ -23,13 +22,6 @@ type Deck struct {
 	Name      string    `db:"name"`
 	CreatedAt time.Time `db:"created_at"`
 	UpdatedAt time.Time `db:"updated_at"`
-}
-
-type User struct {
-	ID        int64
-	Name      string
-	CreatedAt sql.NullTime
-	UpdatedAt sql.NullTime
 }
 
 func (d *Card) ToDomain() *domain.Card {
@@ -86,4 +78,42 @@ func (m *CardReview) ToDomain() *domain.CardReview {
 		ReviewedAt: m.ReviewedAt,
 		Grade:      m.Grade,
 	}
+}
+
+type Permission struct {
+	ID   int64  `db:"id"`
+	Key  string `db:"key"`
+	Name string `db:"name"`
+}
+
+func (m *Permission) ToDomain() *domain.Permission {
+	return &domain.Permission{
+		ID:   m.ID,
+		Key:  m.Key,
+		Name: m.Name,
+	}
+}
+
+type Role struct {
+	ID   int64  `db:"id"`
+	Key  string `db:"key"`
+	Name string `db:"name"`
+}
+
+type RolesPermission struct {
+	RoleID       int64 `db:"role_id"`
+	PermissionID int64 `db:"permission_id"`
+}
+
+type User struct {
+	ID        string    `db:"id"`
+	CreatedAt time.Time `db:"created_at"`
+	UpdatedAt time.Time `db:"updated_at"`
+}
+
+type UsersRole struct {
+	UserID    string    `db:"user_id"`
+	RoleID    int64     `db:"role_id"`
+	CreatedAt time.Time `db:"created_at"`
+	UpdatedAt time.Time `db:"updated_at"`
 }

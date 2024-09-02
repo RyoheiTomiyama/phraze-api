@@ -695,6 +695,7 @@ type CreateCardOutput {
 extend type Mutation {
   """
   Card作成
+  Freeプランは1000件までしか作成できない
   """
   createCard(input: CreateCardInput!): CreateCardOutput! @hasRole(role: USER)
 }
