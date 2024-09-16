@@ -24,6 +24,7 @@ type IClient interface {
 	GetPendingCards(ctx context.Context, deckID int64, to time.Time, limit, offset int) ([]*domain.Card, error)
 	UpdateCardByID(ctx context.Context, id int64, input *domain.UpdateCardInput) (*domain.Card, error)
 	CountCards(ctx context.Context, where *domain.CardsWhere) (int, error)
+	DeleteCard(ctx context.Context, id int64) (int, error)
 
 	/* card_reviews */
 	GetCardReview(ctx context.Context, cardID int64) (*domain.CardReview, error)
