@@ -77,6 +77,14 @@ type DecksOutput struct {
 	Decks []*Deck `json:"decks"`
 }
 
+type DeleteCardInput struct {
+	ID int64 `json:"id"`
+}
+
+type DeleteCardOutput struct {
+	AffectedRows int `json:"affectedRows"`
+}
+
 type Health struct {
 	Healthy *bool `json:"healthy,omitempty"`
 }
