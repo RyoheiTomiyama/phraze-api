@@ -7,7 +7,7 @@ import (
 	"github.com/RyoheiTomiyama/phraze-api/util/errutil"
 )
 
-func (u *usecase) DeleteCard(ctx context.Context, id int64) (int, error) {
+func (u *usecase) DeleteCard(ctx context.Context, id int64) (int64, error) {
 	user := auth.FromCtx(ctx)
 
 	card, err := u.dbClient.GetCard(ctx, id)
