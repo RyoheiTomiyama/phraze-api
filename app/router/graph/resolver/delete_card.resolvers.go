@@ -6,12 +6,17 @@ package resolver
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/RyoheiTomiyama/phraze-api/router/graph/model"
+	"github.com/RyoheiTomiyama/phraze-api/util/errutil"
 )
 
 // DeleteCard is the resolver for the deleteCard field.
 func (r *mutationResolver) DeleteCard(ctx context.Context, input model.DeleteCardInput) (*model.DeleteCardOutput, error) {
-	panic(fmt.Errorf("not implemented: DeleteCard - deleteCard"))
+	ar, err := r.cardUsecase.DeleteCard(ctx, input.ID)
+	if err != nil {
+		return nil, errutil.Wrap(err)
+	}
+
+	return &model.DeleteCardOutput{AffectedRows: int(ar)}, nil
 }
