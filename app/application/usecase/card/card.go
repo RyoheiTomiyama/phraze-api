@@ -18,6 +18,7 @@ type IUsecase interface {
 	ReviewCard(ctx context.Context, id int64, grade int) error
 	UpdateCard(ctx context.Context, id int64, input domain.UpdateCardInput) (*domain.Card, error)
 	UpdateCardWithGendAnswer(ctx context.Context, id int64, input domain.UpdateCardInput) (*domain.Card, error)
+	DeleteCard(ctx context.Context, id int64) (int64, error)
 }
 
 type usecase struct {

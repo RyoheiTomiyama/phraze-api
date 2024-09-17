@@ -1,0 +1,14 @@
+input DeleteCardInput {
+  id: ID!
+}
+
+type DeleteCardOutput {
+  affectedRows: Int!
+}
+
+extend type Mutation {
+  """
+  Card削除
+  """
+  deleteCard(input: DeleteCardInput!): DeleteCardOutput! @hasRole(role: USER)
+}
