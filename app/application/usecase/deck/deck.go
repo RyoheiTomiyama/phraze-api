@@ -13,6 +13,7 @@ type IUsecase interface {
 	CreateDeck(ctx context.Context, deck *domain.Deck) (*domain.Deck, error)
 	GetDeck(ctx context.Context, id int64) (*domain.Deck, error)
 	GetDecks(ctx context.Context) ([]*domain.Deck, error)
+	DeleteDeck(ctx context.Context, id int64) (int64, error)
 
 	ReadDeckInfo(ctx context.Context, deckIDs []int64) ([]*domain.DeckInfo, error)
 }

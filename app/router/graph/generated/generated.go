@@ -96,6 +96,10 @@ type ComplexityRoot struct {
 		AffectedRows func(childComplexity int) int
 	}
 
+	DeleteDeckOutput struct {
+		AffectedRows func(childComplexity int) int
+	}
+
 	Health struct {
 		Healthy func(childComplexity int) int
 	}
@@ -104,6 +108,7 @@ type ComplexityRoot struct {
 		CreateCard              func(childComplexity int, input model.CreateCardInput) int
 		CreateDeck              func(childComplexity int, input model.CreateDeckInput) int
 		DeleteCard              func(childComplexity int, input model.DeleteCardInput) int
+		DeleteDeck              func(childComplexity int, input model.DeleteDeckInput) int
 		Health                  func(childComplexity int) int
 		ReviewCard              func(childComplexity int, input model.ReviewCardInput) int
 		UpdateCard              func(childComplexity int, input model.UpdateCardInput) int
@@ -148,6 +153,7 @@ type MutationResolver interface {
 	CreateCard(ctx context.Context, input model.CreateCardInput) (*model.CreateCardOutput, error)
 	CreateDeck(ctx context.Context, input model.CreateDeckInput) (*model.CreateDeckOutput, error)
 	DeleteCard(ctx context.Context, input model.DeleteCardInput) (*model.DeleteCardOutput, error)
+	DeleteDeck(ctx context.Context, input model.DeleteDeckInput) (*model.DeleteDeckOutput, error)
 	ReviewCard(ctx context.Context, input model.ReviewCardInput) (*model.ReviewCardOutput, error)
 	UpdateCard(ctx context.Context, input model.UpdateCardInput) (*model.UpdateCardOutput, error)
 	UpdateCardWithGenAnswer(ctx context.Context, input model.UpdateCardWithGenAnswerInput) (*model.UpdateCardWithGenAnswerOutput, error)
@@ -341,6 +347,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.DeleteCardOutput.AffectedRows(childComplexity), true
 
+	case "DeleteDeckOutput.affectedRows":
+		if e.complexity.DeleteDeckOutput.AffectedRows == nil {
+			break
+		}
+
+		return e.complexity.DeleteDeckOutput.AffectedRows(childComplexity), true
+
 	case "Health.healthy":
 		if e.complexity.Health.Healthy == nil {
 			break
@@ -383,6 +396,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.DeleteCard(childComplexity, args["input"].(model.DeleteCardInput)), true
+
+	case "Mutation.deleteDeck":
+		if e.complexity.Mutation.DeleteDeck == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_deleteDeck_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.DeleteDeck(childComplexity, args["input"].(model.DeleteDeckInput)), true
 
 	case "Mutation.health":
 		if e.complexity.Mutation.Health == nil {
@@ -537,6 +562,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputCreateCardInput,
 		ec.unmarshalInputCreateDeckInput,
 		ec.unmarshalInputDeleteCardInput,
+		ec.unmarshalInputDeleteDeckInput,
 		ec.unmarshalInputPendingCardsInput,
 		ec.unmarshalInputReviewCardInput,
 		ec.unmarshalInputUpdateCardInput,
@@ -793,6 +819,21 @@ extend type Mutation {
   deleteCard(input: DeleteCardInput!): DeleteCardOutput! @hasRole(role: USER)
 }
 `, BuiltIn: false},
+	{Name: "../schema/delete_deck.graphqls", Input: `input DeleteDeckInput {
+  id: ID!
+}
+
+type DeleteDeckOutput {
+  affectedRows: Int!
+}
+
+extend type Mutation {
+  """
+  Deck削除
+  """
+  deleteDeck(input: DeleteDeckInput!): DeleteDeckOutput! @hasRole(role: USER)
+}
+`, BuiltIn: false},
 	{Name: "../schema/review_card.graphqls", Input: `input ReviewCardInput {
   cardId: ID!
   grade: Int!
@@ -925,6 +966,21 @@ func (ec *executionContext) field_Mutation_deleteCard_args(ctx context.Context, 
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg0, err = ec.unmarshalNDeleteCardInput2githubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐDeleteCardInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_deleteDeck_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.DeleteDeckInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNDeleteDeckInput2githubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐDeleteDeckInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -2174,6 +2230,50 @@ func (ec *executionContext) fieldContext_DeleteCardOutput_affectedRows(_ context
 	return fc, nil
 }
 
+func (ec *executionContext) _DeleteDeckOutput_affectedRows(ctx context.Context, field graphql.CollectedField, obj *model.DeleteDeckOutput) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_DeleteDeckOutput_affectedRows(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.AffectedRows, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_DeleteDeckOutput_affectedRows(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DeleteDeckOutput",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Health_healthy(ctx context.Context, field graphql.CollectedField, obj *model.Health) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Health_healthy(ctx, field)
 	if err != nil {
@@ -2506,6 +2606,89 @@ func (ec *executionContext) fieldContext_Mutation_deleteCard(ctx context.Context
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_deleteCard_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_deleteDeck(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_deleteDeck(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().DeleteDeck(rctx, fc.Args["input"].(model.DeleteDeckInput))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			role, err := ec.unmarshalNRole2githubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐRole(ctx, "USER")
+			if err != nil {
+				return nil, err
+			}
+			if ec.directives.HasRole == nil {
+				return nil, errors.New("directive hasRole is not implemented")
+			}
+			return ec.directives.HasRole(ctx, nil, directive0, role)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.DeleteDeckOutput); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/RyoheiTomiyama/phraze-api/router/graph/model.DeleteDeckOutput`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.DeleteDeckOutput)
+	fc.Result = res
+	return ec.marshalNDeleteDeckOutput2ᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐDeleteDeckOutput(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_deleteDeck(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "affectedRows":
+				return ec.fieldContext_DeleteDeckOutput_affectedRows(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type DeleteDeckOutput", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_deleteDeck_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -5577,6 +5760,33 @@ func (ec *executionContext) unmarshalInputDeleteCardInput(ctx context.Context, o
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputDeleteDeckInput(ctx context.Context, obj interface{}) (model.DeleteDeckInput, error) {
+	var it model.DeleteDeckInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"id"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "id":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			data, err := ec.unmarshalNID2int64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ID = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputPendingCardsInput(ctx context.Context, obj interface{}) (model.PendingCardsInput, error) {
 	var it model.PendingCardsInput
 	asMap := map[string]interface{}{}
@@ -6157,6 +6367,45 @@ func (ec *executionContext) _DeleteCardOutput(ctx context.Context, sel ast.Selec
 	return out
 }
 
+var deleteDeckOutputImplementors = []string{"DeleteDeckOutput"}
+
+func (ec *executionContext) _DeleteDeckOutput(ctx context.Context, sel ast.SelectionSet, obj *model.DeleteDeckOutput) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, deleteDeckOutputImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("DeleteDeckOutput")
+		case "affectedRows":
+			out.Values[i] = ec._DeleteDeckOutput_affectedRows(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 var healthImplementors = []string{"Health"}
 
 func (ec *executionContext) _Health(ctx context.Context, sel ast.SelectionSet, obj *model.Health) graphql.Marshaler {
@@ -6236,6 +6485,13 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		case "deleteCard":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_deleteCard(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "deleteDeck":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_deleteDeck(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
@@ -7220,6 +7476,25 @@ func (ec *executionContext) marshalNDeleteCardOutput2ᚖgithubᚗcomᚋRyoheiTom
 		return graphql.Null
 	}
 	return ec._DeleteCardOutput(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNDeleteDeckInput2githubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐDeleteDeckInput(ctx context.Context, v interface{}) (model.DeleteDeckInput, error) {
+	res, err := ec.unmarshalInputDeleteDeckInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNDeleteDeckOutput2githubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐDeleteDeckOutput(ctx context.Context, sel ast.SelectionSet, v model.DeleteDeckOutput) graphql.Marshaler {
+	return ec._DeleteDeckOutput(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNDeleteDeckOutput2ᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐDeleteDeckOutput(ctx context.Context, sel ast.SelectionSet, v *model.DeleteDeckOutput) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._DeleteDeckOutput(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNHealth2githubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐHealth(ctx context.Context, sel ast.SelectionSet, v model.Health) graphql.Marshaler {

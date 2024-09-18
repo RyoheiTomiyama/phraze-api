@@ -1,0 +1,14 @@
+input DeleteDeckInput {
+  id: ID!
+}
+
+type DeleteDeckOutput {
+  affectedRows: Int!
+}
+
+extend type Mutation {
+  """
+  Deck削除
+  """
+  deleteDeck(input: DeleteDeckInput!): DeleteDeckOutput! @hasRole(role: USER)
+}
