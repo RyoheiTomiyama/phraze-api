@@ -26,8 +26,15 @@ func (u *usecase) DeleteCard(ctx context.Context, id int64) (int64, error) {
 		return 0, errutil.New(errutil.CodeForbidden, "指定されたCardは取得できません")
 	}
 
-	ar, err := u.dbClient.DeleteCard(ctx, card.ID)
-	if err != nil {
+	var ar int64
+	if err = u.dbClient.Tx(ctx, func(ctx context.Context) error {
+		ar, err = u.dbClient.DeleteCard(ctx, card.ID)
+		if err != nil {
+			return errutil.Wrap(err)
+		}
+
+		return nil
+	}); err != nil {
 		return 0, errutil.Wrap(err)
 	}
 
