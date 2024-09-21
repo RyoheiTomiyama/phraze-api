@@ -28,31 +28,68 @@ func TestDeleteCard(t *testing.T) {
 		&fixture.DeckInput{UserID: lo.ToPtr("own")},
 	)
 
-	cards := fx.CreateCard(t, decks[0].ID, make([]fixture.CardInput, 10)...)
-
 	t.Run("正常系", func(t *testing.T) {
+		cases := []struct {
+			name    string
+			arrange func() (cardId int64)
+			assert  func(result int64, err error, cardID int64)
+		}{
+			{
+				name: "cardsのみの場合",
+				arrange: func() (cardId int64) {
+					cards := fx.CreateCard(t, decks[0].ID, fixture.CardInput{})
+
+					return cards[0].ID
+				},
+				assert: func(result int64, err error, cardID int64) {
+					assert.NoError(t, err)
+					assert.Equal(t, int64(1), result)
+
+					var c model.Card
+					err = db.Get(&c, "SELECT * FROM cards WHERE id=$1", cardID)
+					assert.Equal(t, sql.ErrNoRows, err)
+				},
+			},
+			{
+				name: "card_reviews, card_schedulesと紐づいているカードの場合",
+				arrange: func() (cardId int64) {
+					cards := fx.CreateCard(t, decks[0].ID, fixture.CardInput{})
+					fx.CreateCardSchedule(t, fixture.CardScheduleInput{CardID: cards[0].ID})
+					fx.CreateCardReview(t, fixture.CardReviewInput{CardID: cards[0].ID})
+
+					return cards[0].ID
+				},
+				assert: func(result int64, err error, cardID int64) {
+					assert.NoError(t, err)
+					assert.Equal(t, int64(3), result)
+
+					var c model.Card
+					err = db.Get(&c, "SELECT * FROM cards WHERE id=$1", cardID)
+					assert.Equal(t, sql.ErrNoRows, err)
+				},
+			},
+		}
+
 		client := NewTestClient(t, db)
 
-		var result int64
-		err := client.Tx(context.Background(), func(ctx context.Context) error {
-			r, err := client.DeleteCard(ctx, cards[0].ID)
-			if err != nil {
-				return err
-			}
+		for _, cs := range cases {
+			id := cs.arrange()
+			var result int64
+			err := client.Tx(context.Background(), func(ctx context.Context) error {
+				r, err := client.DeleteCard(ctx, id)
+				if err != nil {
+					return err
+				}
+				result = r
 
-			result = r
-
-			return nil
-		})
-		assert.NoError(t, err)
-		assert.Equal(t, int64(1), result)
-
-		var c model.Card
-		err = db.Get(&c, "SELECT * FROM cards WHERE id=$1", cards[0].ID)
-		assert.Equal(t, sql.ErrNoRows, err)
+				return nil
+			})
+			cs.assert(result, err, id)
+		}
 	})
 
 	t.Run("トランザクションの外でメソッドを実行した場合", func(t *testing.T) {
+		cards := fx.CreateCard(t, decks[0].ID, fixture.CardInput{})
 		client := NewTestClient(t, db)
 
 		result, err := client.DeleteCard(context.Background(), cards[0].ID)
