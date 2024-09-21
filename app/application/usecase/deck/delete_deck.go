@@ -18,8 +18,15 @@ func (u *usecase) DeleteDeck(ctx context.Context, id int64) (int64, error) {
 		return 0, errutil.New(errutil.CodeForbidden, "指定されたDeckは取得できません")
 	}
 
-	ar, err := u.dbClient.DeleteDeck(ctx, deck.ID)
-	if err != nil {
+	var ar int64
+	if err := u.dbClient.Tx(ctx, func(ctx context.Context) error {
+		ar, err = u.dbClient.DeleteDeck(ctx, deck.ID)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	}); err != nil {
 		return 0, errutil.Wrap(err)
 	}
 
