@@ -7,7 +7,9 @@ import (
 
 	"github.com/RyoheiTomiyama/phraze-api/infra/db/fixture"
 	"github.com/RyoheiTomiyama/phraze-api/infra/db/model"
+	"github.com/RyoheiTomiyama/phraze-api/test/assertion"
 	db_test "github.com/RyoheiTomiyama/phraze-api/test/db"
+	"github.com/RyoheiTomiyama/phraze-api/util/errutil"
 	"github.com/samber/lo"
 	"github.com/stretchr/testify/assert"
 )
@@ -31,7 +33,17 @@ func TestDeleteCard(t *testing.T) {
 	t.Run("正常系", func(t *testing.T) {
 		client := NewTestClient(t, db)
 
-		result, err := client.DeleteCard(context.Background(), cards[0].ID)
+		var result int64
+		err := client.Tx(context.Background(), func(ctx context.Context) error {
+			r, err := client.DeleteCard(ctx, cards[0].ID)
+			if err != nil {
+				return err
+			}
+
+			result = r
+
+			return nil
+		})
 		assert.NoError(t, err)
 		assert.Equal(t, int64(1), result)
 
@@ -40,10 +52,29 @@ func TestDeleteCard(t *testing.T) {
 		assert.Equal(t, sql.ErrNoRows, err)
 	})
 
+	t.Run("トランザクションの外でメソッドを実行した場合", func(t *testing.T) {
+		client := NewTestClient(t, db)
+
+		result, err := client.DeleteCard(context.Background(), cards[0].ID)
+
+		assertion.AssertError(t, "transaction内で実行してください", errutil.CodeInternalError, err)
+		assert.Equal(t, int64(0), result)
+	})
+
 	t.Run("存在しないカードを削除しようとした場合", func(t *testing.T) {
 		client := NewTestClient(t, db)
 
-		result, err := client.DeleteCard(context.Background(), -1)
+		var result int64
+		err := client.Tx(context.Background(), func(ctx context.Context) error {
+			r, err := client.DeleteCard(ctx, -1)
+			if err != nil {
+				return err
+			}
+
+			result = r
+
+			return nil
+		})
 		assert.NoError(t, err)
 		assert.Equal(t, int64(0), result)
 	})

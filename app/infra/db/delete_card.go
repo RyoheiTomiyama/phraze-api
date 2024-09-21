@@ -7,7 +7,10 @@ import (
 )
 
 func (c *client) DeleteCard(ctx context.Context, id int64) (int64, error) {
-	e := c.execerFrom(ctx)
+	e, err := c.txFrom(ctx)
+	if err != nil {
+		return 0, errutil.Wrap(err)
+	}
 
 	query := "DELETE FROM cards WHERE id=$1"
 

@@ -3,6 +3,7 @@ package db
 import (
 	"context"
 
+	"github.com/RyoheiTomiyama/phraze-api/util/errutil"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -20,4 +21,14 @@ func (c *client) execerFrom(ctx context.Context) execer {
 	}
 
 	return tx
+}
+
+// トランザクション内で絶対に実行した場合はこちらを使う
+func (c *client) txFrom(ctx context.Context) (execer, error) {
+	tx, ok := ctx.Value(txCtxKey{}).(*sqlx.Tx)
+	if !ok {
+		return nil, errutil.New(errutil.CodeInternalError, "transaction内で実行してください")
+	}
+
+	return tx, nil
 }
