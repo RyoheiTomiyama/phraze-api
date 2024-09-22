@@ -28,7 +28,7 @@ type IClient interface {
 
 	/* card_reviews */
 	CreateCardReview(ctx context.Context, review *domain.CardReview) (*domain.CardReview, error)
-	GetCardReview(ctx context.Context, cardID int64) (*domain.CardReview, error)
+	GetLatestCardReview(ctx context.Context, cardID int64) (*domain.CardReview, error)
 
 	/* card_schedules */
 	GetCardSchedule(ctx context.Context, cardID int64) (*domain.CardSchedule, error)

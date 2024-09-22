@@ -11,7 +11,7 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-func (c *client) GetCardReview(ctx context.Context, cardID int64) (*domain.CardReview, error) {
+func (c *client) GetLatestCardReview(ctx context.Context, cardID int64) (*domain.CardReview, error) {
 	e := c.execerFrom(ctx)
 
 	var review model.CardReview
