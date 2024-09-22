@@ -68,19 +68,22 @@ func TestUpsertCardSchedule(t *testing.T) {
 	t.Run("異常系", func(t *testing.T) {
 		cases := []struct {
 			name    string
-			arrange func() (review *domain.CardReview)
+			arrange func() (review *domain.CardSchedule)
 			assert  func(err error)
 		}{
 			{
 				name: "存在しないCardIDが入力された場合",
-				arrange: func() (review *domain.CardReview) {
-					review = &domain.CardReview{CardID: 0, Grade: 3}
+				arrange: func() (review *domain.CardSchedule) {
+					review = &domain.CardSchedule{
+						CardID: 0, ScheduleAt: time.Now().Add(time.Hour),
+						Interval: 20, Efactor: 1.1,
+					}
 
 					return review
 				},
 				assert: func(err error) {
 					assert.Error(t, err)
-					assert.ErrorContains(t, err, "card_reviews_card_id_fkey")
+					assert.ErrorContains(t, err, "card_schedules_card_id_fkey")
 				},
 			},
 		}
@@ -98,7 +101,7 @@ func TestUpsertCardSchedule(t *testing.T) {
 
 			review := tc.arrange()
 
-			result, err := client.UpsertCardReview(ctx, review)
+			result, err := client.UpsertCardSchedule(ctx, review)
 			assert.Nil(t, result)
 			tc.assert(err)
 		}

@@ -30,6 +30,7 @@ type Card struct {
 type CardReview struct {
 	ID         int64
 	CardID     int64
+	UserID     string
 	ReviewedAt time.Time
 	Grade      int
 }

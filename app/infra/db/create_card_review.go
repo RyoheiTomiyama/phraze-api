@@ -8,20 +8,16 @@ import (
 	"github.com/RyoheiTomiyama/phraze-api/util/errutil"
 )
 
-func (c *client) UpsertCardReview(ctx context.Context, review *domain.CardReview) (*domain.CardReview, error) {
+func (c *client) CreateCardReview(ctx context.Context, review *domain.CardReview) (*domain.CardReview, error) {
 	e := c.execerFrom(ctx)
 
 	query := `
-		INSERT INTO card_reviews (card_id, grade)
-		VALUES (:card_id, :grade)
-		ON CONFLICT (card_id)
-		DO UPDATE SET
-			reviewed_at=NOW(),
-			grade=EXCLUDED.grade
+		INSERT INTO card_reviews (card_id, grade, user_id)
+		VALUES (:card_id, :grade, :user_id)
 		RETURNING *
 	`
 
-	d := model.CardReview{CardID: review.CardID, Grade: review.Grade}
+	d := model.CardReview{CardID: review.CardID, Grade: review.Grade, UserID: review.UserID}
 
 	query, args, err := e.BindNamed(query, d)
 	if err != nil {
