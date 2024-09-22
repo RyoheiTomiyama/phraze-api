@@ -67,6 +67,7 @@ func (m *CardSchedule) ToDomain() *domain.CardSchedule {
 type CardReview struct {
 	ID         int64     `db:"id"`
 	CardID     int64     `db:"card_id"`
+	UserID     string    `db:"user_id"`
 	ReviewedAt time.Time `db:"reviewed_at"`
 	Grade      int       `db:"grade"`
 }
@@ -75,6 +76,7 @@ func (m *CardReview) ToDomain() *domain.CardReview {
 	return &domain.CardReview{
 		ID:         m.ID,
 		CardID:     m.CardID,
+		UserID:     m.UserID,
 		ReviewedAt: m.ReviewedAt,
 		Grade:      m.Grade,
 	}

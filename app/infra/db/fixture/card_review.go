@@ -11,6 +11,7 @@ import (
 
 type CardReviewInput struct {
 	CardID     int64
+	UserID     string
 	ReviewedAt time.Time
 	Grade      int
 }
@@ -20,6 +21,7 @@ func (f *fixture) CreateCardReview(t *testing.T, cardReviews ...CardReviewInput)
 	for _, d := range cardReviews {
 		list = append(list, &model.CardReview{
 			CardID:     d.CardID,
+			UserID:     d.UserID,
 			Grade:      lo.Ternary(d.Grade == 0, 1, d.Grade),
 			ReviewedAt: lo.Ternary(d.ReviewedAt.IsZero(), time.Now(), d.ReviewedAt),
 		})
