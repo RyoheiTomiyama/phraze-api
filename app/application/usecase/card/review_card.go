@@ -42,7 +42,7 @@ func (u *usecase) ReviewCard(ctx context.Context, id int64, grade int) error {
 	}
 
 	if err = u.dbClient.Tx(ctx, func(ctx context.Context) error {
-		if _, err := u.dbClient.UpsertCardReview(ctx, &domain.CardReview{
+		if _, err := u.dbClient.CreateCardReview(ctx, &domain.CardReview{
 			CardID:     id,
 			ReviewedAt: time.Now(),
 			Grade:      grade,

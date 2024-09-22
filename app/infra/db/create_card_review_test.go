@@ -12,7 +12,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func assertUpsertedCardReview(t *testing.T, expect *domain.CardReview, actual *domain.CardReview) {
+func assertCardReview(t *testing.T, expect *domain.CardReview, actual *domain.CardReview) {
 	t.Helper()
 	assert.NotEqual(t, expect.ReviewedAt.Format(time.RFC3339Nano), actual.ReviewedAt.Format(time.RFC3339Nano))
 
@@ -21,7 +21,7 @@ func assertUpsertedCardReview(t *testing.T, expect *domain.CardReview, actual *d
 	assert.Equal(t, expect, actual)
 }
 
-func TestUpsertCardReview(t *testing.T) {
+func TestCreateCardReview(t *testing.T) {
 	ctx := context.Background()
 
 	db := db_test.GetDB(t)
@@ -41,25 +41,25 @@ func TestUpsertCardReview(t *testing.T) {
 	client := NewTestClient(t, db)
 	t.Run("はじめてのレビューの場合", func(t *testing.T) {
 		review := &domain.CardReview{CardID: cards[0].ID, Grade: 5}
-		result, err := client.UpsertCardReview(ctx, review)
+		result, err := client.CreateCardReview(ctx, review)
 		assert.NoError(t, err)
-		assertUpsertedCardReview(t, review, result)
+		assertCardReview(t, review, result)
 	})
 
-	t.Run("レビュー更新の場合", func(t *testing.T) {
+	t.Run("2度目のレビューの場合", func(t *testing.T) {
 		review := &domain.CardReview{CardID: cards[0].ID, Grade: 5}
 
 		// 1回目
-		_, err := client.UpsertCardReview(ctx, review)
+		_, err := client.CreateCardReview(ctx, review)
 		assert.NoError(t, err)
 
 		time.Sleep(time.Millisecond)
 
 		// 2回目
 		review.Grade = 3
-		result, err := client.UpsertCardReview(ctx, review)
+		result, err := client.CreateCardReview(ctx, review)
 		assert.NoError(t, err)
-		assertUpsertedCardReview(t, review, result)
+		assertCardReview(t, review, result)
 	})
 
 	t.Run("異常系", func(t *testing.T) {
@@ -118,7 +118,7 @@ func TestUpsertCardReview(t *testing.T) {
 
 			review := tc.arrange()
 
-			result, err := client.UpsertCardReview(ctx, review)
+			result, err := client.CreateCardReview(ctx, review)
 			assert.Nil(t, result)
 			tc.assert(err)
 		}

@@ -27,8 +27,8 @@ type IClient interface {
 	DeleteCard(ctx context.Context, id int64) (int64, error)
 
 	/* card_reviews */
+	CreateCardReview(ctx context.Context, review *domain.CardReview) (*domain.CardReview, error)
 	GetCardReview(ctx context.Context, cardID int64) (*domain.CardReview, error)
-	UpsertCardReview(ctx context.Context, review *domain.CardReview) (*domain.CardReview, error)
 
 	/* card_schedules */
 	GetCardSchedule(ctx context.Context, cardID int64) (*domain.CardSchedule, error)
