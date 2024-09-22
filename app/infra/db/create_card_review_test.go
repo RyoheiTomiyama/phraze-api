@@ -12,7 +12,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func assertCardReview(t *testing.T, expect *domain.CardReview, actual *domain.CardReview) {
+func assertCreatedCardReview(t *testing.T, expect *domain.CardReview, actual *domain.CardReview) {
 	t.Helper()
 	assert.NotEqual(t, expect.ReviewedAt.Format(time.RFC3339Nano), actual.ReviewedAt.Format(time.RFC3339Nano))
 
@@ -43,7 +43,7 @@ func TestCreateCardReview(t *testing.T) {
 		review := &domain.CardReview{CardID: cards[0].ID, Grade: 5}
 		result, err := client.CreateCardReview(ctx, review)
 		assert.NoError(t, err)
-		assertCardReview(t, review, result)
+		assertCreatedCardReview(t, review, result)
 	})
 
 	t.Run("2度目のレビューの場合", func(t *testing.T) {
@@ -59,7 +59,7 @@ func TestCreateCardReview(t *testing.T) {
 		review.Grade = 3
 		result, err := client.CreateCardReview(ctx, review)
 		assert.NoError(t, err)
-		assertCardReview(t, review, result)
+		assertCreatedCardReview(t, review, result)
 	})
 
 	t.Run("異常系", func(t *testing.T) {

@@ -16,7 +16,7 @@ func (c *client) GetLatestCardReview(ctx context.Context, cardID int64) (*domain
 
 	var review model.CardReview
 
-	if err := sqlx.GetContext(ctx, e, &review, "SELECT * FROM card_reviews WHERE card_id=$1", cardID); err != nil {
+	if err := sqlx.GetContext(ctx, e, &review, "SELECT * FROM card_reviews WHERE card_id=$1 ORDER BY reviewed_at DESC", cardID); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, nil
 		}

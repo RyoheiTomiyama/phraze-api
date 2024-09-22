@@ -40,7 +40,7 @@ func (s *resolverSuite) TestReviewCard() {
 		}
 		assert.NotNil(t, schedule)
 
-		review, err := s.dbClient.GetCardReview(ctx, cards[0].ID)
+		review, err := s.dbClient.GetLatestCardReview(ctx, cards[0].ID)
 		if err != nil {
 			t.Fatal(err)
 		}
