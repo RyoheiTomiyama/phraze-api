@@ -10,7 +10,8 @@ import (
 
 func Monitoring(conf *env.Config, mHttp monitoring.IHttp) func(http.Handler) http.Handler {
 	if err := mHttp.Setup(&monitoring.Options{
-		Dsn: conf.Sentry.DSN,
+		Dsn:         conf.Sentry.DSN,
+		Environment: conf.APP.ENV,
 	}); err != nil {
 		fmt.Println(err)
 	}

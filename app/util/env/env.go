@@ -34,6 +34,7 @@ type sentry struct {
 
 type app struct {
 	CORS []string `env:"CORS" envSeparator:"," envDefault:"http://localhost:3000"`
+	ENV  string   `env:"ENV"`
 }
 
 func New() (*Config, error) {

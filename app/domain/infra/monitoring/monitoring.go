@@ -16,7 +16,8 @@ const (
 )
 
 type Options struct {
-	Dsn string
+	Dsn         string
+	Environment string
 }
 
 type IClient interface {

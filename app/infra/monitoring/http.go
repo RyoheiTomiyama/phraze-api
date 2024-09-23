@@ -19,7 +19,8 @@ func NewHttp() monitoring.IHttp {
 
 func (m *mhttp) Setup(opt *monitoring.Options) error {
 	if err := sentry.Init(sentry.ClientOptions{
-		Dsn: opt.Dsn,
+		Dsn:         opt.Dsn,
+		Environment: opt.Environment,
 		// Debug: true,
 		// Set TracesSampleRate to 1.0 to capture 100%
 		// of transactions for performance monitoring.
