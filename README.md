@@ -98,11 +98,13 @@ settings.json に以下を追加する
 API
 
 ```sh
-docker build -f docker/Dockerfile.production -t phraze-app-prd .
+docker build --platform linux/amd64 -f docker/Dockerfile.production -t phraze-app-prd .
 ```
 
 Migration
 
 ```sh
-docker build -f docker/Dockerfile.migration -t phraze-migration-prd .
+docker build --platform linux/amd64 -f docker/Dockerfile.migration -t phraze-migration-prd .
 ```
+
+本番サーバーで動かすために platform の指定が必要
