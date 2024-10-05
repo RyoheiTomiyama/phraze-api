@@ -17,8 +17,8 @@ COPY ./app .
 RUN go build -o /bin/phraze-api -ldflags="-s -w" -trimpath
 
 # RUN
-FROM scratch
+FROM gcr.io/distroless/static-debian12
 
 COPY --from=build /bin/phraze-api /bin/phraze-api
 
-CMD ["/bin/phraze-api"]
+ENTRYPOINT ["/bin/phraze-api"]
