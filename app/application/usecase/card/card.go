@@ -5,7 +5,7 @@ import (
 
 	"github.com/RyoheiTomiyama/phraze-api/domain"
 	"github.com/RyoheiTomiyama/phraze-api/infra/db"
-	"github.com/RyoheiTomiyama/phraze-api/infra/genemi"
+	"github.com/RyoheiTomiyama/phraze-api/infra/gemini"
 	"github.com/RyoheiTomiyama/phraze-api/service/card"
 )
 
@@ -23,10 +23,10 @@ type IUsecase interface {
 
 type usecase struct {
 	dbClient     db.IClient
-	genemiClient genemi.IClient
+	geminiClient gemini.IClient
 	cardService  card.ICardService
 }
 
-func New(dbClient db.IClient, genemiClient genemi.IClient, cardService card.ICardService) IUsecase {
-	return &usecase{dbClient, genemiClient, cardService}
+func New(dbClient db.IClient, geminiClient gemini.IClient, cardService card.ICardService) IUsecase {
+	return &usecase{dbClient, geminiClient, cardService}
 }

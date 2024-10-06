@@ -40,7 +40,7 @@ func (s *resolverSuite) TestCreateCard() {
 	fx := fixture.New(s.dbx)
 	decks := fx.CreateDeck(s.T(), &fixture.DeckInput{UserID: lo.ToPtr(userID)})
 
-	s.genemiClient.On("GenAnswer", mock.Anything, "question").Return("ai-answer", nil)
+	s.geminiClient.On("GenAnswer", mock.Anything, "question").Return("ai-answer", nil)
 
 	s.T().Run("Cardが作成できること", func(t *testing.T) {
 		input := model.CreateCardInput{

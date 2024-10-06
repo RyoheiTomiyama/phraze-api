@@ -9,7 +9,7 @@ import (
 	"github.com/RyoheiTomiyama/phraze-api/application/usecase/deck"
 	"github.com/RyoheiTomiyama/phraze-api/infra/db"
 	firebaseAuth "github.com/RyoheiTomiyama/phraze-api/infra/firebase/auth"
-	"github.com/RyoheiTomiyama/phraze-api/infra/genemi"
+	"github.com/RyoheiTomiyama/phraze-api/infra/gemini"
 	"github.com/RyoheiTomiyama/phraze-api/infra/monitoring"
 	"github.com/RyoheiTomiyama/phraze-api/router"
 	"github.com/RyoheiTomiyama/phraze-api/router/graph/directive"
@@ -39,7 +39,7 @@ func main() {
 		panic(err)
 	}
 
-	genemiClient, err := genemi.New(genemi.ClientOption{APIKey: config.Genemi.API_KEY})
+	geminiClient, err := gemini.New(gemini.ClientOption{APIKey: config.Gemini.API_KEY})
 	if err != nil {
 		panic(err)
 	}
@@ -58,7 +58,7 @@ func main() {
 
 	// usecase
 	authUsecase := auth.New(firebaseAuthClient)
-	cardUsecase := card.New(dbClient, genemiClient, cardService)
+	cardUsecase := card.New(dbClient, geminiClient, cardService)
 	deckUsecase := deck.New(dbClient)
 
 	resolver := resolver.New(cardUsecase, deckUsecase)
