@@ -14,8 +14,6 @@ type client struct {
 	db *sqlx.DB
 }
 
-var _ db.IClient = (*client)(nil)
-
 type DataSourceOption struct {
 	Host     string
 	Port     string

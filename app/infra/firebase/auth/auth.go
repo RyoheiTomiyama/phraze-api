@@ -7,17 +7,15 @@ import (
 	firebase "firebase.google.com/go"
 	"firebase.google.com/go/auth"
 	"github.com/RyoheiTomiyama/phraze-api/domain"
+	firebaseAuth "github.com/RyoheiTomiyama/phraze-api/domain/infra/firebase"
 	"github.com/RyoheiTomiyama/phraze-api/util/errutil"
 )
 
 type client struct {
 	client *auth.Client
 }
-type IClient interface {
-	Verify(ctx context.Context, idToken string) (*domain.User, error)
-}
 
-func New() (IClient, error) {
+func New() (firebaseAuth.IClient, error) {
 	app, err := firebase.NewApp(context.Background(), nil)
 	if err != nil {
 		return nil, errutil.Wrap(err)
