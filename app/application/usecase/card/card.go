@@ -5,7 +5,7 @@ import (
 
 	"github.com/RyoheiTomiyama/phraze-api/domain"
 	"github.com/RyoheiTomiyama/phraze-api/domain/infra/db"
-	"github.com/RyoheiTomiyama/phraze-api/infra/gemini"
+	"github.com/RyoheiTomiyama/phraze-api/domain/infra/gemini"
 	"github.com/RyoheiTomiyama/phraze-api/service/card"
 )
 
