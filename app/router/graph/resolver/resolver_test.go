@@ -5,7 +5,8 @@ import (
 
 	"github.com/RyoheiTomiyama/phraze-api/application/usecase/card"
 	"github.com/RyoheiTomiyama/phraze-api/application/usecase/deck"
-	"github.com/RyoheiTomiyama/phraze-api/infra/db"
+	"github.com/RyoheiTomiyama/phraze-api/domain/infra/db"
+	infraDB "github.com/RyoheiTomiyama/phraze-api/infra/db"
 	"github.com/RyoheiTomiyama/phraze-api/infra/gemini"
 	"github.com/RyoheiTomiyama/phraze-api/router/graph/resolver"
 	card_service "github.com/RyoheiTomiyama/phraze-api/service/card"
@@ -29,7 +30,7 @@ func TestResolverSuite(t *testing.T) {
 // テスト間で干渉してしまうので、テストごとにtxdbをリセットする
 func (s *resolverSuite) SetupTest() {
 	dbx := db_test.GetDB(s.T())
-	dbClient := db.NewTestClient(s.T(), dbx)
+	dbClient := infraDB.NewTestClient(s.T(), dbx)
 	geminiClient := gemini.NewMock()
 	cardService := card_service.NewService()
 
