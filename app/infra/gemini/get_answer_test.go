@@ -1,4 +1,4 @@
-package genemi
+package gemini
 
 import (
 	"context"
@@ -9,7 +9,7 @@ import (
 )
 
 func TestGenAnswer(t *testing.T) {
-	// Genemiのトークン消費してしまうのでテスト省略
+	// Geminiのトークン消費してしまうのでテスト省略
 	// 動作確認したいときは手元でSkipをコメントアウトして実行する
 	t.Skip()
 
@@ -20,7 +20,7 @@ func TestGenAnswer(t *testing.T) {
 	}
 	ctx = config.WithCtx(ctx)
 
-	c, err := New(ClientOption{APIKey: config.Genemi.API_KEY})
+	c, err := New(ClientOption{APIKey: config.Gemini.API_KEY})
 	if err != nil {
 		t.Fatal(err)
 	}

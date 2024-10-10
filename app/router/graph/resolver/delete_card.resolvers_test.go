@@ -28,7 +28,7 @@ func (s *resolverSuite) TestDeleteCard() {
 	cards := fx.CreateCard(s.T(), decks[0].ID, fixture.CardInput{})
 	otherCards := fx.CreateCard(s.T(), decks[1].ID, fixture.CardInput{})
 
-	s.genemiClient.On("GenAnswer", mock.Anything, "updated question").Return("ai-answer", nil)
+	s.geminiClient.On("GenAnswer", mock.Anything, "updated question").Return("ai-answer", nil)
 
 	s.T().Run("Cardが削除できること", func(t *testing.T) {
 		input := model.DeleteCardInput{

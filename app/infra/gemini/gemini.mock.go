@@ -1,4 +1,4 @@
-package genemi
+package gemini
 
 import (
 	"context"

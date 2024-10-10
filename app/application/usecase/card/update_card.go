@@ -38,7 +38,7 @@ func (u *usecase) UpdateCardWithGendAnswer(ctx context.Context, id int64, input 
 		return nil, errutil.New(errutil.CodeBadRequest, err.Error())
 	}
 
-	ans, err := u.genemiClient.GenAnswer(ctx, *input.Field.Question)
+	ans, err := u.geminiClient.GenAnswer(ctx, *input.Field.Question)
 	if err != nil {
 		return nil, errutil.Wrap(err)
 	}

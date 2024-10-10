@@ -58,7 +58,7 @@ func (u *usecase) CreateCardWithGenAnswer(ctx context.Context, card *domain.Card
 		if card.Question == "" {
 			return
 		}
-		answer, err := u.genemiClient.GenAnswer(ctx, card.Question)
+		answer, err := u.geminiClient.GenAnswer(ctx, card.Question)
 		if err != nil {
 			log.ErrorWithNotify(ctx, err, "card", card)
 		}

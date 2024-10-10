@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/RyoheiTomiyama/phraze-api/domain"
-	"github.com/RyoheiTomiyama/phraze-api/infra/firebase/auth"
+	"github.com/RyoheiTomiyama/phraze-api/domain/infra/firebase"
 	"github.com/RyoheiTomiyama/phraze-api/util/errutil"
 )
 
@@ -13,10 +13,10 @@ type IAuthUsecase interface {
 }
 
 type usecase struct {
-	authClient auth.IClient
+	authClient firebase.IClient
 }
 
-func New(authClient auth.IClient) IAuthUsecase {
+func New(authClient firebase.IClient) IAuthUsecase {
 	return &usecase{authClient}
 }
 

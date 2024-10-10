@@ -12,7 +12,7 @@ import (
 type Config struct {
 	APP    app
 	DB     db
-	Genemi genemi
+	Gemini gemini
 	Sentry sentry
 }
 
@@ -24,7 +24,7 @@ type db struct {
 	PORT     string `env:"POSTGRES_PORT" envDefault:"5432"`
 }
 
-type genemi struct {
+type gemini struct {
 	API_KEY string `env:"GOOGLE_GEMINI_API_SECRET_KEY"`
 }
 

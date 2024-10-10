@@ -1,8 +1,9 @@
-package genemi
+package gemini
 
 import (
 	"context"
 
+	"github.com/RyoheiTomiyama/phraze-api/domain/infra/gemini"
 	"github.com/RyoheiTomiyama/phraze-api/util/errutil"
 	"github.com/google/generative-ai-go/genai"
 	"google.golang.org/api/option"
@@ -12,15 +13,12 @@ type client struct {
 	client *genai.Client
 	model  *genai.GenerativeModel
 }
-type IClient interface {
-	GenAnswer(ctx context.Context, q string) (string, error)
-}
 
 type ClientOption struct {
 	APIKey string
 }
 
-func New(opts ClientOption) (IClient, error) {
+func New(opts ClientOption) (gemini.IClient, error) {
 	ak := option.WithAPIKey(opts.APIKey)
 
 	cl, err := genai.NewClient(context.Background(), ak)
