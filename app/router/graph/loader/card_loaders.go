@@ -15,19 +15,19 @@ type cardLoader struct {
 }
 
 type ICardLoader interface {
-	GetSchedule(ctx context.Context, deckID int64) (*domain.CardSchedule, error)
+	GetSchedule(ctx context.Context, cardID int64) (*domain.CardSchedule, error)
 }
 
 func NewCardLoader(cardUsecase card.IUsecase) ICardLoader {
 	reader := &cardReader{cardUsecase}
 
 	return &cardLoader{
-		ScheduleLoader: NewNoCacheLoader(reader.ReadDeckInfo, dataloadgen.WithWait(time.Millisecond)),
+		ScheduleLoader: NewNoCacheLoader(reader.ReadSchedules, dataloadgen.WithWait(time.Millisecond)),
 	}
 }
 
-func (l *cardLoader) GetSchedule(ctx context.Context, deckID int64) (*domain.CardSchedule, error) {
-	s, err := l.ScheduleLoader.Load(ctx, deckID)
+func (l *cardLoader) GetSchedule(ctx context.Context, cardID int64) (*domain.CardSchedule, error) {
+	s, err := l.ScheduleLoader.Load(ctx, cardID)
 	if err != nil {
 		return nil, errutil.Wrap(err)
 	}
@@ -39,13 +39,13 @@ type cardReader struct {
 	cardUsecase card.IUsecase
 }
 
-func (r *cardReader) ReadDeckInfo(ctx context.Context, cardIDs []int64) ([]*domain.CardSchedule, []error) {
+func (r *cardReader) ReadSchedules(ctx context.Context, cardIDs []int64) ([]*domain.CardSchedule, []error) {
 	scheduleMap, err := r.cardUsecase.ReadSchedules(ctx, cardIDs)
 	if err != nil {
 		return nil, []error{errutil.Wrap(err)}
 	}
 
-	schedules := make([]*domain.CardSchedule, 0, len(cardIDs))
+	schedules := make([]*domain.CardSchedule, len(cardIDs))
 
 	for i, id := range cardIDs {
 		schedules[i] = scheduleMap[id]
