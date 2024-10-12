@@ -21,6 +21,15 @@ type Card struct {
 	AiAnswer  string    `json:"aiAnswer"`
 	CreatedAt time.Time `json:"createdAt"`
 	UpdatedAt time.Time `json:"updatedAt"`
+	// 学習スケジュール
+	Schedule *CardSchedule `json:"schedule,omitempty"`
+}
+
+type CardSchedule struct {
+	ID         int64     `json:"id"`
+	ScheduleAt time.Time `json:"scheduleAt"`
+	Interval   int       `json:"interval"`
+	Efactor    float64   `json:"efactor"`
 }
 
 type CardsInput struct {

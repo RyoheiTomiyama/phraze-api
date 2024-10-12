@@ -39,6 +39,7 @@ type Config struct {
 }
 
 type ResolverRoot interface {
+	Card() CardResolver
 	Deck() DeckResolver
 	Mutation() MutationResolver
 	Query() QueryResolver
@@ -56,7 +57,15 @@ type ComplexityRoot struct {
 		DeckID    func(childComplexity int) int
 		ID        func(childComplexity int) int
 		Question  func(childComplexity int) int
+		Schedule  func(childComplexity int) int
 		UpdatedAt func(childComplexity int) int
+	}
+
+	CardSchedule struct {
+		Efactor    func(childComplexity int) int
+		ID         func(childComplexity int) int
+		Interval   func(childComplexity int) int
+		ScheduleAt func(childComplexity int) int
 	}
 
 	CardsOutput struct {
@@ -145,6 +154,9 @@ type ComplexityRoot struct {
 	}
 }
 
+type CardResolver interface {
+	Schedule(ctx context.Context, obj *model.Card) (*model.CardSchedule, error)
+}
 type DeckResolver interface {
 	DeckInfo(ctx context.Context, obj *model.Deck) (*model.DeckInfo, error)
 }
@@ -228,12 +240,47 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Card.Question(childComplexity), true
 
+	case "Card.schedule":
+		if e.complexity.Card.Schedule == nil {
+			break
+		}
+
+		return e.complexity.Card.Schedule(childComplexity), true
+
 	case "Card.updatedAt":
 		if e.complexity.Card.UpdatedAt == nil {
 			break
 		}
 
 		return e.complexity.Card.UpdatedAt(childComplexity), true
+
+	case "CardSchedule.efactor":
+		if e.complexity.CardSchedule.Efactor == nil {
+			break
+		}
+
+		return e.complexity.CardSchedule.Efactor(childComplexity), true
+
+	case "CardSchedule.id":
+		if e.complexity.CardSchedule.ID == nil {
+			break
+		}
+
+		return e.complexity.CardSchedule.ID(childComplexity), true
+
+	case "CardSchedule.interval":
+		if e.complexity.CardSchedule.Interval == nil {
+			break
+		}
+
+		return e.complexity.CardSchedule.Interval(childComplexity), true
+
+	case "CardSchedule.scheduleAt":
+		if e.complexity.CardSchedule.ScheduleAt == nil {
+			break
+		}
+
+		return e.complexity.CardSchedule.ScheduleAt(childComplexity), true
 
 	case "CardsOutput.cards":
 		if e.complexity.CardsOutput.Cards == nil {
@@ -687,6 +734,10 @@ var sources = []*ast.Source{
   aiAnswer: String!
   createdAt: Timestamp!
   updatedAt: Timestamp!
+  """
+  学習スケジュール
+  """
+  schedule: CardSchedule
 }
 
 input CardsWhere {
@@ -750,6 +801,13 @@ extend type Mutation {
   Freeプランは1000件までしか作成できない
   """
   createCard(input: CreateCardInput!): CreateCardOutput! @hasRole(role: USER)
+}
+`, BuiltIn: false},
+	{Name: "../schema/card_schedule.graphqls", Input: `type CardSchedule {
+  id: ID!
+  scheduleAt: Timestamp!
+  interval: Int!
+  efactor: Float!
 }
 `, BuiltIn: false},
 	{Name: "../schema/deck.graphqls", Input: `type Deck {
@@ -1455,6 +1513,233 @@ func (ec *executionContext) fieldContext_Card_updatedAt(_ context.Context, field
 	return fc, nil
 }
 
+func (ec *executionContext) _Card_schedule(ctx context.Context, field graphql.CollectedField, obj *model.Card) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Card_schedule(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Card().Schedule(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.CardSchedule)
+	fc.Result = res
+	return ec.marshalOCardSchedule2ᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐCardSchedule(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Card_schedule(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Card",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_CardSchedule_id(ctx, field)
+			case "scheduleAt":
+				return ec.fieldContext_CardSchedule_scheduleAt(ctx, field)
+			case "interval":
+				return ec.fieldContext_CardSchedule_interval(ctx, field)
+			case "efactor":
+				return ec.fieldContext_CardSchedule_efactor(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type CardSchedule", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CardSchedule_id(ctx context.Context, field graphql.CollectedField, obj *model.CardSchedule) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CardSchedule_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int64)
+	fc.Result = res
+	return ec.marshalNID2int64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CardSchedule_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CardSchedule",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CardSchedule_scheduleAt(ctx context.Context, field graphql.CollectedField, obj *model.CardSchedule) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CardSchedule_scheduleAt(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ScheduleAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTimestamp2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CardSchedule_scheduleAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CardSchedule",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Timestamp does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CardSchedule_interval(ctx context.Context, field graphql.CollectedField, obj *model.CardSchedule) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CardSchedule_interval(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Interval, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CardSchedule_interval(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CardSchedule",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CardSchedule_efactor(ctx context.Context, field graphql.CollectedField, obj *model.CardSchedule) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CardSchedule_efactor(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Efactor, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalNFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CardSchedule_efactor(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CardSchedule",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _CardsOutput_cards(ctx context.Context, field graphql.CollectedField, obj *model.CardsOutput) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_CardsOutput_cards(ctx, field)
 	if err != nil {
@@ -1508,6 +1793,8 @@ func (ec *executionContext) fieldContext_CardsOutput_cards(_ context.Context, fi
 				return ec.fieldContext_Card_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Card_updatedAt(ctx, field)
+			case "schedule":
+				return ec.fieldContext_Card_schedule(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Card", field.Name)
 		},
@@ -1616,6 +1903,8 @@ func (ec *executionContext) fieldContext_CreateCardOutput_card(_ context.Context
 				return ec.fieldContext_Card_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Card_updatedAt(ctx, field)
+			case "schedule":
+				return ec.fieldContext_Card_schedule(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Card", field.Name)
 		},
@@ -3041,6 +3330,8 @@ func (ec *executionContext) fieldContext_PendingCardsOutput_cards(_ context.Cont
 				return ec.fieldContext_Card_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Card_updatedAt(ctx, field)
+			case "schedule":
+				return ec.fieldContext_Card_schedule(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Card", field.Name)
 		},
@@ -3258,6 +3549,8 @@ func (ec *executionContext) fieldContext_Query_card(ctx context.Context, field g
 				return ec.fieldContext_Card_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Card_updatedAt(ctx, field)
+			case "schedule":
+				return ec.fieldContext_Card_schedule(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Card", field.Name)
 		},
@@ -3750,6 +4043,8 @@ func (ec *executionContext) fieldContext_UpdateCardOutput_card(_ context.Context
 				return ec.fieldContext_Card_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Card_updatedAt(ctx, field)
+			case "schedule":
+				return ec.fieldContext_Card_schedule(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Card", field.Name)
 		},
@@ -3810,6 +4105,8 @@ func (ec *executionContext) fieldContext_UpdateCardWithGenAnswerOutput_card(_ co
 				return ec.fieldContext_Card_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Card_updatedAt(ctx, field)
+			case "schedule":
+				return ec.fieldContext_Card_schedule(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Card", field.Name)
 		},
@@ -5966,35 +6263,122 @@ func (ec *executionContext) _Card(ctx context.Context, sel ast.SelectionSet, obj
 		case "id":
 			out.Values[i] = ec._Card_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "deckId":
 			out.Values[i] = ec._Card_deckId(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "question":
 			out.Values[i] = ec._Card_question(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "answer":
 			out.Values[i] = ec._Card_answer(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "aiAnswer":
 			out.Values[i] = ec._Card_aiAnswer(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "createdAt":
 			out.Values[i] = ec._Card_createdAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "updatedAt":
 			out.Values[i] = ec._Card_updatedAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "schedule":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Card_schedule(ctx, field, obj)
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var cardScheduleImplementors = []string{"CardSchedule"}
+
+func (ec *executionContext) _CardSchedule(ctx context.Context, sel ast.SelectionSet, obj *model.CardSchedule) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, cardScheduleImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("CardSchedule")
+		case "id":
+			out.Values[i] = ec._CardSchedule_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "scheduleAt":
+			out.Values[i] = ec._CardSchedule_scheduleAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "interval":
+			out.Values[i] = ec._CardSchedule_interval(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "efactor":
+			out.Values[i] = ec._CardSchedule_efactor(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -7497,6 +7881,21 @@ func (ec *executionContext) marshalNDeleteDeckOutput2ᚖgithubᚗcomᚋRyoheiTom
 	return ec._DeleteDeckOutput(ctx, sel, v)
 }
 
+func (ec *executionContext) unmarshalNFloat2float64(ctx context.Context, v interface{}) (float64, error) {
+	res, err := graphql.UnmarshalFloatContext(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNFloat2float64(ctx context.Context, sel ast.SelectionSet, v float64) graphql.Marshaler {
+	res := graphql.MarshalFloatContext(v)
+	if res == graphql.Null {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+	}
+	return graphql.WrapContextMarshaler(ctx, res)
+}
+
 func (ec *executionContext) marshalNHealth2githubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐHealth(ctx context.Context, sel ast.SelectionSet, v model.Health) graphql.Marshaler {
 	return ec._Health(ctx, sel, &v)
 }
@@ -7939,6 +8338,13 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	}
 	res := graphql.MarshalBoolean(*v)
 	return res
+}
+
+func (ec *executionContext) marshalOCardSchedule2ᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐCardSchedule(ctx context.Context, sel ast.SelectionSet, v *model.CardSchedule) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._CardSchedule(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOCardsInput2ᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐCardsInput(ctx context.Context, v interface{}) (*model.CardsInput, error) {

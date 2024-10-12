@@ -19,5 +19,4 @@ func (r *mutationResolver) DeleteDeck(ctx context.Context, input model.DeleteDec
 	}
 
 	return &model.DeleteDeckOutput{AffectedRows: int(ar)}, nil
-
 }

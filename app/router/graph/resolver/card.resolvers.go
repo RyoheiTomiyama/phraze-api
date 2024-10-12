@@ -6,12 +6,19 @@ package resolver
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/RyoheiTomiyama/phraze-api/domain"
+	"github.com/RyoheiTomiyama/phraze-api/router/graph/generated"
 	"github.com/RyoheiTomiyama/phraze-api/router/graph/model"
 	"github.com/RyoheiTomiyama/phraze-api/util/errutil"
 	"github.com/samber/lo"
 )
+
+// Schedule is the resolver for the schedule field.
+func (r *cardResolver) Schedule(ctx context.Context, obj *model.Card) (*model.CardSchedule, error) {
+	panic(fmt.Errorf("not implemented: Schedule - schedule"))
+}
 
 // CreateCard is the resolver for the createCard field.
 func (r *mutationResolver) CreateCard(ctx context.Context, input model.CreateCardInput) (*model.CreateCardOutput, error) {
@@ -129,3 +136,8 @@ func (r *queryResolver) PendingCards(ctx context.Context, input *model.PendingCa
 		Cards: cards,
 	}, nil
 }
+
+// Card returns generated.CardResolver implementation.
+func (r *Resolver) Card() generated.CardResolver { return &cardResolver{r} }
+
+type cardResolver struct{ *Resolver }
