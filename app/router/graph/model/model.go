@@ -75,6 +75,25 @@ func FromDomain(ctx context.Context, d any, target interface{}) error {
 		t.UpdatedAt = v.UpdatedAt
 
 		return nil
+	case *domain.CardSchedule:
+		if v == nil {
+			return nil
+		}
+
+		t, ok := target.(*CardSchedule)
+		if !ok {
+			err := errutil.New(errutil.CodeInternalError, "targetとdomainの型が違います")
+			log.Error(ctx, err, "domain", d, "target", target)
+
+			return err
+		}
+
+		t.ID = v.ID
+		t.Efactor = v.Efactor
+		t.Interval = v.Interval
+		t.ScheduleAt = v.ScheduleAt
+
+		return nil
 	default:
 		err := errutil.New(errutil.CodeInternalError, "domain→model変換に失敗しました。")
 		log.Error(ctx, err, "domain", d)

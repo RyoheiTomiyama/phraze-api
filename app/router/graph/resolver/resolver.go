@@ -12,6 +12,7 @@ import (
 
 type Resolver struct {
 	/* loader */
+	cardLoader loader.ICardLoader
 	deckLoader loader.IDeckLoader
 
 	/* usecase */
@@ -23,9 +24,11 @@ func New(
 	cardUsecase card.IUsecase,
 	deckUsecase deck.IUsecase,
 ) *Resolver {
+	cardLoader := loader.NewCardLoader(cardUsecase)
 	deckLoader := loader.NewDeckLoader(deckUsecase)
 
 	return &Resolver{
+		cardLoader,
 		deckLoader,
 		cardUsecase,
 		deckUsecase,
