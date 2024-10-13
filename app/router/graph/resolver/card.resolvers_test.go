@@ -32,6 +32,32 @@ func assertCard(t *testing.T, expect *domain.Card, actual *model.Card) {
 	assert.Equal(t, em, actual)
 }
 
+func (s *resolverSuite) TestCardResolverSchedule() {
+	userID := "test_user"
+	ctx := context.Background()
+	ctx = auth.New(&domain.User{ID: userID}).WithCtx(ctx)
+
+	fx := fixture.New(s.dbx)
+	decks := fx.CreateDeck(s.T(), &fixture.DeckInput{UserID: lo.ToPtr(userID)})
+	cards := fx.CreateCard(s.T(), decks[0].ID, make([]fixture.CardInput, 2)...)
+	schedules := fx.CreateCardSchedule(s.T(), []fixture.CardScheduleInput{
+		{CardID: cards[0].ID, ScheduleAt: time.Now().Add(-10 * time.Hour)},
+	}...)
+
+	s.T().Run("スケジュールがある場合", func(t *testing.T) {
+		result, err := s.resolver.Card().Schedule(ctx, &model.Card{ID: cards[0].ID})
+
+		assert.NoError(t, err)
+		assert.Equal(t, schedules[0].ID, result.ID)
+	})
+	s.T().Run("スケジュールがない場合", func(t *testing.T) {
+		result, err := s.resolver.Card().Schedule(ctx, &model.Card{ID: cards[1].ID})
+
+		assert.NoError(t, err)
+		assert.Nil(t, result)
+	})
+}
+
 func (s *resolverSuite) TestCreateCard() {
 	userID := "test_user"
 	ctx := context.Background()
