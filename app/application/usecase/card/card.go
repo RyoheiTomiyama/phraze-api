@@ -19,6 +19,8 @@ type IUsecase interface {
 	UpdateCard(ctx context.Context, id int64, input domain.UpdateCardInput) (*domain.Card, error)
 	UpdateCardWithGendAnswer(ctx context.Context, id int64, input domain.UpdateCardInput) (*domain.Card, error)
 	DeleteCard(ctx context.Context, id int64) (int64, error)
+
+	ReadSchedules(ctx context.Context, cardIDs []int64) (map[int64]*domain.CardSchedule, error)
 }
 
 type usecase struct {

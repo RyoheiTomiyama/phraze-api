@@ -21,6 +21,10 @@ type Card {
   aiAnswer: String!
   createdAt: Timestamp!
   updatedAt: Timestamp!
+  """
+  学習スケジュール
+  """
+  schedule: CardSchedule
 }
 
 input CardsWhere {

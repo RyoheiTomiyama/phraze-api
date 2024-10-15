@@ -89,3 +89,7 @@ models:
     fields:
       deckInfo:
         resolver: true
+  Card:
+    fields:
+      schedule:
+        resolver: true

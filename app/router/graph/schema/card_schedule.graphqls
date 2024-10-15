@@ -1,0 +1,6 @@
+type CardSchedule {
+  id: ID!
+  scheduleAt: Timestamp!
+  interval: Int!
+  efactor: Float!
+}
