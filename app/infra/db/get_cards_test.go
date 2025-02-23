@@ -26,7 +26,9 @@ func TestGetCards(t *testing.T) {
 		&fixture.DeckInput{UserID: lo.ToPtr("another user")},
 	)
 
-	cards := fx.CreateCard(t, decks[0].ID, make([]fixture.CardInput, 10)...)
+	cardsInput := make([]fixture.CardInput, 9)
+	cardsInput = append(cardsInput, fixture.CardInput{Question: lo.ToPtr("asdfghjkl")}) // 謎の文字列にしないと、部分一致テストでモックデータが引っかかる可能性がある
+	cards := fx.CreateCard(t, decks[0].ID, cardsInput...)
 	cards2 := fx.CreateCard(t, decks[1].ID, make([]fixture.CardInput, 10)...)
 
 	t.Run("正常系", func(t *testing.T) {
@@ -77,6 +79,22 @@ func TestGetCards(t *testing.T) {
 						assert.Len(t, result, 2)
 						assert.Equal(t, cards[len(cards)-1].ToDomain(), result[0])
 						assert.Equal(t, cards[len(cards)-2].ToDomain(), result[1])
+					})
+				},
+			},
+			{
+				name: "Question.Likeで絞り込んだ場合",
+				arrange: func() (where *domain.CardsWhere, limit int, offset int) {
+					return &domain.CardsWhere{
+						Question: &domain.CardQuestionWhere{
+							Like: lo.ToPtr("dfgh"),
+						},
+					}, 2, 0
+				},
+				assert: func(result []*domain.Card) {
+					t.Run("部分一致で取得できること", func(t *testing.T) {
+						assert.Len(t, result, 1)
+						assert.Equal(t, cards[9].ToDomain(), result[0])
 					})
 				},
 			},

@@ -30,7 +30,7 @@ type Card {
 input CardsWhere {
   deckId: ID!
   """
-  曖昧検索ワード
+  Querstionの曖昧検索
   """
   q: String
 }

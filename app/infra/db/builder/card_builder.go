@@ -2,6 +2,7 @@ package builder
 
 import (
 	"context"
+	"fmt"
 	"strings"
 
 	"github.com/RyoheiTomiyama/phraze-api/domain"
@@ -21,6 +22,12 @@ func (builder *CardsWhere) BuildNamedWhere(ctx context.Context,
 		if builder.UserID != nil {
 			wheres = append(wheres, "decks.user_id=:user_id")
 			arg["user_id"] = builder.UserID
+		}
+		if builder.Question != nil {
+			if builder.Question.Like != nil {
+				wheres = append(wheres, "question LIKE :question_like")
+				arg["question_like"] = fmt.Sprintf("%%%s%%", *builder.Question.Like)
+			}
 		}
 	}
 
