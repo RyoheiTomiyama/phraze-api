@@ -29,6 +29,10 @@ type Card {
 
 input CardsWhere {
   deckId: ID!
+  """
+  曖昧検索ワード
+  """
+  q: String
 }
 
 input CardsInput {
@@ -42,8 +46,12 @@ type CardsOutput {
   pageInfo: PageInfo!
 }
 
+input PendingCardsWhere {
+  deckId: ID!
+}
+
 input PendingCardsInput {
-  where: CardsWhere!
+  where: PendingCardsWhere!
   limit: Int = 100
   offset: Int = 0
 }
