@@ -2,6 +2,7 @@ package builder
 
 import (
 	"context"
+	"fmt"
 	"strings"
 
 	"github.com/RyoheiTomiyama/phraze-api/domain"
@@ -21,6 +22,13 @@ func (builder *CardsWhere) BuildNamedWhere(ctx context.Context,
 		if builder.UserID != nil {
 			wheres = append(wheres, "decks.user_id=:user_id")
 			arg["user_id"] = builder.UserID
+		}
+		if builder.Question != nil {
+			if builder.Question.Like != nil {
+				// ILIKEはPostgreSQLの演算子で、大文字小文字を区別せずに部分一致検索を行う
+				wheres = append(wheres, "question ILIKE :question_like")
+				arg["question_like"] = fmt.Sprintf("%%%s%%", *builder.Question.Like)
+			}
 		}
 	}
 

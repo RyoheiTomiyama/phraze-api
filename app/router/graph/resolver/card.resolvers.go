@@ -73,6 +73,9 @@ func (r *queryResolver) Cards(ctx context.Context, input *model.CardsInput) (*mo
 	output, err := r.cardUsecase.GetCards(ctx, domain.GetCardsInput{
 		Where: &domain.CardsWhere{
 			DeckID: lo.ToPtr(input.Where.DeckID),
+			Question: &domain.CardQuestionWhere{
+				Like: input.Where.Q,
+			},
 		},
 		Limit:  input.Limit,
 		Offset: input.Offset,

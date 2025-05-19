@@ -156,7 +156,9 @@ func (s *resolverSuite) TestCards() {
 		&fixture.DeckInput{UserID: lo.ToPtr(userID)},
 		&fixture.DeckInput{UserID: lo.ToPtr("other_user")},
 	)
-	cards := fx.CreateCard(s.T(), decks[0].ID, make([]fixture.CardInput, 10)...)
+	cardsInput := make([]fixture.CardInput, 9)
+	cardsInput = append(cardsInput, fixture.CardInput{Question: lo.ToPtr("qwertyuiop")})
+	cards := fx.CreateCard(s.T(), decks[0].ID, cardsInput...)
 	fx.CreateCard(s.T(), decks[1].ID, make([]fixture.CardInput, 10)...)
 
 	s.T().Run("Validationエラー", func(t *testing.T) {
@@ -200,6 +202,20 @@ func (s *resolverSuite) TestCards() {
 			assert.Len(t, result.Cards, 2)
 			assertCard(t, cards[len(cards)-1].ToDomain(), result.Cards[0])
 			assertCard(t, cards[len(cards)-2].ToDomain(), result.Cards[1])
+		}
+	})
+	s.T().Run("Cardsを検索できること", func(t *testing.T) {
+		result, err := s.resolver.Query().Cards(ctx, &model.CardsInput{
+			Where: &model.CardsWhere{
+				DeckID: decks[0].ID,
+				Q:      lo.ToPtr("ertyuio"),
+			},
+			Limit:  lo.ToPtr(2),
+			Offset: lo.ToPtr(0),
+		})
+		if assert.Nil(t, err) {
+			assert.Len(t, result.Cards, 1)
+			assertCard(t, cards[9].ToDomain(), result.Cards[0])
 		}
 	})
 
@@ -276,14 +292,14 @@ func (s *resolverSuite) TestPendingCards() {
 		}{
 			{
 				name:  "DeckIDが0値の場合",
-				input: model.PendingCardsInput{Where: &model.CardsWhere{}},
+				input: model.PendingCardsInput{Where: &model.PendingCardsWhere{}},
 				assert: func(err error) {
 					assertion.AssertError(t, "DeckIDは必須項目です", errutil.CodeBadRequest, err)
 				},
 			},
 			{
 				name:  "Limitが100より大きい場合",
-				input: model.PendingCardsInput{Where: &model.CardsWhere{DeckID: 100}, Limit: lo.ToPtr(101)},
+				input: model.PendingCardsInput{Where: &model.PendingCardsWhere{DeckID: 100}, Limit: lo.ToPtr(101)},
 				assert: func(err error) {
 					assertion.AssertError(t, "Limitは100が最大です", errutil.CodeBadRequest, err)
 				},
@@ -299,7 +315,7 @@ func (s *resolverSuite) TestPendingCards() {
 
 	s.T().Run("未学習のCardsがSchedule古い順に取得できること", func(t *testing.T) {
 		result, err := s.resolver.Query().PendingCards(ctx, &model.PendingCardsInput{
-			Where: &model.CardsWhere{
+			Where: &model.PendingCardsWhere{
 				DeckID: decks[0].ID,
 			},
 			Limit:  lo.ToPtr(100),

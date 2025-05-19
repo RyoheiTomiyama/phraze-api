@@ -611,6 +611,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputDeleteCardInput,
 		ec.unmarshalInputDeleteDeckInput,
 		ec.unmarshalInputPendingCardsInput,
+		ec.unmarshalInputPendingCardsWhere,
 		ec.unmarshalInputReviewCardInput,
 		ec.unmarshalInputUpdateCardInput,
 		ec.unmarshalInputUpdateCardWithGenAnswerInput,
@@ -742,6 +743,11 @@ var sources = []*ast.Source{
 
 input CardsWhere {
   deckId: ID!
+  """
+  Querstionの曖昧検索
+  大文字小文字を区別せずに部分一致検索を行う
+  """
+  q: String
 }
 
 input CardsInput {
@@ -755,8 +761,12 @@ type CardsOutput {
   pageInfo: PageInfo!
 }
 
+input PendingCardsWhere {
+  deckId: ID!
+}
+
 input PendingCardsInput {
-  where: CardsWhere!
+  where: PendingCardsWhere!
   limit: Int = 100
   offset: Int = 0
 }
@@ -5942,7 +5952,7 @@ func (ec *executionContext) unmarshalInputCardsWhere(ctx context.Context, obj in
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"deckId"}
+	fieldsInOrder := [...]string{"deckId", "q"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -5956,6 +5966,13 @@ func (ec *executionContext) unmarshalInputCardsWhere(ctx context.Context, obj in
 				return it, err
 			}
 			it.DeckID = data
+		case "q":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("q"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Q = data
 		}
 	}
 
@@ -6107,7 +6124,7 @@ func (ec *executionContext) unmarshalInputPendingCardsInput(ctx context.Context,
 		switch k {
 		case "where":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("where"))
-			data, err := ec.unmarshalNCardsWhere2ᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐCardsWhere(ctx, v)
+			data, err := ec.unmarshalNPendingCardsWhere2ᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐPendingCardsWhere(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -6126,6 +6143,33 @@ func (ec *executionContext) unmarshalInputPendingCardsInput(ctx context.Context,
 				return it, err
 			}
 			it.Offset = data
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputPendingCardsWhere(ctx context.Context, obj interface{}) (model.PendingCardsWhere, error) {
+	var it model.PendingCardsWhere
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"deckId"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "deckId":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deckId"))
+			data, err := ec.unmarshalNID2int64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeckID = data
 		}
 	}
 
@@ -7962,6 +8006,11 @@ func (ec *executionContext) marshalNPendingCardsOutput2ᚖgithubᚗcomᚋRyoheiT
 		return graphql.Null
 	}
 	return ec._PendingCardsOutput(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNPendingCardsWhere2ᚖgithubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐPendingCardsWhere(ctx context.Context, v interface{}) (*model.PendingCardsWhere, error) {
+	res, err := ec.unmarshalInputPendingCardsWhere(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalNReviewCardInput2githubᚗcomᚋRyoheiTomiyamaᚋphrazeᚑapiᚋrouterᚋgraphᚋmodelᚐReviewCardInput(ctx context.Context, v interface{}) (model.ReviewCardInput, error) {

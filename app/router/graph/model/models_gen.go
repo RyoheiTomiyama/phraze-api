@@ -45,6 +45,9 @@ type CardsOutput struct {
 
 type CardsWhere struct {
 	DeckID int64 `json:"deckId"`
+	// Querstionの曖昧検索
+	// 大文字小文字を区別せずに部分一致検索を行う
+	Q *string `json:"q,omitempty"`
 }
 
 type CreateCardInput struct {
@@ -114,13 +117,17 @@ type PageInfo struct {
 }
 
 type PendingCardsInput struct {
-	Where  *CardsWhere `json:"where"`
-	Limit  *int        `json:"limit,omitempty"`
-	Offset *int        `json:"offset,omitempty"`
+	Where  *PendingCardsWhere `json:"where"`
+	Limit  *int               `json:"limit,omitempty"`
+	Offset *int               `json:"offset,omitempty"`
 }
 
 type PendingCardsOutput struct {
 	Cards []*Card `json:"cards"`
+}
+
+type PendingCardsWhere struct {
+	DeckID int64 `json:"deckId"`
 }
 
 type Query struct {

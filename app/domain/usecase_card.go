@@ -12,8 +12,13 @@ type GetPendingCardsInput struct {
 }
 
 type CardsWhere struct {
-	DeckID *int64
-	UserID *string
+	DeckID   *int64
+	UserID   *string
+	Question *CardQuestionWhere
+}
+
+type CardQuestionWhere struct {
+	Like *string
 }
 
 type UpdateCardInput struct {

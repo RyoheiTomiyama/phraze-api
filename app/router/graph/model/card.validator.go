@@ -40,7 +40,8 @@ func (i *CardsInput) Validate(ctx context.Context) error {
 	v := validate()
 
 	type where struct {
-		DeckID int64 `json:"deckId" validate:"required"`
+		DeckID int64   `json:"deckId" validate:"required"`
+		Q      *string `json:"q" validate:"omitempty,min=1,max=100"`
 	}
 	type input struct {
 		Where  *where `json:"where" validate:"required"`

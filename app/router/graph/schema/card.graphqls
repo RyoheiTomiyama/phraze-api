@@ -29,6 +29,11 @@ type Card {
 
 input CardsWhere {
   deckId: ID!
+  """
+  Querstionの曖昧検索
+  大文字小文字を区別せずに部分一致検索を行う
+  """
+  q: String
 }
 
 input CardsInput {
@@ -42,8 +47,12 @@ type CardsOutput {
   pageInfo: PageInfo!
 }
 
+input PendingCardsWhere {
+  deckId: ID!
+}
+
 input PendingCardsInput {
-  where: CardsWhere!
+  where: PendingCardsWhere!
   limit: Int = 100
   offset: Int = 0
 }
