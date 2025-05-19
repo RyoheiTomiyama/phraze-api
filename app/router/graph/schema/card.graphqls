@@ -31,6 +31,7 @@ input CardsWhere {
   deckId: ID!
   """
   Querstionの曖昧検索
+  大文字小文字を区別せずに部分一致検索を行う
   """
   q: String
 }

@@ -99,6 +99,22 @@ func TestGetCards(t *testing.T) {
 				},
 			},
 			{
+				name: "Question.Likeで大文字小文字を無視して絞り込んだ場合",
+				arrange: func() (where *domain.CardsWhere, limit int, offset int) {
+					return &domain.CardsWhere{
+						Question: &domain.CardQuestionWhere{
+							Like: lo.ToPtr("DfGh"),
+						},
+					}, 2, 0
+				},
+				assert: func(result []*domain.Card) {
+					t.Run("部分一致で取得できること", func(t *testing.T) {
+						assert.Len(t, result, 1)
+						assert.Equal(t, cards[9].ToDomain(), result[0])
+					})
+				},
+			},
+			{
 				name: "offsetが取得できるデータ数より大きい場合",
 				arrange: func() (where *domain.CardsWhere, limit int, offset int) {
 					return nil, 2, 9999

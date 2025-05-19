@@ -744,7 +744,8 @@ var sources = []*ast.Source{
 input CardsWhere {
   deckId: ID!
   """
-  曖昧検索ワード
+  Querstionの曖昧検索
+  大文字小文字を区別せずに部分一致検索を行う
   """
   q: String
 }

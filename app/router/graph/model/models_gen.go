@@ -45,7 +45,8 @@ type CardsOutput struct {
 
 type CardsWhere struct {
 	DeckID int64 `json:"deckId"`
-	// 曖昧検索ワード
+	// Querstionの曖昧検索
+	// 大文字小文字を区別せずに部分一致検索を行う
 	Q *string `json:"q,omitempty"`
 }
 
