@@ -23,7 +23,7 @@ jobs:
   test:
     name: Go API Tests
     runs-on: ubuntu-latest
-    container: golang:{{ env.GO_VERSION}}
+    container: golang:${{ github.env.GO_VERSION }}
     services:
       db:
         image: postgres:16
@@ -36,7 +36,7 @@ jobs:
           POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
           POSTGRES_DB: ${{ env.POSTGRES_DB }}
         options: >-
-          --health-cmd "pg_isready -U postgres"
+          --health-cmd "pg_isready -U ${{ github.env.POSTGRES_USER }} -d ${{ github.env.POSTGRES_DB }}"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
