@@ -51,6 +51,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-go-
 
+      - name: Setup Atlas
+        uses: ariga/setup-atlas@v0.2
+
       - name: Install dependencies
         run: go mod download
 
@@ -68,7 +71,7 @@ jobs:
 
       - uses: graphql-hive/graphql-inspector@v3.4.0
         with:
-          schema: ${{ github.base_ref }}:"./app/router/graph/schema/**/*.graphqls"
+          schema: "${{ github.base_ref }}:./app/router/graph/schema/**/*.graphqls"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
