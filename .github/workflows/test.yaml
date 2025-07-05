@@ -1,0 +1,62 @@
+name: Test
+
+on:
+  pull_request:
+    branches:
+      - main
+      - develop
+    paths:
+      - "app/*"
+      - "atlas/*"
+      - ".github/workflows/test.yaml"
+
+env:
+  POSTGRES_PORT: 5432
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: password
+  POSTGRES_DB: phraze_test
+
+jobs:
+  test:
+    name: Check Schema
+    runs-on: ubuntu-latest
+    container: golang:1.22
+    services:
+      postgresql:
+        image: postgres:16
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_PORT: "{{ env.POSTGRES_PORT }}"
+          POSTGRES_USER: "{{ env.POSTGRES_USER }}"
+          POSTGRES_PASSWORD: "{{ env.POSTGRES_PASSWORD }}"
+          POSTGRES_DB: "{{ env.POSTGRES_DB }}"
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: go mod download
+
+      - name: Run tests
+        run: go test -v ./...
+
+  graphql-inspector:
+    name: Check Schema
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - uses: graphql-hive/graphql-inspector@v3.4.0
+        with:
+          schema: "{{ github.base_ref }}:app/router/graph/schema/**/*.graphqls"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
