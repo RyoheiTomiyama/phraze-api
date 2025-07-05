@@ -11,6 +11,7 @@ on:
       - ".github/workflows/test.yaml"
 
 env:
+  TZ: UTC
   POSTGRES_PORT: 5432
   POSTGRES_USER: postgres
   POSTGRES_PASSWORD: password
@@ -18,7 +19,7 @@ env:
 
 jobs:
   test:
-    name: Check Schema
+    name: Go API Tests
     runs-on: ubuntu-latest
     container: golang:1.22
     services:
@@ -44,7 +45,7 @@ jobs:
         run: go mod download
 
       - name: Run tests
-        run: go test -v ./...
+        run: make test
 
   graphql-inspector:
     name: Check Schema
