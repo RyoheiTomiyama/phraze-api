@@ -12,6 +12,7 @@ on:
 
 env:
   TZ: UTC
+  POSTGRES_HOST: db
   POSTGRES_PORT: 5432
   POSTGRES_USER: postgres
   POSTGRES_PASSWORD: password
@@ -23,11 +24,12 @@ jobs:
     runs-on: ubuntu-latest
     container: golang:1.22
     services:
-      postgresql:
+      db:
         image: postgres:16
         ports:
           - 5432:5432
         env:
+          POSTGRES_HOST: "{{ env.POSTGRES_HOST}}"
           POSTGRES_PORT: "{{ env.POSTGRES_PORT }}"
           POSTGRES_USER: "{{ env.POSTGRES_USER }}"
           POSTGRES_PASSWORD: "{{ env.POSTGRES_PASSWORD }}"
@@ -48,7 +50,7 @@ jobs:
         run: make test
 
   graphql-inspector:
-    name: Check Schema
+    name: GraphQL Inspector
     runs-on: ubuntu-latest
     permissions:
       checks: write
