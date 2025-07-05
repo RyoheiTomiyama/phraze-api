@@ -49,6 +49,8 @@ jobs:
   graphql-inspector:
     name: Check Schema
     runs-on: ubuntu-latest
+    permissions:
+      checks: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
