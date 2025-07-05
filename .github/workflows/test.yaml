@@ -11,6 +11,7 @@ on:
       - ".github/workflows/test.yaml"
 
 env:
+  GO_VERSION: 1.22
   TZ: UTC
   POSTGRES_HOST: db
   POSTGRES_PORT: 5432
@@ -22,18 +23,18 @@ jobs:
   test:
     name: Go API Tests
     runs-on: ubuntu-latest
-    container: golang:1.22
+    container: golang:{{ env.GO_VERSION}}
     services:
       db:
         image: postgres:16
         ports:
           - 5432:5432
         env:
-          POSTGRES_HOST: "{{ env.POSTGRES_HOST}}"
-          POSTGRES_PORT: "{{ env.POSTGRES_PORT }}"
-          POSTGRES_USER: "{{ env.POSTGRES_USER }}"
-          POSTGRES_PASSWORD: "{{ env.POSTGRES_PASSWORD }}"
-          POSTGRES_DB: "{{ env.POSTGRES_DB }}"
+          POSTGRES_HOST: ${{ env.POSTGRES_HOST}}
+          POSTGRES_PORT: ${{ env.POSTGRES_PORT }}
+          POSTGRES_USER: ${{ env.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
+          POSTGRES_DB: ${{ env.POSTGRES_DB }}
         options: >-
           --health-cmd "pg_isready -U postgres"
           --health-interval 10s
@@ -45,6 +46,14 @@ jobs:
 
       - name: Install dependencies
         run: go mod download
+
+      - name: Cache Go modules
+        uses: actions/cache@v4
+        with:
+          path: /go/pkg/mod
+          key: ${{ runner.os }}-go-${{ env.GO_VERSION }}-${{ hashFiles('./app/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
 
       - name: Run tests
         run: make test
