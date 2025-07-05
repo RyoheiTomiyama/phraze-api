@@ -68,7 +68,7 @@ jobs:
 
       - uses: graphql-hive/graphql-inspector@v3.4.0
         with:
-          schema: "{{ github.base_ref }}:./app/router/graph/schema/**/*.graphqls"
+          schema: ${{ github.base_ref }}:"./app/router/graph/schema/**/*.graphqls"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
