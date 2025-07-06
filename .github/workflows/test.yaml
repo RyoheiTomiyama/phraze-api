@@ -59,11 +59,11 @@ jobs:
   graphql-inspector:
     name: GraphQL Inspector
     runs-on: ubuntu-latest
-    permissions:
-      actions: write
-      checks: write
-      contents: read
-      packages: read
+    # permissions:
+    #   actions: write
+    #   checks: write
+    #   contents: read
+    #   packages: read
     steps:
       - name: Checkout
         uses: actions/checkout@v4
