@@ -68,9 +68,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - run: pwd
+      - run: ls -la
+
       - uses: graphql-hive/graphql-inspector@v3.4.0
         with:
-          schema: "${{ github.base_ref }}:./app/router/graph/schema/**/*.graphqls"
+          schema: "${{ github.base_ref }}:app/router/graph/schema/**/*.graphqls"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
