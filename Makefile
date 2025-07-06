@@ -40,4 +40,4 @@ seed:
 
 
 test:
-	TZ=UTC go test -v ./app/...
+	TZ=UTC go test -v ./app/... -p 1
