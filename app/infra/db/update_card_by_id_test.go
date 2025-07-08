@@ -51,6 +51,8 @@ func TestUpdateCardByID(t *testing.T) {
 				},
 				assert: func(result *domain.Card) {
 					t.Run("更新できること", func(t *testing.T) {
+						t.Log(cards[0].UpdatedAt.Format(time.RFC3339Nano))
+						t.Log(result.UpdatedAt.Format(time.RFC3339Nano))
 						assert.NotEqual(t, cards[0].UpdatedAt.UnixMilli(), result.UpdatedAt.UnixMilli())
 
 						expect := *cards[0]
