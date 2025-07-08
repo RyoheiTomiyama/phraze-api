@@ -73,7 +73,7 @@ jobs:
           fetch-depth: 0
 
       - run: pwd
-      - run: ls -la
+      - run: ls -la ./app/router/graph/schema/
 
       - uses: graphql-hive/graphql-inspector@v3.4.0
         with:
