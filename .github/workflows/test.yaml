@@ -77,7 +77,7 @@ jobs:
 
       - uses: graphql-hive/graphql-inspector@v3.4.0
         with:
-          schema: "main:/app/router/graph/schema/*.graphqls"
+          schema: "main:app/router/graph/schema/*.graphqls"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
