@@ -3,6 +3,7 @@ package db
 import (
 	"context"
 	"testing"
+	"time"
 
 	"github.com/RyoheiTomiyama/phraze-api/domain"
 	"github.com/RyoheiTomiyama/phraze-api/infra/db/fixture"
@@ -37,6 +38,8 @@ func TestUpdateCardByID(t *testing.T) {
 			{
 				name: "全更新の場合",
 				arrange: func() (int64, *domain.UpdateCardInput) {
+					time.Sleep(1 * time.Millisecond) // 更新時刻が変わることを確認するためにスリープ
+
 					return cards[0].ID, &domain.UpdateCardInput{
 						Field: domain.UpdateCardField{
 							DeckID:   lo.ToPtr(decks[1].ID),
@@ -64,6 +67,8 @@ func TestUpdateCardByID(t *testing.T) {
 			{
 				name: "Questionのみ更新の場合",
 				arrange: func() (int64, *domain.UpdateCardInput) {
+					time.Sleep(1 * time.Millisecond) // 更新時刻が変わることを確認するためにスリープ
+
 					return cards[1].ID, &domain.UpdateCardInput{
 						Field: domain.UpdateCardField{
 							Question: lo.ToPtr("question-updated-only-question"),
