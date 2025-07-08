@@ -38,7 +38,7 @@ func TestUpdateCardByID(t *testing.T) {
 			{
 				name: "全更新の場合",
 				arrange: func() (int64, *domain.UpdateCardInput) {
-					time.Sleep(1 * time.Millisecond) // 更新時刻が変わることを確認するためにスリープ
+					time.Sleep(100 * time.Millisecond) // 更新時刻が変わることを確認するためにスリープ
 
 					return cards[0].ID, &domain.UpdateCardInput{
 						Field: domain.UpdateCardField{
@@ -67,7 +67,7 @@ func TestUpdateCardByID(t *testing.T) {
 			{
 				name: "Questionのみ更新の場合",
 				arrange: func() (int64, *domain.UpdateCardInput) {
-					time.Sleep(1 * time.Millisecond) // 更新時刻が変わることを確認するためにスリープ
+					time.Sleep(100 * time.Millisecond) // 更新時刻が変わることを確認するためにスリープ
 
 					return cards[1].ID, &domain.UpdateCardInput{
 						Field: domain.UpdateCardField{
