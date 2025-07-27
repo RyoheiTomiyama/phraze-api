@@ -55,6 +55,10 @@ func TestUpdateCardByID(t *testing.T) {
 					t.Run("更新できること", func(t *testing.T) {
 						t.Log(cards[0].UpdatedAt.Format(time.RFC3339Nano))
 						t.Log(result.UpdatedAt.Format(time.RFC3339Nano))
+						dbCard, err := client.GetCard(context.Background(), cards[0].ID)
+						assert.NoError(t, err)
+						t.Log(dbCard.UpdatedAt.Format(time.RFC3339Nano))
+
 						assert.NotEqual(t, cards[0].UpdatedAt.UnixMilli(), result.UpdatedAt.UnixMilli())
 
 						expect := *cards[0]
@@ -93,7 +97,7 @@ func TestUpdateCardByID(t *testing.T) {
 
 		for _, tc := range testCases {
 			id, input := tc.arrange()
-			result, err := client.UpdateCardByID(context.Background(), id, input)
+			result, err := client.UpdateCardByID(context.TODO(), id, input)
 			if assert.NoError(t, err) {
 				tc.assert(result)
 			}
