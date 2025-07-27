@@ -28,6 +28,7 @@ jobs:
         ports:
           - 5432:5432
         env:
+          TZ: ${{ env.TZ }}
           POSTGRES_PORT: ${{ env.POSTGRES_PORT }}
           POSTGRES_USER: ${{ env.POSTGRES_USER }}
           POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
