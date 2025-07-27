@@ -81,7 +81,7 @@ jobs:
           sparse-checkout: app/router/graph/schema
 
       - run: pwd
-      - run: ls -la ./app/router/graph/schema/
+      # - run: ls -la ./app/router/graph/schema/
 
       - run: npm install -g @graphql-inspector/serve-command graphql
       - run: graphql-inspector serve --schema base/app/router/graph/schema/*.graphqls --port 8080
