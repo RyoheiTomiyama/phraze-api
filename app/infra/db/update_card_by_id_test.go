@@ -25,7 +25,11 @@ func TestUpdateCardByID(t *testing.T) {
 		&fixture.DeckInput{UserID: lo.ToPtr("own")},
 		&fixture.DeckInput{UserID: lo.ToPtr("own")},
 	)
-	cards := fx.CreateCard(t, decks[0].ID, make([]fixture.CardInput, 2)...)
+
+	cards := fx.CreateCard(t, decks[0].ID, lo.Map(make([]fixture.CardInput, 2), func(ci fixture.CardInput, i int) fixture.CardInput {
+		ci.UpdatedAt = lo.ToPtr(time.Now().Add(-time.Hour))
+		return ci
+	})...)
 
 	t.Run("正常系", func(t *testing.T) {
 		client := NewTestClient(t, db)
@@ -49,10 +53,7 @@ func TestUpdateCardByID(t *testing.T) {
 				},
 				assert: func(result *domain.Card) {
 					t.Run("更新できること", func(t *testing.T) {
-						t.Log(cards[0].UpdatedAt.Format(time.RFC3339Nano))
-						t.Log(result.UpdatedAt.Format(time.RFC3339Nano))
-						// 更新日時のテストをしていたが、txdbを使うとtransaction内での更新日時が同じになってしまうため、コメントアウト
-						// assert.NotEqual(t, cards[0].UpdatedAt.UnixMilli(), result.UpdatedAt.UnixMilli())
+						assert.NotEqual(t, cards[0].UpdatedAt.UnixMilli(), result.UpdatedAt.UnixMilli())
 
 						expect := *cards[0]
 						expect.DeckID = decks[1].ID
@@ -76,7 +77,7 @@ func TestUpdateCardByID(t *testing.T) {
 				},
 				assert: func(result *domain.Card) {
 					t.Run("更新できること", func(t *testing.T) {
-						// assert.NotEqual(t, cards[1].UpdatedAt.UnixMilli(), result.UpdatedAt.UnixMilli())
+						assert.NotEqual(t, cards[1].UpdatedAt.UnixMilli(), result.UpdatedAt.UnixMilli())
 
 						expect := *cards[1]
 						expect.Question = "question-updated-only-question"
