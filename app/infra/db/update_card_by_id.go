@@ -35,6 +35,8 @@ func (c *client) UpdateCardByID(ctx context.Context, id int64, input *domain.Upd
 		}
 	}
 
+	sets = append(sets, "updated_at = NOW()")
+
 	if len(sets) > 0 {
 		query = query + " SET " + strings.Join(sets, ", ")
 	}
