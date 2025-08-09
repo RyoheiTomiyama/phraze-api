@@ -8,7 +8,7 @@ import (
 	"runtime"
 	"testing"
 
-	"ariga.io/atlas-go-sdk/atlasexec"
+	"ariga.io/atlas/atlasexec"
 	"github.com/DATA-DOG/go-txdb"
 	"github.com/RyoheiTomiyama/phraze-api/util/env"
 	_ "github.com/jackc/pgx/v5/stdlib"
@@ -165,7 +165,7 @@ func migration() error {
 	}
 
 	r, err := client.SchemaApply(context.Background(), &atlasexec.SchemaApplyParams{
-		DevURL: "docker://postgres",
+		DevURL: "docker://postgres/16",
 		URL:    dataSource,
 		To:     "file://atlas/schema.sql",
 		DryRun: true,
@@ -176,27 +176,19 @@ func migration() error {
 
 	fmt.Printf("%+v\n", r)
 
-	r, err = client.SchemaApply(context.Background(), &atlasexec.SchemaApplyParams{
-		DevURL: "docker://postgres",
-		URL:    dataSource,
-		To:     "file://atlas/schema.sql",
+	if r.Error != "" {
+		return fmt.Errorf("migration failed: %s", r.Error)
+	}
+
+	_, err = client.SchemaApply(context.Background(), &atlasexec.SchemaApplyParams{
+		DevURL:      "docker://postgres/16",
+		URL:         dataSource,
+		To:          "file://atlas/schema.sql",
+		AutoApprove: true,
 	})
 	if err != nil {
 		return err
 	}
-
-	fmt.Printf("%+v\n", r)
-
-	r, err = client.SchemaApply(context.Background(), &atlasexec.SchemaApplyParams{
-		DevURL: "docker://postgres",
-		URL:    dataSource,
-		To:     "file://atlas/schema.sql",
-	})
-	if err != nil {
-		return err
-	}
-
-	fmt.Printf("%+v\n", r)
 
 	return nil
 }

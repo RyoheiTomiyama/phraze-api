@@ -1,9 +1,11 @@
 module github.com/RyoheiTomiyama/phraze-api
 
-go 1.22.4
+go 1.24
+
+toolchain go1.24.6
 
 require (
-	ariga.io/atlas-go-sdk v0.5.6
+	ariga.io/atlas v0.36.2-0.20250806044935-5bb51a0a956e
 	github.com/99designs/gqlgen v0.17.49
 	github.com/DATA-DOG/go-txdb v0.1.9
 	github.com/caarlos0/env/v11 v11.1.0
@@ -18,7 +20,6 @@ require (
 )
 
 require (
-	ariga.io/atlas v0.21.2-0.20240418081819-02b3f6239b04 // indirect
 	cloud.google.com/go v0.115.0 // indirect
 	cloud.google.com/go/ai v0.8.0 // indirect
 	cloud.google.com/go/auth v0.6.0 // indirect
@@ -30,6 +31,7 @@ require (
 	cloud.google.com/go/storage v1.42.0 // indirect
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/apparentlymart/go-textseg/v15 v15.0.0 // indirect
+	github.com/bmatcuk/doublestar v1.3.4 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/felixge/httpsnoop v1.0.4 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.3 // indirect
@@ -53,7 +55,8 @@ require (
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rogpeppe/go-internal v1.10.0 // indirect
 	github.com/stretchr/objx v0.5.2 // indirect
-	github.com/zclconf/go-cty v1.14.1 // indirect
+	github.com/zclconf/go-cty v1.14.4 // indirect
+	github.com/zclconf/go-cty-yaml v1.1.0 // indirect
 	go.opencensus.io v0.24.0 // indirect
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.51.0 // indirect
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.51.0 // indirect
@@ -92,9 +95,9 @@ require (
 	github.com/sosodev/duration v1.3.1 // indirect
 	github.com/urfave/cli/v2 v2.27.2 // indirect
 	github.com/xrash/smetrics v0.0.0-20240312152122-5f08fbb34913 // indirect
-	golang.org/x/mod v0.19.0 // indirect
-	golang.org/x/sync v0.7.0 // indirect
-	golang.org/x/text v0.16.0 // indirect
+	golang.org/x/mod v0.24.0 // indirect
+	golang.org/x/sync v0.10.0 // indirect
+	golang.org/x/text v0.21.0 // indirect
 	golang.org/x/tools v0.23.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
