@@ -53,6 +53,7 @@ func TestUpdateCardByID(t *testing.T) {
 				},
 				assert: func(result *domain.Card) {
 					t.Run("更新できること", func(t *testing.T) {
+						t.Log(time.Now().Format(time.RFC3339Nano))
 						t.Log(cards[0].UpdatedAt.Format(time.RFC3339Nano))
 						t.Log(result.UpdatedAt.Format(time.RFC3339Nano))
 						dbCard, err := client.GetCard(context.Background(), cards[0].ID)
