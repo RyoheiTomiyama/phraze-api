@@ -130,10 +130,10 @@ func migration() error {
 	}
 
 	r, err := client.SchemaApply(context.Background(), &atlasexec.SchemaApplyParams{
-		DevURL: "docker://postgres/16",
-		URL:    dataSource,
-		To:     "file://atlas/schema.sql",
-		DryRun: true,
+		DevURL:      "docker://postgres/16",
+		URL:         dataSource,
+		To:          "file://atlas/schema.sql",
+		AutoApprove: true,
 	})
 	if err != nil {
 		return err
@@ -143,16 +143,6 @@ func migration() error {
 
 	if r.Error != "" {
 		return fmt.Errorf("migration failed: %s", r.Error)
-	}
-
-	_, err = client.SchemaApply(context.Background(), &atlasexec.SchemaApplyParams{
-		DevURL:      "docker://postgres/16",
-		URL:         dataSource,
-		To:          "file://atlas/schema.sql",
-		AutoApprove: true,
-	})
-	if err != nil {
-		return err
 	}
 
 	return nil
