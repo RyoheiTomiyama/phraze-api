@@ -7,7 +7,6 @@ import (
 	"github.com/RyoheiTomiyama/phraze-api/domain"
 	"github.com/RyoheiTomiyama/phraze-api/infra/db/model"
 	"github.com/RyoheiTomiyama/phraze-api/util/errutil"
-	"github.com/RyoheiTomiyama/phraze-api/util/logger"
 )
 
 func (c *client) UpdateCardByID(ctx context.Context, id int64, input *domain.UpdateCardInput) (*domain.Card, error) {
@@ -45,8 +44,6 @@ func (c *client) UpdateCardByID(ctx context.Context, id int64, input *domain.Upd
 	if err != nil {
 		return nil, errutil.Wrap(err)
 	}
-
-	logger.FromCtx(ctx).Debug(ctx, "UpdateCardByID query: %s, args: %v", query, args)
 
 	var card model.Card
 	if err = e.QueryRowxContext(ctx, query, args...).StructScan(&card); err != nil {

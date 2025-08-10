@@ -66,42 +66,7 @@ func SetupDB() (*sqlx.DB, error) {
 		return nil, err
 	}
 
-	if err := checkMigration(); err != nil {
-		return nil, fmt.Errorf("migration check failed: %w", err)
-	}
-
 	return nil, nil
-}
-
-func checkMigration() error {
-	config, err := env.New()
-	if err != nil {
-		return err
-	}
-
-	dataSource := fmt.Sprintf(
-		"host=%s port=%s dbname=%s sslmode=disable user=%s password=%s",
-		config.DB.HOST, config.DB.PORT, config.DB.DB_NAME, config.DB.USER, config.DB.PASSWORD,
-	)
-
-	sqlDB, err := sql.Open("pgx", dataSource)
-	db := sqlx.NewDb(sqlDB, "pgx")
-	if err != nil {
-		return err
-	}
-	defer func() {
-		err = db.Close()
-	}()
-
-	var result any
-
-	if err := db.QueryRow("SELECT tgname FROM pg_trigger WHERE tgrelid = 'cards'::regclass;").Scan(&result); err != nil {
-		return fmt.Errorf("failed database exist check: %w", err)
-	}
-
-	fmt.Printf("%+v", result)
-
-	return nil
 }
 
 func initializeDB() (err error) {

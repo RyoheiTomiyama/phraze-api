@@ -3,7 +3,6 @@ package db
 import (
 	"context"
 	"testing"
-	"time"
 
 	"github.com/RyoheiTomiyama/phraze-api/domain"
 	"github.com/RyoheiTomiyama/phraze-api/infra/db/fixture"
@@ -26,10 +25,7 @@ func TestUpdateCardByID(t *testing.T) {
 		&fixture.DeckInput{UserID: lo.ToPtr("own")},
 	)
 
-	cards := fx.CreateCard(t, decks[0].ID, lo.Map(make([]fixture.CardInput, 2), func(ci fixture.CardInput, i int) fixture.CardInput {
-		ci.UpdatedAt = lo.ToPtr(time.Now().Add(-time.Hour))
-		return ci
-	})...)
+	cards := fx.CreateCard(t, decks[0].ID, make([]fixture.CardInput, 2)...)
 
 	t.Run("正常系", func(t *testing.T) {
 		client := NewTestClient(t, db)
@@ -53,13 +49,6 @@ func TestUpdateCardByID(t *testing.T) {
 				},
 				assert: func(result *domain.Card) {
 					t.Run("更新できること", func(t *testing.T) {
-						t.Log(time.Now().Format(time.RFC3339Nano))
-						t.Log(cards[0].UpdatedAt.Format(time.RFC3339Nano))
-						t.Log(result.UpdatedAt.Format(time.RFC3339Nano))
-						dbCard, err := client.GetCard(context.Background(), cards[0].ID)
-						assert.NoError(t, err)
-						t.Log(dbCard.UpdatedAt.Format(time.RFC3339Nano))
-
 						assert.NotEqual(t, cards[0].UpdatedAt.UnixMilli(), result.UpdatedAt.UnixMilli())
 
 						expect := *cards[0]
