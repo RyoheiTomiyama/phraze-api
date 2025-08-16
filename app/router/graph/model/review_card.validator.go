@@ -28,5 +28,5 @@ func (i *ReviewCardInput) Validate(ctx context.Context) error {
 		return nil
 	}
 
-	return errutil.New(errutil.CodeBadRequest, translateValidateError(errs[0]))
+	return errutil.New(errutil.CodeBadRequest, "%s", translateValidateError(errs[0]))
 }
