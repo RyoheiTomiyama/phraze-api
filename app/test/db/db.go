@@ -101,6 +101,11 @@ func initializeDB() (err error) {
 		return nil
 	}
 
+	fmt.Println("create test database...")
+
+	if _, err := db.Exec("ALTER DATABASE template1 REFRESH COLLATION VERSION;"); err != nil {
+		return fmt.Errorf("could not refresh collation version: %w", err)
+	}
 	if _, err := db.Exec(fmt.Sprintf("CREATE DATABASE %s", TestDBName)); err != nil {
 		return fmt.Errorf("could not create test database: %w", err)
 	}
@@ -126,6 +131,13 @@ func migration() error {
 
 	client, err := atlasexec.NewClient(filepath.Join(dir, "../../.."), "atlas")
 	if err != nil {
+		return err
+	}
+
+	// Atlas Login by Bot token
+	if err = client.Login(context.Background(), &atlasexec.LoginParams{
+		Token: config.ATLAS.TOKEN,
+	}); err != nil {
 		return err
 	}
 

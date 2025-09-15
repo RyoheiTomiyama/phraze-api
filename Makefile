@@ -40,4 +40,4 @@ seed:
 
 
 test:
-	TZ=UTC go test -v ./app/... -p 1
+	export $$(xargs < .env.test) && go test -v ./app/...
