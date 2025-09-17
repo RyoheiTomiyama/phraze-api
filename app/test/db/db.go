@@ -106,7 +106,7 @@ func initializeDB() (err error) {
 	if _, err := db.Exec("ALTER DATABASE template1 REFRESH COLLATION VERSION;"); err != nil {
 		return fmt.Errorf("could not refresh collation version: %w", err)
 	}
-	if _, err := db.Exec(fmt.Sprintf("CREATE DATABASE %s", TestDBName)); err != nil {
+	if _, err := db.Exec(fmt.Sprintf("CREATE DATABASE %s WITH OWNER %s", TestDBName, config.DB.USER)); err != nil {
 		return fmt.Errorf("could not create test database: %w", err)
 	}
 

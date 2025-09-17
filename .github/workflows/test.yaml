@@ -12,11 +12,11 @@ on:
 
 env:
   TZ: UTC
-  POSTGRES_HOST: db
+  POSTGRES_HOST: localhost
   POSTGRES_PORT: 5432
   POSTGRES_USER: postgres
   POSTGRES_PASSWORD: password
-  POSTGRES_DB: phraze_test
+  POSTGRES_DB: phraze # これはテストDBとは別ログイン用の仮DB
   ATLAS_TOKEN: ${{ secrets.ATLAS_TOKEN }}
 
 jobs:
