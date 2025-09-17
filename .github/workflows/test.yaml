@@ -17,6 +17,7 @@ env:
   POSTGRES_USER: postgres
   POSTGRES_PASSWORD: password
   POSTGRES_DB: phraze_test
+  ATLAS_TOKEN: ${{ secrets.ATLAS_TOKEN }}
 
 jobs:
   test:
