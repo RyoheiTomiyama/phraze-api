@@ -11,9 +11,14 @@ import (
 
 type Config struct {
 	APP    app
+	ATLAS  atlas
 	DB     db
 	Gemini gemini
 	Sentry sentry
+}
+
+type atlas struct {
+	TOKEN string `env:"ATLAS_TOKEN"`
 }
 
 type db struct {

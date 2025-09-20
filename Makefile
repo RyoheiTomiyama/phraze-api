@@ -19,7 +19,7 @@ lint:
 # DATABASE 
 migrate:
 	atlas schema apply\
-		--url "postgres://postgres:password@0.0.0.0:5432/phraze?sslmode=disable"\
+		--url "postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST }:${POSTGRES_PORT}/${POSTGRES_DB}?sslmode=disable"\
 		--to "file://atlas/schema.sql"\
 		--dev-url "docker://postgres"
 
@@ -39,5 +39,18 @@ seed:
 # 		--allow-dirty
 
 
+# test環境のDBセットアップ
+test-setup:
+	make test-init
+	make test-migrate
+test-init:
+	docker compose exec db sh ./atlas/bin/create-test-database.sh
+test-migrate:
+	atlas schema apply\
+		--url "postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST }:${POSTGRES_PORT}/${POSTGRES_DB}_test?sslmode=disable"\
+		--to "file://atlas/schema.sql"\
+		--dev-url "docker://postgres"\
+		--auto-approve
+
 test:
-	TZ=UTC go test -v ./app/...
+	@set -a; [ -f .env.test ] && . .env.test || true; set +a; TZ=UTC go test -v ./app/...

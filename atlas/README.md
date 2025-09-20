@@ -10,8 +10,10 @@ Atlas https://atlasgo.io/docs
 curl -sSf https://atlasgo.sh | sh
 ```
 
-シーケンスとかマテビューのマイグレーションを使うのには、ログインが必要
+シーケンスとかマテビューのマイグレーション、トリガーを使うのには、ログインが必要
 bonos という組織を作成したので、管理者に招待してもらってからログインをしてください。
+Hacker License を取得しています
+https://atlasgo.io/hacker-license
 
 ```bash
 atlas login bonos

@@ -24,6 +24,7 @@ func TestUpdateCardByID(t *testing.T) {
 		&fixture.DeckInput{UserID: lo.ToPtr("own")},
 		&fixture.DeckInput{UserID: lo.ToPtr("own")},
 	)
+
 	cards := fx.CreateCard(t, decks[0].ID, make([]fixture.CardInput, 2)...)
 
 	t.Run("正常系", func(t *testing.T) {
@@ -86,7 +87,7 @@ func TestUpdateCardByID(t *testing.T) {
 
 		for _, tc := range testCases {
 			id, input := tc.arrange()
-			result, err := client.UpdateCardByID(context.Background(), id, input)
+			result, err := client.UpdateCardByID(context.TODO(), id, input)
 			if assert.NoError(t, err) {
 				tc.assert(result)
 			}
