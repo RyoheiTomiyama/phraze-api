@@ -41,7 +41,11 @@ seed:
 
 # test環境のDBセットアップ
 test-setup:
+	make test-init
+	make test-migrate
+test-init:
 	docker compose exec db sh ./atlas/bin/create-test-database.sh
+test-migrate:
 	atlas schema apply\
 		--url "postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST }:${POSTGRES_PORT}/${POSTGRES_DB}_test?sslmode=disable"\
 		--to "file://atlas/schema.sql"\
