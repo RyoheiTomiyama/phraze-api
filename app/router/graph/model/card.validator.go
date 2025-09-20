@@ -33,7 +33,7 @@ func (i *CreateCardInput) Validate(ctx context.Context) error {
 		return nil
 	}
 
-	return errutil.New(errutil.CodeBadRequest, translateValidateError(errs[0]))
+	return errutil.New(errutil.CodeBadRequest, "%s", translateValidateError(errs[0]))
 }
 
 func (i *CardsInput) Validate(ctx context.Context) error {
@@ -67,7 +67,7 @@ func (i *CardsInput) Validate(ctx context.Context) error {
 		return nil
 	}
 
-	return errutil.New(errutil.CodeBadRequest, translateValidateError(errs[0]))
+	return errutil.New(errutil.CodeBadRequest, "%s", translateValidateError(errs[0]))
 }
 
 func (i *UpdateCardInput) Validate(ctx context.Context) error {
@@ -96,7 +96,7 @@ func (i *UpdateCardInput) Validate(ctx context.Context) error {
 		return nil
 	}
 
-	return errutil.New(errutil.CodeBadRequest, translateValidateError(errs[0]))
+	return errutil.New(errutil.CodeBadRequest, "%s", translateValidateError(errs[0]))
 }
 func (i *UpdateCardWithGenAnswerInput) Validate(ctx context.Context) error {
 	v := validate()
@@ -119,7 +119,7 @@ func (i *UpdateCardWithGenAnswerInput) Validate(ctx context.Context) error {
 		return nil
 	}
 
-	return errutil.New(errutil.CodeBadRequest, translateValidateError(errs[0]))
+	return errutil.New(errutil.CodeBadRequest, "%s", translateValidateError(errs[0]))
 }
 
 func (i *PendingCardsInput) Validate(ctx context.Context) error {
@@ -152,5 +152,5 @@ func (i *PendingCardsInput) Validate(ctx context.Context) error {
 		return nil
 	}
 
-	return errutil.New(errutil.CodeBadRequest, translateValidateError(errs[0]))
+	return errutil.New(errutil.CodeBadRequest, "%s", translateValidateError(errs[0]))
 }
