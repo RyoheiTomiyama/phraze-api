@@ -56,6 +56,9 @@ jobs:
       - name: Install dependencies
         run: go mod download
 
+      - name: Setup DB
+        run: make test-setup
+
       - name: Run tests
         run: make test
 
